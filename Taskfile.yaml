@@ -1,0 +1,35 @@
+---
+version: "3"
+
+tasks:
+  install:
+    desc: Install dependencies
+    cmds:
+      - npm install
+      - go install github.com/a-h/templ/cmd/templ@latest
+      - go get -u github.com/gofiber/fiber/v3
+      - go install github.com/gofiber/fiber/v2/middleware/adaptor
+
+  assets:
+    desc: Build tailwind
+    cmds:
+      - npx tailwindcss -i ./internal/assets/tailwind.css -o ./internal/assets/dist/styles.css --watch
+  generate:
+    desc: Generate build output
+    cmds:
+      - go generate ./...
+  # build:
+  #   desc: build and run the app
+  #   cmds: go run .
+  run:
+    desc: Run the app
+    deps:
+      - assets
+      - generate
+    cmds:
+      - gow run .
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
