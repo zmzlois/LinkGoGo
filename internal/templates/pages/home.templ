@@ -1,0 +1,12 @@
+package pages 
+
+import (
+	"github.com/zmzlois/go-tooo/internal/templates/shared"
+	"github.com/zmzlois/go-tooo/internal/templates/partials"
+)
+
+templ HomePage() {
+	@shared.Page("Home") {
+		@partials.Login()
+	}
+}
