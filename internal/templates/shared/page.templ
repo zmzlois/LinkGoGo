@@ -16,8 +16,14 @@ templ Page(title string) {
 			<script src="/dist/app.js"></script>
 			<link rel="stylesheet" href="/dist/styles.css"/>
 		</head>
-		<body class="bg-zinc-100 ">
-			<section class="p-20 mx-auto container my-2">
+		<style type="text/css">
+			.antialiased {
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+		</style>
+		<body class="h-full antialiased">
+			<section class="">
 				{ children... }
 			</section>
 		</body>
