@@ -6,7 +6,7 @@
   "packageManager": "pnpm@8.10.2",
   "scripts": {
     "dev": "concurrently \"pnpm run dev:css\" \"pnpm run dev:go\" \"pnpm run dev:templates\"",
-    "dev:css": "tailwindcss -i internal/assets/tailwind.css -o internal/assets/dist/style.css --watch",
+    "dev:css": "tailwindcss -i internal/assets/tailwind.css -o internal/assets/dist/style.css",
     "dev:go": "nodemon --signal SIGTERM --watch '*/**' --ext go,css --exec \"go run main.go\"",
     "dev:templates": "nodemon --signal SIGTERM --watch '*/**' --ext templ --exec \"templ generate\""
   },
@@ -18,5 +18,12 @@
     "nodemon": "^3.1.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1"
+  },
+  "dependencies": {
+    "@radix-ui/react-icons": "^1.3.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.1",
+    "tailwindcss-animate": "^1.0.7"
   }
 }
