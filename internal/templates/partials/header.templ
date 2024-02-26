@@ -1,0 +1,52 @@
+package partials 
+
+templ Header(avatar string, name string, bio string) {
+	<style type="text/css">
+        .rounded-full {
+            border-radius: 9999px;
+        }
+        .h-24 {
+            height: 6rem;
+        }
+        .w-24 {
+            width: 6rem;
+        }
+        .text-2xl {
+            font-size: 1.8rem;
+        }
+
+        .text-base {
+            font-size: 1rem;
+        }
+
+        .text-zinc-950 {
+            color: #1F2937;
+        }
+
+        .text-zinc-700 {
+            color: #4B5563;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .font-medium {
+            font-weight: 500;
+        }
+        .tracking-tight {
+            letter-spacing: -0.04em;
+        }
+    </style>
+	<div class="py-8 flex flex-col items-center gap-4">
+		<img src={ avatar } alt={ name + "'s avatar" } class="rounded-full h-24 w-24"/>
+		<div class="gap-2 flex flex-col items-center">
+			<h1 class="text-2xl tracking-tight font-bold text-zinc-950">{ name }</h1>
+			<h2 class="text-base text-zinc-700 font-medium">{ bio }</h2>
+		</div>
+	</div>
+}
