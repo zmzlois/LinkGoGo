@@ -1,0 +1,54 @@
+package partials 
+
+type LinkType struct {
+	Image string
+	Path  templ.SafeURL
+	Name  string
+}
+
+var links = []LinkType{
+	{Image: " ", Path: "https://loiszhao.com", Name: "Website"},
+	{Image: " ", Path: "https://twitter.com/zmzlois", Name: "Twitter"},
+	{Image: " ", Path: "https://github.com/zmzlois", Name: "Github"},
+	{Image: " ", Path: "https://github.com/zmzlois/go-tooo", Name: "The repo made this shit"},
+}
+
+templ LinkSection (isLogIn bool) {
+	<style type="text/css">
+        .flex {
+            display: flex;
+        }
+        .flex-col {
+            flex-direction: column;
+        }
+        .justify-between {
+            justify-content: space-between;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        
+        .w-11\/12 {
+            width: 91.666667%;
+        }
+
+        @media (min-width: 1024px) {
+            .lg\:w-3\/5 {
+                width: 80%;
+            }
+        }
+      
+        </style>
+	<div class="flex flex-col lg:w-3/5 w-11/12 justify-between items-center gap-8 py-8">
+		for _, link := range links {
+			@Link(link.Image, link.Path, link.Name, isLogIn)
+		}
+	</div>
+}
