@@ -22,3 +22,6 @@ go.work
 
 # node modules
 node_modules
+
+# Environment variable
+.env
