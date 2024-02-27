@@ -23,7 +23,7 @@ func Background() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style type=\"text/css\">\n \n.py-10 {\n  padding-top: 2.5rem;\n  padding-bottom: 2.5rem;\n}\n.bg-gradient-to-tr {\n  background-image: linear-gradient(to top right, var(--tw-gradient-stops));\n}\n\n.from-teal-600\\/30 {\n  --tw-gradient-from: rgb(13 148 136 / 0.3) var(--tw-gradient-from-position);\n  --tw-gradient-to: rgb(13 148 136 / 0) var(--tw-gradient-to-position);\n  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);\n}\n.to-violet-300 {\n  --tw-gradient-to: #c4b5fd var(--tw-gradient-to-position);\n}\n\n.via-indigo-700\\/30 {\n  --tw-gradient-to: rgb(67 56 202 / 0)  var(--tw-gradient-to-position);\n  --tw-gradient-stops: var(--tw-gradient-from), rgb(67 56 202 / 0.3) var(--tw-gradient-via-position), var(--tw-gradient-to);\n}\n\n.h-full {\n    height: 100vh;\n}\n.container {\n    width: 100%;\n    margin-right: auto;\n    margin-left: auto;\n    padding-right: 2rem;\n    padding-left: 2rem;\n}\n.mx-auto {\n    margin-right: auto;\n    margin-left: auto;\n}\n.justify-between {\n    justify-content: space-between;\n}\n\n    </style><div class=\" py-10 h-full bg-gradient-to-tr from-teal-600/30 via-indigo-700/30 to-violet-300 flex flex-col justify-between\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\" py-10 h-full bg-gradient-to-tr from-teal-600/30 via-indigo-700/30 to-violet-300 flex flex-col \">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

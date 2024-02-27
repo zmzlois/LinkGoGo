@@ -1,50 +1,7 @@
 package shared 
 
 templ Background () {
-	<style type="text/css">
- 
-.py-10 {
-  padding-top: 2.5rem;
-  padding-bottom: 2.5rem;
-}
-.bg-gradient-to-tr {
-  background-image: linear-gradient(to top right, var(--tw-gradient-stops));
-}
-
-.from-teal-600\/30 {
-  --tw-gradient-from: rgb(13 148 136 / 0.3) var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(13 148 136 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-.to-violet-300 {
-  --tw-gradient-to: #c4b5fd var(--tw-gradient-to-position);
-}
-
-.via-indigo-700\/30 {
-  --tw-gradient-to: rgb(67 56 202 / 0)  var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), rgb(67 56 202 / 0.3) var(--tw-gradient-via-position), var(--tw-gradient-to);
-}
-
-.h-full {
-    height: 100vh;
-}
-.container {
-    width: 100%;
-    margin-right: auto;
-    margin-left: auto;
-    padding-right: 2rem;
-    padding-left: 2rem;
-}
-.mx-auto {
-    margin-right: auto;
-    margin-left: auto;
-}
-.justify-between {
-    justify-content: space-between;
-}
-
-    </style>
-	<div class=" py-10 h-full bg-gradient-to-tr from-teal-600/30 via-indigo-700/30 to-violet-300 flex flex-col justify-between">
+	<div class=" py-10 h-full bg-gradient-to-tr from-teal-600/30 via-indigo-700/30 to-violet-300 flex flex-col ">
 		{ children... }
 	</div>
 }
