@@ -23,7 +23,7 @@ func Container() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style type=\"text/css\">\n        .container {\n            max-width: 1200px;\n        }\n        .border {\n            border: 1px solid #000;\n        }\n        .flex {\n            display: flex;\n        }\n        .flex-col {\n            flex-direction: column;\n        }\n        .items-center {\n            align-items: center;\n        }\n        .justify-between {\n            justify-content: space-between;\n        }\n        .mx-auto {\n            margin-left: auto;\n            margin-right: auto;\n        }\n\n    </style><div class=\" container mx-auto flex flex-col items-center\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\" container mx-auto flex flex-col\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
