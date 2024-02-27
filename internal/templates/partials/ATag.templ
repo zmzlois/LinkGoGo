@@ -1,0 +1,29 @@
+package partials 
+
+templ ATag (href templ.SafeURL, text string) {
+	<style type="text/css">
+	
+	.rounded-xl {
+		border-radius: 0.75rem;
+	}
+	.bg-zinc-100 {
+		background-color: #F5F5F5;
+	}
+	.text-zinc-900 {
+		color: #333333;
+	}
+	.px-4 {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+	.py-2 {
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+	}
+
+	</style>
+	<a href={ href } class={ "px-4 py-2 flex gap-2 bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base" }>
+		<img src="/dist/pen.svg" class="w-4 h-4 inline-block mr-2" alt="Create your own link"/>
+		<span>{ text }</span>
+	</a>
+}
