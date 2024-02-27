@@ -14,18 +14,10 @@ templ Page(title string) {
 			<script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
 			<script src="https://unpkg.com/sortablejs@1.15.0"></script>
 			<script src="/dist/app.js"></script>
-			<link rel="stylesheet" href="/dist/styles.css"/>
+			<link rel="stylesheet" href="/dist/style.css"/>
 		</head>
-		<style type="text/css">
-			.antialiased {
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-			}
-		</style>
 		<body class="h-full antialiased">
-			<section class="">
-				{ children... }
-			</section>
+			{ children... }
 		</body>
 	</html>
 }
