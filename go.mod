@@ -1,4 +1,6 @@
-module github.com/zmzlois/go-tooo
+module github.com/zmzlois/LinkGoGo
+
+// replace github.com/zmzlois/LinkGoGo => github.com/zmzlois/LinkGogo v0.0.1
 
 go 1.21.4
 
