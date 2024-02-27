@@ -23,7 +23,7 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style type=\"text/css\">\n\t.flex {\n\t\tdisplay: flex;\n\t}\n\t.items-center {\n\t\talign-items: center;\n\t}\n\t.gap-2 {\n\t\tgap: 0.5rem;\n\t}\n\n\t.font-semibold {\n\t\tfont-weight: 600;\n\t}\n\t.text-zinc-900 {\n\t\tcolor: #111827;\n\t}\n\t\n.hover\\:text-zinc-900:hover {\n\tcolor: #111827;\n}\n.text-zinc-700 {\n\tcolor: #6B7280;\n}\n.transition-colors {\n    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;\n    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n    transition-duration: 150ms;\n}\n\t</style><footer><a href=\"/\" class=\"flex items-center gap-2\"><p class=\"font-semibold text-zinc-700 hover:text-zinc-900   transition-colors\">LinkGoGo</p></a></footer>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<footer><a href=\"/\" class=\"flex py-10 text-center justify-center items-end gap-2\"><p class=\"font-semibold text-zinc-700 hover:text-zinc-900   transition-colors\">LinkGoGo</p></a></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

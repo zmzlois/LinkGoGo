@@ -36,7 +36,7 @@ func LinkSection(isLogIn bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style type=\"text/css\">\n        .flex {\n            display: flex;\n        }\n        .flex-col {\n            flex-direction: column;\n        }\n        .justify-between {\n            justify-content: space-between;\n        }\n        .items-center {\n            align-items: center;\n        }\n        .gap-8 {\n            gap: 8px;\n        }\n        .py-8 {\n            padding-top: 2rem;\n            padding-bottom: 2rem;\n        }\n        \n        .w-11\\/12 {\n            width: 91.666667%;\n        }\n\n        @media (min-width: 1024px) {\n            .lg\\:w-3\\/5 {\n                width: 80%;\n            }\n        }\n      \n        </style><div class=\"flex flex-col lg:w-3/5 w-11/12 justify-between items-center gap-8 py-8\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col  items-center  py-8\"><div class=\"lg:w-3/5 w-11/12 justify-between items-center flex flex-col gap-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -46,7 +46,7 @@ func LinkSection(isLogIn bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
