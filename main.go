@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/joho/godotenv"
+	"github.com/zmzlois/LinkGoGo/auth"
 	"github.com/zmzlois/LinkGoGo/web/pages"
 )
 
@@ -25,6 +26,9 @@ func main() {
 
 	app := fiber.New()
 
+	req := &fiber.Request{}
+	res := &fiber.Response{}
+
 	app.Static("/", "./web/assets")
 
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -35,6 +39,28 @@ func main() {
 	app.Get("/login", func(c *fiber.Ctx) error {
 		fmt.Println("Sign in page")
 		return Render(c, pages.SignInPage())
+	})
+
+	// everything below needs to be authorized
+
+	var cred *auth.Client = &auth.Client{
+		ClientId:     os.Getenv("DISCORD_CLIENT_ID"),
+		ClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
+		RedirectUri:  os.Getenv("DISCORD_REDIRECT_URI"),
+	}
+
+	var discordClient *auth.Client = auth.Initialise(&auth.Client{
+		ClientId:     cred.ClientId,
+		ClientSecret: cred.ClientSecret,
+		RedirectUri:  cred.RedirectUri,
+		Scopes:       []string{auth.ScopeIdentify},
+	})
+
+	app.Get("/discord-oauth", func(c *fiber.Ctx) error {
+		fmt.Println("Redirecting to Discord")
+		discordClient.RedirectHandler(c, res, req, "")
+		fmt.Println("Status and error: ", c.Response().StatusCode())
+		return nil
 	})
 
 	app.Listen(port)
