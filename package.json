@@ -1,12 +1,12 @@
 {
-  "name": "go-tooo",
+  "name": "LinkGoGo",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "packageManager": "pnpm@8.10.2",
   "scripts": {
     "dev": "concurrently \"pnpm run dev:css\" \"pnpm run dev:go\" \"pnpm run dev:templates\"",
-    "dev:css": "tailwindcss -i internal/assets/tailwind.css -o internal/assets/dist/style.css",
+    "dev:css": "tailwindcss -i internal/assets/tailwind.css -o internal/assets/dist/style.css --watch --jit",
     "dev:go": "nodemon --signal SIGTERM --watch '*/**' --ext go,css --exec \"go run main.go\"",
     "dev:templates": "nodemon --signal SIGTERM --watch '*/**' --ext templ --exec \"templ generate\""
   },
