@@ -1,0 +1,44 @@
+package pages 
+
+import (
+	"github.com/zmzlois/LinkGoGo/web/templates/shared"
+	"github.com/zmzlois/LinkGoGo/web/templates/partials"
+)
+
+var data map[string]string = map[string]string{
+	"avatar": "https://pbs.twimg.com/profile_images/1751005853900005376/nGX46ucY_400x400.png",
+	"name":   "LOIS",
+	"bio":    "Noob dev",
+}
+
+// var data map[string]string = map[string]string{
+// 	"avatar": "",
+// 	"name":   "",
+// 	"bio":    "",
+// }
+
+// func init() {
+// 	err := godotenv.Load()
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	data["avatar"] = os.Getenv("AVATAR")
+// 	data["name"] = os.Getenv("NAME")
+// 	data["bio"] = os.Getenv("BIO")
+
+// }
+templ HomePage() {
+	@shared.Page("Home") {
+		@shared.Background() {
+			@shared.Container() {
+				@partials.Header()
+			}
+			@shared.Container() {
+				@partials.ProfileHeader(data["avatar"], data["name"], data["bio"])
+			}
+			@shared.Container() {
+				@partials.LinkSection(false)
+			}
+		}
+	}
+}

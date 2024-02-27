@@ -1,0 +1,18 @@
+package shared 
+
+import "github.com/zmzlois/LinkGoGo/web/templates/partials"
+
+templ Background () {
+	<style type="text/css">
+		.min-height {
+			min-height: calc(100vh - 18vh);
+		
+		}
+		</style>
+	<div class=" py-10 h-full bg-gradient-to-tr from-teal-600/30 via-indigo-700/30 to-violet-300 flex flex-col ">
+		<div class="min-height">
+			{ children... }
+		</div>
+		@partials.Footer()
+	</div>
+}

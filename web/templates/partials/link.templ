@@ -1,0 +1,153 @@
+package partials 
+
+import (
+	"strings"
+	"fmt"
+)
+
+func ImageTranform(image string, path templ.SafeURL, name string) string {
+
+	pathString := string(path)
+	if image == " " {
+		if strings.Contains(pathString, "twitter") || strings.Contains(pathString, "x.com") {
+			return (fmt.Sprintf(`<img src="%s" class="w-14 h-14 rounded" alt="avatar"/>`, "/dist/twitter.svg"))
+		} else if strings.Contains(pathString, "github") {
+			return "/dist/github.svg"
+		} else if strings.Contains(pathString, "instagram") {
+			return "/dist/instagram.svg"
+		}
+		return string(name[0])
+	} else {
+		return image
+	}
+}
+
+templ Link (image string, href templ.SafeURL, text string, isLogIn bool) {
+	<style type="text/css">
+        .w-full {
+            width: 100%;
+        } 
+        .p-1 {
+            padding: 0.25rem;
+        }
+        .px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .p-2 {
+            padding: 0.5rem;
+        }
+        .rounded {
+            border-radius: 0.25rem;
+        }
+        .bg-zinc-100 {
+            background-color: #f5f7f9;
+        }
+        .drop-shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .content-center {
+            align-content: center;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .justify-center {
+            justify-content: center;
+        }
+        .flex {
+            display: flex;
+        }
+        .justify-between {
+            justify-content: space-between;
+        }
+        .animate-pop{
+            transition-timing-function: ease-in;
+           transition: all 300ms cubic-bezier(.47,1.64,.41,.8);
+	        &:hover {
+		        transform: scale(1.04);
+	        } 
+        }
+
+        .hidden {
+            display: none;
+        }
+        .group {
+            position: relative;
+            &:hover {
+                .group-hover\:block {
+                    z-index: 10;
+                    display: block;
+                }
+                .group-hover\:bg-zinc-300 {
+                    background-color: #e5e7eb;
+                }
+            }
+        }
+        .h-14 {
+           height: 4rem;
+        }
+        .w-14 {
+            width: 4rem;
+        }
+        .h-10 {
+            height: 2.5rem;
+        }
+        .w-10 {
+            width: 2.5rem;
+        }
+        .h-6 {
+            height: 1rem;
+        }
+        .w-6 {
+            width: 1rem;
+        }
+        .rounded {
+            border-radius: 0.25rem;
+        }
+        .rounded-full {
+            border-radius: 9999px;
+        }
+        .bg-inherit {
+            background-color: inherit;
+        }
+        .transition-colors {
+            transition-property: background-color, border-color, color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .bg-zinc-900 {
+            background-color: #111827;
+        }
+        .text-zinc-100 {
+            color: #f9fafb;
+        }
+        .border-white {
+            border-color:1px solid #fff;
+        }
+        
+
+    </style>
+	<a href={ href } class="w-full p-2 rounded bg-zinc-100 drop-shadow-sm content-center items-center flex group justify-between animate-pop">
+		if strings.Contains(string(href), "twitter") || strings.Contains(string(href), "x.com") {
+			<img src="/dist/twitter.svg" class="w-14 h-14 rounded" alt="avatar"/>
+		} else if strings.Contains(string(href), "github") {
+			<img src="/dist/github.svg" class="w-14 h-14 rounded" alt="avatar"/>
+		} else if image != " " && strings.Contains(string(href), "instagram") {
+			<img src="/dist/instagram.svg" class="w-14 h-14 rounded" alt="avatar"/>
+		} else {
+			<div class="w-14 h-14 flex p-1 bg-zinc-900 rounded text-zinc-100  items-center justify-center">
+				<p class="text-zinc-100 font-semibold text-3xl">{ ImageTranform(image, href, text) }</p>
+			</div>
+		}
+		<p>{ text }</p>
+		if isLogIn {
+			<div class="w-10 h-10 p-2 flex rounded-full bg-inherit group-hover:bg-zinc-300 items-center transition-colors content-center">
+				<img src="/dist/dot-horizontal.svg" class="group-hover:block hidden w-6 h-6"/>
+			</div>
+		} else {
+			<div class="w-10 h-10 p-2 flex  items-center  content-center"></div>
+		}
+	</a>
+}

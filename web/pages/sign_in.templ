@@ -1,0 +1,35 @@
+package pages 
+
+import "github.com/zmzlois/LinkGoGo/web/templates/shared"
+import "github.com/zmzlois/LinkGoGo/web/templates/partials"
+
+templ SignInPage () {
+	@shared.Page("Sign In") {
+		@shared.Background() {
+			@shared.Container() {
+				<div class="items-center h-[cal(100vh-10vh)]  flex flex-col flex-1 justify-center border-1 border-black py-24 gap-4">
+					<h1 class="text-transparent bg-clip-text px-1 bg-gradient-to-br from-zinc-600 from-10% via-zinc-950 via-70% to-zinc-500 to-100%  my-6 py-2 text-2xl antialiased md:text-4xl  font-bold tracking-tighter drop-shadow-sm">Create your own LinkGoGo</h1>
+					<div class="flex flex-col gap-4 ">
+						@partials.Button() {
+							@LoginButton("/github-oauth", "Github") {
+								<img src="/dist/github.svg" class="h-6 w-6" alt="Github logo"/>
+							}
+						}
+						@partials.Button() {
+							@LoginButton("/discord-oauth", "Discord") {
+								<img src="/dist/discord.svg" class="h-6 w-6 -mb-1" alt="Discord logo"/>
+							}
+						}
+					</div>
+				</div>
+			}
+		}
+	}
+}
+
+templ LoginButton(href templ.SafeURL, text string) {
+	<a href={ href } class="flex gap-10 px-12 py-2 items-center ">
+		{ children... }
+		<span>{ text }</span>
+	</a>
+}
