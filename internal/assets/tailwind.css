@@ -79,3 +79,14 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+
+@layer utilities {
+    .btn {
+        @apply px-4 py-2 rounded-md;
+    }
+
+    .primary-btn {
+        @apply bg-primary text-primary-foreground;
+    }
+}
