@@ -31,7 +31,12 @@ templ HomePage() {
 	@shared.Page("Home") {
 		@shared.Background() {
 			@shared.Container() {
-				@partials.Header(data["avatar"], data["name"], data["bio"])
+				@partials.Header()
+			}
+			@shared.Container() {
+				@partials.ProfileHeader(data["avatar"], data["name"], data["bio"])
+			}
+			@shared.Container() {
 				@partials.LinkSection(false)
 			}
 			@shared.Container() {
