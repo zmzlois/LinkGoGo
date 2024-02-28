@@ -2,20 +2,20 @@
 version: "3.8"
 
 services:
-  web:
-    image: web
-    container_name: WebCont
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    ports:
-      - "3001:3000"
-    env_file:
-      - .env
-    depends_on:
-      - postgres_db
-    volumes:
-      - .:/app
+  # web:
+  #   image: web
+  #   container_name: WebCont
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - "3001:3000"
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - postgres_db
+  #   volumes:
+  #     - .:/app
 
   # This is a testing instance for development
   postgres_db:
