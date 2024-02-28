@@ -8,6 +8,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
+	"github.com/gofiber/fiber/v2/middleware/redirect"
 	"github.com/joho/godotenv"
 	"github.com/zmzlois/LinkGoGo/auth"
 	"github.com/zmzlois/LinkGoGo/web/pages"
@@ -26,10 +27,19 @@ func main() {
 
 	app := fiber.New()
 
-	req := &fiber.Request{}
+	// req := &fiber.Request{}
 	res := &fiber.Response{}
+	resWrite := res.BodyWriter()
 
 	app.Static("/", "./web/assets")
+
+	var cred *auth.Client = &auth.Client{
+		ClientId:     os.Getenv("DISCORD_CLIENT_ID"),
+		ClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
+		RedirectUri:  os.Getenv("DISCORD_REDIRECT_URI"),
+	}
+
+	fmt.Println("Discord client id: ", cred.ClientId)
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		fmt.Println("Home page")
@@ -37,17 +47,13 @@ func main() {
 	})
 
 	app.Get("/login", func(c *fiber.Ctx) error {
-		fmt.Println("Sign in page")
+		fmt.Println("Sign in page, dicord client credentials: ", cred.ClientId, cred.ClientSecret, cred.RedirectUri)
 		return Render(c, pages.SignInPage())
 	})
 
 	// everything below needs to be authorized
 
-	var cred *auth.Client = &auth.Client{
-		ClientId:     os.Getenv("DISCORD_CLIENT_ID"),
-		ClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
-		RedirectUri:  os.Getenv("DISCORD_REDIRECT_URI"),
-	}
+	// handle discord sign in
 
 	var discordClient *auth.Client = auth.Initialise(&auth.Client{
 		ClientId:     cred.ClientId,
@@ -56,11 +62,31 @@ func main() {
 		Scopes:       []string{auth.ScopeIdentify},
 	})
 
+	app.Use(redirect.New(redirect.Config{
+		Rules: map[string]string{
+			"/discord-oauth": discordClient.AuthUrl,
+		},
+		StatusCode: 307,
+	}))
 	app.Get("/discord-oauth", func(c *fiber.Ctx) error {
-		fmt.Println("Redirecting to Discord")
-		discordClient.RedirectHandler(c, res, req, "")
-		fmt.Println("Status and error: ", c.Response().StatusCode())
+		fmt.Println("Redirecting to discord sign in")
 		return nil
+	})
+
+	app.Get("/discord-redirect", func(c *fiber.Ctx) error {
+		fmt.Println("After log in redirected from discord")
+
+		var (
+			// get the code from the query
+			code = c.Query("code")
+
+			accessToken, _ = discordClient.GetOnlyAccessToken(code)
+
+			userData, _ = auth.GetDiscordUserData(accessToken)
+		)
+
+		fmt.Fprint(resWrite, userData)
+		return Render(c, pages.EditPage())
 	})
 
 	app.Listen(port)
