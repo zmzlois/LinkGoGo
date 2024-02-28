@@ -27,8 +27,7 @@ func (Links) Fields() []ent.Field {
 func (Links) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", Users.Type).
-			Field("user_id").
-			Unique().
-			Ref("users_links"),
+			Ref("users_links").
+			Unique(),
 	}
 }
