@@ -4,11 +4,19 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . /app
-RUN CGO_ENABLED=0 GOOS=linux go build -o /entrypoint
+RUN CGO_ENABLED=0 GOOS=linux go build -o /entrypoint 
+
+FROM gcr.io/distroless/static-debian11 AS release-stage
+WORKDIR /
+COPY --from=build-stage /entrypoint /entrypoint
+COPY --from=build-stage /app/web/assets /assets
+ENTRYPOINT ["/entrypoint"]
 
 
 # Start a new stage for the development environment
-FROM build-stage
-WORKDIR /app
+#FROM build-stage
+#WORKDIR /app
 # Start the application
-ENTRYPOINT ["/entrypoint"]
+#ENTRYPOINT ["/entrypoint"]
+
+

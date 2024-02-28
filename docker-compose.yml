@@ -9,7 +9,9 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"
+      - "3001:3000"
+    env_file:
+      - .env
     depends_on:
       - postgres_db
     volumes:
