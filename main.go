@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/a-h/templ"
+	"github.com/getsentry/sentry-go"
+	"github.com/gofiber/contrib/fibersentry"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/redirect"
+	"github.com/gofiber/fiber/v2/utils"
 	"github.com/joho/godotenv"
 	"github.com/zmzlois/LinkGoGo/auth"
 	"github.com/zmzlois/LinkGoGo/web/pages"
@@ -25,7 +29,37 @@ func main() {
 
 	fmt.Printf("Port is trying to listening on %s\n\n", port)
 
+	sentryDSN := os.Getenv("SENTRY_DSN")
+
+	err = sentry.Init(sentry.ClientOptions{
+		Dsn: sentryDSN,
+		BeforeSend: func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+			if hint.Context != nil {
+				if c, ok := hint.Context.Value(sentry.RequestContextKey).(*fiber.Ctx); ok {
+					// You have access to the original Context if it panicked
+					fmt.Println(utils.CopyString(c.Hostname()))
+				}
+			}
+			fmt.Println(event)
+			return event
+		},
+		Debug:            true,
+		AttachStacktrace: true,
+	})
+
+	if err != nil {
+		log.Fatalf("sentry.Init: %s", err)
+	}
+	// Flush buffered events before the program terminates.
+	// Set the timeout to the maximum duration the program can afford to wait.
+	defer sentry.Flush(2 * time.Second)
+
 	app := fiber.New()
+
+	app.Use(fibersentry.New(fibersentry.Config{
+		Repanic:         true,
+		WaitForDelivery: true,
+	}))
 
 	// req := &fiber.Request{}
 	res := &fiber.Response{}
@@ -39,15 +73,13 @@ func main() {
 		RedirectUri:  os.Getenv("DISCORD_REDIRECT_URI"),
 	}
 
-	fmt.Println("Discord client id: ", cred.ClientId)
-
 	app.Get("/", func(c *fiber.Ctx) error {
 		fmt.Println("Home page")
 		return Render(c, pages.HomePage())
 	})
 
 	app.Get("/login", func(c *fiber.Ctx) error {
-		fmt.Println("Sign in page, dicord client credentials: ", cred.ClientId, cred.ClientSecret, cred.RedirectUri)
+		fmt.Println("They hit sign in page!")
 		return Render(c, pages.SignInPage())
 	})
 
@@ -64,7 +96,8 @@ func main() {
 
 	app.Use(redirect.New(redirect.Config{
 		Rules: map[string]string{
-			"/discord-oauth": discordClient.AuthUrl,
+			"/discord-oauth":    discordClient.AuthUrl,
+			"/discord-redirect": "/edit",
 		},
 		StatusCode: 307,
 	}))
@@ -84,6 +117,7 @@ func main() {
 
 			userData, _ = auth.GetDiscordUserData(accessToken)
 		)
+		fmt.Println("Code: ", code)
 
 		fmt.Fprint(resWrite, userData)
 		return Render(c, pages.EditPage())
