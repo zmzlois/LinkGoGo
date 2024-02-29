@@ -1,5 +1,8 @@
 package main
 
+// TODO: middleware if you don't have any cookies "github or discord", bounce back to login page
+// TODO: how are you getting the cookie
+
 import (
 	"fmt"
 	"log"
@@ -15,6 +18,7 @@ import (
 	"github.com/gofiber/fiber/v2/utils"
 	"github.com/joho/godotenv"
 	"github.com/zmzlois/LinkGoGo/auth"
+	"github.com/zmzlois/LinkGoGo/handlers"
 	"github.com/zmzlois/LinkGoGo/web/pages"
 )
 
@@ -62,8 +66,8 @@ func main() {
 	}))
 
 	// req := &fiber.Request{}
-	res := &fiber.Response{}
-	resWrite := res.BodyWriter()
+	// res := &fiber.Response{}
+	// resWrite := res.BodyWriter()
 
 	app.Static("/", "./web/assets")
 
@@ -79,15 +83,21 @@ func main() {
 	})
 
 	app.Get("/login", func(c *fiber.Ctx) error {
-		fmt.Println("They hit sign in page!")
-		return Render(c, pages.SignInPage())
+		fmt.Println("They hit log in page!")
+
+		code := c.Cookies("discord_code")
+
+		if len(code) > 1 {
+			return c.Redirect("/user/edit")
+		}
+		return Render(c, pages.LogInPage())
 	})
 
 	// everything below needs to be authorized
 
 	// handle discord sign in
 
-	var discordClient *auth.Client = auth.Initialise(&auth.Client{
+	var dc *auth.Client = auth.DiscordInitialise(&auth.Client{
 		ClientId:     cred.ClientId,
 		ClientSecret: cred.ClientSecret,
 		RedirectUri:  cred.RedirectUri,
@@ -96,11 +106,11 @@ func main() {
 
 	app.Use(redirect.New(redirect.Config{
 		Rules: map[string]string{
-			"/discord-oauth":    discordClient.AuthUrl,
-			"/discord-redirect": "/edit",
+			"/discord-oauth": dc.AuthUrl,
 		},
-		StatusCode: 307,
+		StatusCode: fiber.StatusTemporaryRedirect,
 	}))
+
 	app.Get("/discord-oauth", func(c *fiber.Ctx) error {
 		fmt.Println("Redirecting to discord sign in")
 		return nil
@@ -111,19 +121,68 @@ func main() {
 
 		var (
 			// get the code from the query
-			code = c.Query("code")
+			code = c.Queries()["code"]
 
-			accessToken, _ = discordClient.GetOnlyAccessToken(code)
+			accessToken = dc.GetAccessToken(c)
 
-			userData, _ = auth.GetDiscordUserData(accessToken)
+			// userData, _ = auth.GetDiscordUserData(accessToken)
 		)
-		fmt.Println("Code: ", code)
 
-		fmt.Fprint(resWrite, userData)
+		fmt.Println("Code: ", code)
+		// cookie := new(fiber.Cookie)
+
+		cookie := fiber.Cookie{
+			Name:    "discord_code",
+			Value:   code,
+			Expires: time.Now().Add(120 * time.Hour),
+		}
+
+		c.Cookie(&cookie)
+
+		fmt.Println("Access Token: ", accessToken)
+
+		// fmt.Println(resWrite, "UserData", userData)
+
+		// verify
+		return c.Redirect("/user/edit")
+	})
+
+	user := app.Group("/user", func(c *fiber.Ctx) error {
+
+		fmt.Println("Implementing middleware")
+		handlers.ProtectedRoutes(c)
+		fmt.Println("Protected routes passed!")
+		return c.Next()
+	})
+
+	user.Get("/edit", func(c *fiber.Ctx) error {
+
+		code := c.Cookies("discord_code")
+		fmt.Println("Code: ", code)
 		return Render(c, pages.EditPage())
 	})
 
-	app.Listen(port)
+	user.Get("/account", func(c *fiber.Ctx) error {
+
+		return nil
+	})
+
+	app.Post("/logout", func(c *fiber.Ctx) error {
+
+		fmt.Println("We hit log out route!")
+
+		cookie := fiber.Cookie{
+			Name:  "discord_code",
+			Value: "",
+		}
+
+		fmt.Println("Cookie: ")
+		c.Cookie(&cookie)
+
+		return c.Redirect("/", fiber.StatusTemporaryRedirect)
+	})
+
+	log.Fatal(app.Listen(port))
 
 	fmt.Println("Listening on 3000")
 }
