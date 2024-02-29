@@ -10,7 +10,9 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/zmzlois/LinkGoGo/web/templates/shared"
+import (
+	"github.com/zmzlois/LinkGoGo/web/templates/shared"
+)
 
 func EditPage() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -37,7 +39,7 @@ func EditPage() templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button hx-post=\"/logout\">Logout</button><div><h1>Create link</h1><form action=\"/create\" method=\"post\"><input type=\"text\" name=\"url\" placeholder=\"URL\"> <input type=\"text\" name=\"title\" placeholder=\"Title\"> <input type=\"submit\" value=\"Create\"></form></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/\" hx-post=\"/logout\"><span>Logout</span></a><div><h1>Create link</h1><form action=\"/create\" method=\"post\"><input type=\"text\" name=\"url\" placeholder=\"URL\"> <input type=\"text\" name=\"title\" placeholder=\"Title\"> <input type=\"submit\" value=\"Create\"></form></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
