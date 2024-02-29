@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,11 +16,11 @@ var publicRoutes = []string{
 	"/discord-oauth",
 }
 
-func ProtectedRoutes(ctx *fiber.Ctx) error {
+func ProtectedRoutes(r chi.Router) error {
 
 	fmt.Println("Implementing middleware for protected routes")
 
-	grantCode := ctx.Cookies("discord_code")
+	grantCode := w.Cookies("discord_code")
 
 	url := ctx.Path()
 
