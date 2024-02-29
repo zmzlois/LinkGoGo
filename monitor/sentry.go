@@ -1,13 +1,28 @@
 package monitor
 
 import (
-	"github.com/gofiber/contrib/fibersentry"
-	"github.com/gofiber/fiber/v2"
+	"net/http"
+
+	"github.com/getsentry/sentry-go"
 )
 
-func EnhancedSentryEvent(ctx *fiber.Ctx, key string, value string) error {
-	if hub := fibersentry.GetHubFromContext(ctx); hub != nil {
-		hub.Scope().SetTag(key, value)
+type handler struct{}
+
+func (h *handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	if hub := sentry.GetHubFromContext(r.Context()); hub != nil {
+		hub.WithScope(func(scope *sentry.Scope) {
+			scope.SetExtra("unwantedQuery", "someQueryDataMaybe")
+			hub.CaptureMessage("User provided unwanted query string, but we recovered just fine")
+		})
 	}
-	return ctx.Next()
+	rw.WriteHeader(http.StatusOK)
+}
+
+func enhanceSentryEvent(handler http.HandlerFunc) http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		if hub := sentry.GetHubFromContext(r.Context()); hub != nil {
+			hub.Scope().SetTag("someRandomTag", "maybeYouNeedIt")
+		}
+		handler(rw, r)
+	}
 }
