@@ -14,7 +14,6 @@ const (
 )
 
 type Client struct {
-	Strategy     Strategy
 	ClientId     string
 	ClientSecret string
 	RedirectUri  string   // click on sign in button and then where?
@@ -26,22 +25,22 @@ type Client struct {
 }
 
 // Make sure all the required fields are provided
-func (c *Client) FieldValidation() {
+func (c *Client) DiscordFieldValidation() {
 
 	if len(c.ClientId) == 0 {
-		panic("Client ID is required for oauth strategy:" + c.Strategy)
+		panic("Client ID is required for discord oauth.")
 	}
 
 	if len(c.ClientSecret) == 0 {
-		panic("Client Secret is required for oauth strategy:" + c.Strategy)
+		panic("Client Secret is required for discord oauth.")
 	}
 
 	if len(c.RedirectUri) == 0 {
-		panic("Redirect URI is required for oauth strategy" + c.Strategy)
+		panic("Redirect URI is required for discord oauth.")
 	}
 
 	if len(c.Scopes) < 1 {
-		panic("Not enough scopes[] are provided for oauth strategy:" + c.Strategy)
+		panic("Not enough scopes[] are provided for discord oauth.")
 	}
 
 }
@@ -86,8 +85,8 @@ func (c *Client) provideAuthUrl() string {
 
 }
 
-func Initialise(c *Client) *Client {
-	c.FieldValidation()
+func DiscordInitialise(c *Client) *Client {
+	c.DiscordFieldValidation()
 
 	// normally the url needs to be 40 characters long
 	if len(c.AuthUrl) < 40 {
