@@ -1,7 +1,19 @@
 package pages 
 
+import "github.com/zmzlois/LinkGoGo/web/templates/shared"
+
 templ EditPage() {
-	<div>
-		<h1>Edit Page</h1>
-	</div>
+	@shared.Page("Create link") {
+		@shared.Background() {
+			<button hx-post="/logout">Logout</button>
+			<div>
+				<h1>Create link</h1>
+				<form action="/create" method="post">
+					<input type="text" name="url" placeholder="URL"/>
+					<input type="text" name="title" placeholder="Title"/>
+					<input type="submit" value="Create"/>
+				</form>
+			</div>
+		}
+	}
 }
