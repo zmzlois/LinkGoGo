@@ -87,7 +87,7 @@ func main() {
 
 		code := c.Cookies("discord_code")
 
-		if len(code) > 1 {
+		if len(code) > 5 {
 			return c.Redirect("/user/edit")
 		}
 		return Render(c, pages.LogInPage())
@@ -119,14 +119,10 @@ func main() {
 	app.Get("/discord-redirect", func(c *fiber.Ctx) error {
 		fmt.Println("After log in redirected from discord")
 
-		var (
-			// get the code from the query
-			code = c.Queries()["code"]
+		// get the code from the query
+		code := c.Queries()["code"]
 
-			accessToken = dc.GetAccessToken(c)
-
-			// userData, _ = auth.GetDiscordUserData(accessToken)
-		)
+		// userData, _ = auth.GetDiscordUserData(accessToken)
 
 		fmt.Println("Code: ", code)
 		// cookie := new(fiber.Cookie)
@@ -138,27 +134,27 @@ func main() {
 		}
 
 		c.Cookie(&cookie)
-
+		accessToken := dc.GetAccessToken(c)
 		fmt.Println("Access Token: ", accessToken)
 
-		// fmt.Println(resWrite, "UserData", userData)
+		// fmt.Println( "UserData", userData)
 
-		// verify
 		return c.Redirect("/user/edit")
+	})
+
+	app.Use(func(c *fiber.Ctx) error {
+
+		handlers.ProtectedRoutes(c)
+		return c.Next()
 	})
 
 	user := app.Group("/user", func(c *fiber.Ctx) error {
 
-		fmt.Println("Implementing middleware")
-		handlers.ProtectedRoutes(c)
-		fmt.Println("Protected routes passed!")
-		return c.Next()
+		return nil
 	})
 
 	user.Get("/edit", func(c *fiber.Ctx) error {
 
-		code := c.Cookies("discord_code")
-		fmt.Println("Code: ", code)
 		return Render(c, pages.EditPage())
 	})
 
@@ -176,10 +172,13 @@ func main() {
 			Value: "",
 		}
 
-		fmt.Println("Cookie: ")
 		c.Cookie(&cookie)
 
-		return c.Redirect("/", fiber.StatusTemporaryRedirect)
+		return c.Redirect("/", fiber.StatusFound)
+	})
+
+	app.Get("/logout", func(c *fiber.Ctx) error {
+		return Render(c, pages.HomePage())
 	})
 
 	log.Fatal(app.Listen(port))
@@ -188,6 +187,7 @@ func main() {
 }
 
 func Render(c *fiber.Ctx, component templ.Component, options ...func(*templ.ComponentHandler)) error {
+
 	componentHandler := templ.Handler(component)
 	for _, o := range options {
 		o(componentHandler)
