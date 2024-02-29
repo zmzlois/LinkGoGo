@@ -27,6 +27,14 @@ func (lc *LinksCreate) SetUserID(s string) *LinksCreate {
 	return lc
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (lc *LinksCreate) SetNillableUserID(s *string) *LinksCreate {
+	if s != nil {
+		lc.SetUserID(*s)
+	}
+	return lc
+}
+
 // SetURL sets the "url" field.
 func (lc *LinksCreate) SetURL(s string) *LinksCreate {
 	lc.mutation.SetURL(s)
@@ -93,20 +101,6 @@ func (lc *LinksCreate) SetID(s string) *LinksCreate {
 	return lc
 }
 
-// SetUserID sets the "user" edge to the Users entity by ID.
-func (lc *LinksCreate) SetUserID(id string) *LinksCreate {
-	lc.mutation.SetUserID(id)
-	return lc
-}
-
-// SetNillableUserID sets the "user" edge to the Users entity by ID if the given value is not nil.
-func (lc *LinksCreate) SetNillableUserID(id *string) *LinksCreate {
-	if id != nil {
-		lc = lc.SetUserID(*id)
-	}
-	return lc
-}
-
 // SetUser sets the "user" edge to the Users entity.
 func (lc *LinksCreate) SetUser(u *Users) *LinksCreate {
 	return lc.SetUserID(u.ID)
@@ -163,9 +157,6 @@ func (lc *LinksCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (lc *LinksCreate) check() error {
-	if _, ok := lc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Links.user_id"`)}
-	}
 	if v, ok := lc.mutation.UserID(); ok {
 		if err := links.UserIDValidator(v); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Links.user_id": %w`, err)}
@@ -244,10 +235,6 @@ func (lc *LinksCreate) createSpec() (*Links, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := lc.mutation.UserID(); ok {
-		_spec.SetField(links.FieldUserID, field.TypeString, value)
-		_node.UserID = value
-	}
 	if value, ok := lc.mutation.URL(); ok {
 		_spec.SetField(links.FieldURL, field.TypeString, value)
 		_node.URL = value
@@ -286,7 +273,7 @@ func (lc *LinksCreate) createSpec() (*Links, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.users_users_links = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

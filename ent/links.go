@@ -34,9 +34,8 @@ type Links struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the LinksQuery when eager-loading is set.
-	Edges             LinksEdges `json:"edges"`
-	users_users_links *string
-	selectValues      sql.SelectValues
+	Edges        LinksEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // LinksEdges holds the relations/edges for other nodes in the graph.
@@ -70,8 +69,6 @@ func (*Links) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case links.FieldCreatedAt, links.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case links.ForeignKeys[0]: // users_users_links
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -134,13 +131,6 @@ func (l *Links) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				l.UpdatedAt = value.Time
-			}
-		case links.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field users_users_links", values[i])
-			} else if value.Valid {
-				l.users_users_links = new(string)
-				*l.users_users_links = value.String
 			}
 		default:
 			l.selectValues.Set(columns[i], values[i])

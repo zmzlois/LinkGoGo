@@ -35,7 +35,6 @@ type LinksMutation struct {
 	op            Op
 	typ           string
 	id            *string
-	user_id       *string
 	url           *string
 	title         *string
 	image         *string
@@ -156,12 +155,12 @@ func (m *LinksMutation) IDs(ctx context.Context) ([]string, error) {
 
 // SetUserID sets the "user_id" field.
 func (m *LinksMutation) SetUserID(s string) {
-	m.user_id = &s
+	m.user = &s
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
 func (m *LinksMutation) UserID() (r string, exists bool) {
-	v := m.user_id
+	v := m.user
 	if v == nil {
 		return
 	}
@@ -185,9 +184,22 @@ func (m *LinksMutation) OldUserID(ctx context.Context) (v string, err error) {
 	return oldValue.UserID, nil
 }
 
+// ClearUserID clears the value of the "user_id" field.
+func (m *LinksMutation) ClearUserID() {
+	m.user = nil
+	m.clearedFields[links.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *LinksMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[links.FieldUserID]
+	return ok
+}
+
 // ResetUserID resets all changes to the "user_id" field.
 func (m *LinksMutation) ResetUserID() {
-	m.user_id = nil
+	m.user = nil
+	delete(m.clearedFields, links.FieldUserID)
 }
 
 // SetURL sets the "url" field.
@@ -406,27 +418,15 @@ func (m *LinksMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
-// SetUserID sets the "user" edge to the Users entity by id.
-func (m *LinksMutation) SetUserID(id string) {
-	m.user = &id
-}
-
 // ClearUser clears the "user" edge to the Users entity.
 func (m *LinksMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[links.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the Users entity was cleared.
 func (m *LinksMutation) UserCleared() bool {
-	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *LinksMutation) UserID() (id string, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
+	return m.UserIDCleared() || m.cleareduser
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -480,7 +480,7 @@ func (m *LinksMutation) Type() string {
 // AddedFields().
 func (m *LinksMutation) Fields() []string {
 	fields := make([]string, 0, 7)
-	if m.user_id != nil {
+	if m.user != nil {
 		fields = append(fields, links.FieldUserID)
 	}
 	if m.url != nil {
@@ -633,7 +633,11 @@ func (m *LinksMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *LinksMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(links.FieldUserID) {
+		fields = append(fields, links.FieldUserID)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -646,6 +650,11 @@ func (m *LinksMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *LinksMutation) ClearField(name string) error {
+	switch name {
+	case links.FieldUserID:
+		m.ClearUserID()
+		return nil
+	}
 	return fmt.Errorf("unknown Links nullable field %s", name)
 }
 

@@ -23,7 +23,6 @@ type LinksQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Links
 	withUser   *UsersQuery
-	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -369,18 +368,11 @@ func (lq *LinksQuery) prepareQuery(ctx context.Context) error {
 func (lq *LinksQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Links, error) {
 	var (
 		nodes       = []*Links{}
-		withFKs     = lq.withFKs
 		_spec       = lq.querySpec()
 		loadedTypes = [1]bool{
 			lq.withUser != nil,
 		}
 	)
-	if lq.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, links.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Links).scanValues(nil, columns)
 	}
@@ -412,10 +404,7 @@ func (lq *LinksQuery) loadUser(ctx context.Context, query *UsersQuery, nodes []*
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Links)
 	for i := range nodes {
-		if nodes[i].users_users_links == nil {
-			continue
-		}
-		fk := *nodes[i].users_users_links
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -432,7 +421,7 @@ func (lq *LinksQuery) loadUser(ctx context.Context, query *UsersQuery, nodes []*
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "users_users_links" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -465,6 +454,9 @@ func (lq *LinksQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != links.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if lq.withUser != nil {
+			_spec.Node.AddColumnOnce(links.FieldUserID)
 		}
 	}
 	if ps := lq.predicates; len(ps) > 0 {

@@ -43,6 +43,12 @@ func (lu *LinksUpdate) SetNillableUserID(s *string) *LinksUpdate {
 	return lu
 }
 
+// ClearUserID clears the value of the "user_id" field.
+func (lu *LinksUpdate) ClearUserID() *LinksUpdate {
+	lu.mutation.ClearUserID()
+	return lu
+}
+
 // SetURL sets the "url" field.
 func (lu *LinksUpdate) SetURL(s string) *LinksUpdate {
 	lu.mutation.SetURL(s)
@@ -116,20 +122,6 @@ func (lu *LinksUpdate) SetNillableCreatedAt(t *time.Time) *LinksUpdate {
 // SetUpdatedAt sets the "updated_at" field.
 func (lu *LinksUpdate) SetUpdatedAt(t time.Time) *LinksUpdate {
 	lu.mutation.SetUpdatedAt(t)
-	return lu
-}
-
-// SetUserID sets the "user" edge to the Users entity by ID.
-func (lu *LinksUpdate) SetUserID(id string) *LinksUpdate {
-	lu.mutation.SetUserID(id)
-	return lu
-}
-
-// SetNillableUserID sets the "user" edge to the Users entity by ID if the given value is not nil.
-func (lu *LinksUpdate) SetNillableUserID(id *string) *LinksUpdate {
-	if id != nil {
-		lu = lu.SetUserID(*id)
-	}
 	return lu
 }
 
@@ -222,9 +214,6 @@ func (lu *LinksUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := lu.mutation.UserID(); ok {
-		_spec.SetField(links.FieldUserID, field.TypeString, value)
-	}
 	if value, ok := lu.mutation.URL(); ok {
 		_spec.SetField(links.FieldURL, field.TypeString, value)
 	}
@@ -306,6 +295,12 @@ func (luo *LinksUpdateOne) SetNillableUserID(s *string) *LinksUpdateOne {
 	return luo
 }
 
+// ClearUserID clears the value of the "user_id" field.
+func (luo *LinksUpdateOne) ClearUserID() *LinksUpdateOne {
+	luo.mutation.ClearUserID()
+	return luo
+}
+
 // SetURL sets the "url" field.
 func (luo *LinksUpdateOne) SetURL(s string) *LinksUpdateOne {
 	luo.mutation.SetURL(s)
@@ -379,20 +374,6 @@ func (luo *LinksUpdateOne) SetNillableCreatedAt(t *time.Time) *LinksUpdateOne {
 // SetUpdatedAt sets the "updated_at" field.
 func (luo *LinksUpdateOne) SetUpdatedAt(t time.Time) *LinksUpdateOne {
 	luo.mutation.SetUpdatedAt(t)
-	return luo
-}
-
-// SetUserID sets the "user" edge to the Users entity by ID.
-func (luo *LinksUpdateOne) SetUserID(id string) *LinksUpdateOne {
-	luo.mutation.SetUserID(id)
-	return luo
-}
-
-// SetNillableUserID sets the "user" edge to the Users entity by ID if the given value is not nil.
-func (luo *LinksUpdateOne) SetNillableUserID(id *string) *LinksUpdateOne {
-	if id != nil {
-		luo = luo.SetUserID(*id)
-	}
 	return luo
 }
 
@@ -514,9 +495,6 @@ func (luo *LinksUpdateOne) sqlSave(ctx context.Context) (_node *Links, err error
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := luo.mutation.UserID(); ok {
-		_spec.SetField(links.FieldUserID, field.TypeString, value)
 	}
 	if value, ok := luo.mutation.URL(); ok {
 		_spec.SetField(links.FieldURL, field.TypeString, value)
