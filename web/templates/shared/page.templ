@@ -11,12 +11,14 @@ templ Page(title string) {
 			<meta name="robots" content="index, follow"/>
 			<meta name="revisit-after" content="7 days"/>
 			<meta name="language" content="English"/>
-			<script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
+			<script src="/htmx.min.js">
+			console.log("htmx loaded")
+			</script>
 			<script src="https://unpkg.com/sortablejs@1.15.0"></script>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
-			<script src="/dist/app.js"></script>
+			// <script src="/dist/app.js"></script>
 			<link rel="stylesheet" href="/dist/style.css"/>
 		</head>
 		<body class="h-full antialiased">
