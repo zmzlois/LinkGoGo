@@ -35,5 +35,5 @@ func (dc *Client) GetAccessToken(c *fiber.Ctx) (err error) {
 	fmt.Println("[GetAccessToken] Result:", result)
 
 	// pass status code and body received by the proxy
-	return c.Status(statusCode).Send(body)
+	return result
 }
