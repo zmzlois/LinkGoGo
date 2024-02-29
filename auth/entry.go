@@ -2,9 +2,17 @@ package auth
 
 import (
 	"net/http"
+
+	"golang.org/x/oauth2"
 )
 
 var RequestClient *http.Client = &http.Client{}
+
+var Endpoint = oauth2.Endpoint{
+	AuthURL:   "https://discord.com/api/oauth2/authorize",
+	TokenURL:  "https://discord.com/api/oauth2/token",
+	AuthStyle: oauth2.AuthStyleInParams,
+}
 
 type Strategy string
 
@@ -16,6 +24,7 @@ const (
 type Client struct {
 	ClientId     string
 	ClientSecret string
+	Endpoint     string
 	RedirectUri  string   // click on sign in button and then where?
 	RefreshUri   string   // Redirect URI for refresh token
 	Scopes       []string // Application scope
