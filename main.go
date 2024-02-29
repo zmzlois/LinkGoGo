@@ -6,20 +6,20 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
-	"github.com/a-h/templ"
 	"github.com/getsentry/sentry-go"
-	"github.com/gofiber/contrib/fibersentry"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/adaptor"
-	"github.com/gofiber/fiber/v2/middleware/redirect"
-	"github.com/gofiber/fiber/v2/utils"
+	sentryhttp "github.com/getsentry/sentry-go/http"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 	"github.com/zmzlois/LinkGoGo/auth"
-	"github.com/zmzlois/LinkGoGo/handlers"
 	"github.com/zmzlois/LinkGoGo/web/pages"
+	"golang.org/x/oauth2"
 )
 
 func main() {
@@ -35,41 +35,38 @@ func main() {
 
 	sentryDSN := os.Getenv("SENTRY_DSN")
 
-	err = sentry.Init(sentry.ClientOptions{
+	if err := sentry.Init(sentry.ClientOptions{
 		Dsn: sentryDSN,
 		BeforeSend: func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
 			if hint.Context != nil {
-				if c, ok := hint.Context.Value(sentry.RequestContextKey).(*fiber.Ctx); ok {
-					// You have access to the original Context if it panicked
-					fmt.Println(utils.CopyString(c.Hostname()))
+				if req, ok := hint.Context.Value(sentry.RequestContextKey).(*http.Request); ok {
+					fmt.Println("Request URL: %s", req.URL)
 				}
 			}
-			fmt.Println(event)
+
 			return event
 		},
 		Debug:            true,
 		AttachStacktrace: true,
-	})
-
-	if err != nil {
-		log.Fatalf("sentry.Init: %s", err)
+		EnableTracing:    true,
+		TracesSampleRate: 1.0,
+	}); err != nil {
+		fmt.Printf("Sentry initialization failed: %v\n", err)
 	}
+
 	// Flush buffered events before the program terminates.
 	// Set the timeout to the maximum duration the program can afford to wait.
 	defer sentry.Flush(2 * time.Second)
 
-	app := fiber.New()
-
-	app.Use(fibersentry.New(fibersentry.Config{
+	sentryHandler := sentryhttp.New(sentryhttp.Options{
 		Repanic:         true,
 		WaitForDelivery: true,
-	}))
+		Timeout:         2 * time.Second,
+	})
 
-	// req := &fiber.Request{}
-	// res := &fiber.Response{}
-	// resWrite := res.BodyWriter()
+	app := chi.NewRouter()
 
-	app.Static("/", "./web/assets")
+	app.Use(middleware.Logger)
 
 	var cred *auth.Client = &auth.Client{
 		ClientId:     os.Getenv("DISCORD_CLIENT_ID"),
@@ -77,120 +74,92 @@ func main() {
 		RedirectUri:  os.Getenv("DISCORD_REDIRECT_URI"),
 	}
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		fmt.Println("Home page")
-		return Render(c, pages.HomePage())
+	// Create a route along /files that will serve contents from
+	// the ./data/ folder.
+	workDir, _ := os.Getwd()
+
+	fmt.Println("Work directory: ", workDir)
+	filesDir := http.Dir(filepath.Join(workDir, "/web/assets"))
+	fmt.Println("Root: ", filesDir)
+	FileServer(app, "/", filesDir)
+
+	app.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		pages.HomePage().Render(r.Context(), w)
 	})
 
-	app.Get("/login", func(c *fiber.Ctx) error {
-		fmt.Println("They hit log in page!")
+	app.Get("/login", func(w http.ResponseWriter, r *http.Request) {
+		pages.LogInPage().Render(r.Context(), w)
 
-		code := c.Cookies("discord_code")
-
-		if len(code) > 5 {
-			return c.Redirect("/user/edit")
-		}
-		return Render(c, pages.LogInPage())
 	})
 
-	// everything below needs to be authorized
-
-	// handle discord sign in
-
-	var dc *auth.Client = auth.DiscordInitialise(&auth.Client{
-		ClientId:     cred.ClientId,
+	conf := &oauth2.Config{
+		RedirectURL:  cred.RedirectUri,
+		ClientID:     cred.ClientId,
 		ClientSecret: cred.ClientSecret,
-		RedirectUri:  cred.RedirectUri,
 		Scopes:       []string{auth.ScopeIdentify},
-	})
+		Endpoint:     auth.Endpoint,
+	}
 
-	app.Use(redirect.New(redirect.Config{
-		Rules: map[string]string{
-			"/discord-oauth": dc.AuthUrl,
-		},
-		StatusCode: fiber.StatusTemporaryRedirect,
-	}))
+	app.Get("/discord-oauth", sentryHandler.HandleFunc(func(w http.ResponseWriter, r *http.Request) {
 
-	app.Get("/discord-oauth", func(c *fiber.Ctx) error {
-		fmt.Println("Redirecting to discord sign in")
-		return nil
-	})
+		state, err := auth.StateGenerator()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			panic(fmt.Sprintf("Error generating state: %s", err))
+		}
 
-	app.Get("/discord-redirect", func(c *fiber.Ctx) error {
+		http.Redirect(w, r, conf.AuthCodeURL(state), http.StatusTemporaryRedirect)
+
+	}),
+	)
+
+	app.Get("/discord-redirect", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("After log in redirected from discord")
 
-		// get the code from the query
-		code := c.Queries()["code"]
-
-		// userData, _ = auth.GetDiscordUserData(accessToken)
-
-		fmt.Println("Code: ", code)
-		// cookie := new(fiber.Cookie)
-
-		cookie := fiber.Cookie{
-			Name:    "discord_code",
-			Value:   code,
-			Expires: time.Now().Add(120 * time.Hour),
-		}
-
-		c.Cookie(&cookie)
-		accessToken := dc.GetAccessToken(c)
-		fmt.Println("Access Token: ", accessToken)
-
-		// fmt.Println( "UserData", userData)
-
-		return c.Redirect("/user/edit")
 	})
 
-	app.Use(func(c *fiber.Ctx) error {
+	// app.Group("/user", func(r chi.Router) {
 
-		handlers.ProtectedRoutes(c)
-		return c.Next()
-	})
+	// 	r.Use(handlers.ProtectedRoutes(r))
 
-	user := app.Group("/user", func(c *fiber.Ctx) error {
+	// 	r.Get("/edit", func(w http.ResponseWriter, r *http.Request) {
 
-		return nil
-	})
+	// 		pages.EditPage().Render(r.Context(), w)
+	// 	})
 
-	user.Get("/edit", func(c *fiber.Ctx) error {
+	// 	r.Get("/account", func(w http.ResponseWriter, r *http.Request) {
 
-		return Render(c, pages.EditPage())
-	})
+	// 	})
 
-	user.Get("/account", func(c *fiber.Ctx) error {
+	// 	r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 
-		return nil
-	})
+	// 	})
 
-	app.Post("/logout", func(c *fiber.Ctx) error {
+	// })
 
-		fmt.Println("We hit log out route!")
-
-		cookie := fiber.Cookie{
-			Name:  "discord_code",
-			Value: "",
-		}
-
-		c.Cookie(&cookie)
-
-		return c.Redirect("/", fiber.StatusFound)
-	})
-
-	app.Get("/logout", func(c *fiber.Ctx) error {
-		return Render(c, pages.HomePage())
-	})
-
-	log.Fatal(app.Listen(port))
+	log.Fatal(http.ListenAndServe(port, app))
 
 	fmt.Println("Listening on 3000")
 }
 
-func Render(c *fiber.Ctx, component templ.Component, options ...func(*templ.ComponentHandler)) error {
-
-	componentHandler := templ.Handler(component)
-	for _, o := range options {
-		o(componentHandler)
+// FileServer conveniently sets up a http.FileServer handler to serve
+// static files from a http.FileSystem.
+func FileServer(r chi.Router, path string, root http.FileSystem) {
+	if strings.ContainsAny(path, "{}*") {
+		panic("FileServer does not permit any URL parameters.")
 	}
-	return adaptor.HTTPHandler(componentHandler)(c)
+
+	if path != "/" && path[len(path)-1] != '/' {
+		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
+		path += "/"
+	}
+	path += "*"
+
+	r.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
+		fs.ServeHTTP(w, r)
+	})
 }
