@@ -21,40 +21,40 @@ func ProtectedRoutes(ctx *fiber.Ctx) error {
 
 	grantCode := ctx.Cookies("discord_code")
 
-	fmt.Println("Grant Code: ", grantCode, "Length: ", len(grantCode))
-
 	url := ctx.Path()
 
 	for _, route := range publicRoutes {
 
+		// parsing current url in browser
 		rawUrl := strings.SplitAfterN(url, "/", 2)[1]
 
+		// parsing the public routes
 		rawRoute := strings.TrimSpace(strings.SplitAfterN(route, "/", 2)[1])
 
+		// if the rawRoute is empty(home page) and the current url equal to public routes we continue and do nothing
 		if rawRoute == "" && rawRoute == rawUrl {
 			continue
 		}
 
+		// if it is not home page
 		if rawRoute != "" {
 
+			// and the path match public routes + grant code is empty, we move to the next and let it render what it should render
 			if strings.Contains(rawUrl, rawRoute) && grantCode == "" {
-				fmt.Println("User is in public route and has no grant code, we do nothing.")
+
 				return ctx.Next()
 			}
 
-			fmt.Printf("Does the url contains any public route? %v \n url: |%s| public route:|%s|\n", strings.Contains(rawUrl, rawRoute), rawUrl, rawRoute)
-
+			// if the path is a private route and grant code is empty, we redirect to home page
 			if !strings.Contains(rawUrl, rawRoute) && grantCode == "" {
-				fmt.Println("User is in protected route and has no grant code, redirecting to home page.")
 
 				return ctx.Redirect("/", fiber.StatusFound)
-
 			}
 		}
 
 	}
 
-	fmt.Println("User has a grant code, continuing to next middleware")
+	// if none of the scenario above is met, we move to the next middleware
 	return ctx.Next()
 }
 
