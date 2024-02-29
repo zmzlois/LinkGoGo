@@ -7,7 +7,7 @@ import (
 templ EditPage() {
 	@shared.Page("Create link") {
 		@shared.Background() {
-			<a href="/" hx-post="/logout"><span>Logout</span></a>
+			<a href="/user/logout"><span>Logout</span></a>
 			<div>
 				<h1>Create link</h1>
 				<form action="/create" method="post">
