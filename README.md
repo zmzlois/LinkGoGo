@@ -10,7 +10,7 @@ The idea started with "why tf do you need to pay LinkTree for analytics and fanc
 
 ### This project uses:
 
-- [Chi](https://docs.gofiber.io/) for backend.
+- [Chi](https://go-chi.io/#/) for backend.
 - [templ](https://templ.guide/) as frontend to give me an experience similar to React (not quite xd)
 - [htmx](https://htmx.org/) (just a little bit)
 - [Alpine](https://alpinejs.dev/) for interactivity.
