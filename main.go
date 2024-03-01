@@ -17,10 +17,10 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 	dsc "github.com/realTristan/disgoauth"
-
 	"github.com/zmzlois/LinkGoGo/auth"
 	"github.com/zmzlois/LinkGoGo/handlers"
 	"github.com/zmzlois/LinkGoGo/monitor"
+	m "github.com/zmzlois/LinkGoGo/monitor"
 	"github.com/zmzlois/LinkGoGo/web/pages"
 )
 
@@ -50,22 +50,18 @@ func main() {
 	// the ./data/ folder.
 	workDir, _ := os.Getwd()
 
-	fmt.Printf("WorkDir: %s\n", workDir)
 	filesDir := http.Dir(filepath.Join(workDir, "/web/assets"))
-
-	fmt.Printf("FilesDir: %s\n", filesDir)
 	FileServer(app, "/", filesDir)
 
-	app.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	app.Get("/", m.Sh.HandleFunc(func(w http.ResponseWriter, r *http.Request) {
 		pages.HomePage().Render(r.Context(), w)
-	})
+	}))
 
-	app.Get("/login", func(w http.ResponseWriter, r *http.Request) {
+	app.Get("/login", m.Sh.HandleFunc(func(w http.ResponseWriter, r *http.Request) {
 		pages.LogInPage().Render(r.Context(), w)
+	}))
 
-	})
-
-	var cred = auth.Cred()
+	var cred = auth.AuthCred()
 
 	ds := dsc.Init(&dsc.Client{
 		RedirectURI:  cred.RedirectUri,
@@ -78,9 +74,7 @@ func main() {
 
 	// Once user hit discord login button
 	app.Get("/discord-oauth", func(w http.ResponseWriter, r *http.Request) {
-
 		ds.RedirectHandler(w, r, state)
-
 	})
 
 	// On discord's authentication page they will be redirected to this page after authentication
