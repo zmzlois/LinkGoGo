@@ -69,6 +69,18 @@ func (uc *UsersCreate) SetDescription(s string) *UsersCreate {
 	return uc
 }
 
+// SetAccessToken sets the "access_token" field.
+func (uc *UsersCreate) SetAccessToken(s string) *UsersCreate {
+	uc.mutation.SetAccessToken(s)
+	return uc
+}
+
+// SetRefreshToken sets the "refresh_token" field.
+func (uc *UsersCreate) SetRefreshToken(s string) *UsersCreate {
+	uc.mutation.SetRefreshToken(s)
+	return uc
+}
+
 // SetDeleted sets the "deleted" field.
 func (uc *UsersCreate) SetDeleted(b bool) *UsersCreate {
 	uc.mutation.SetDeleted(b)
@@ -247,6 +259,22 @@ func (uc *UsersCreate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Users.description": %w`, err)}
 		}
 	}
+	if _, ok := uc.mutation.AccessToken(); !ok {
+		return &ValidationError{Name: "access_token", err: errors.New(`ent: missing required field "Users.access_token"`)}
+	}
+	if v, ok := uc.mutation.AccessToken(); ok {
+		if err := users.AccessTokenValidator(v); err != nil {
+			return &ValidationError{Name: "access_token", err: fmt.Errorf(`ent: validator failed for field "Users.access_token": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.RefreshToken(); !ok {
+		return &ValidationError{Name: "refresh_token", err: errors.New(`ent: missing required field "Users.refresh_token"`)}
+	}
+	if v, ok := uc.mutation.RefreshToken(); ok {
+		if err := users.RefreshTokenValidator(v); err != nil {
+			return &ValidationError{Name: "refresh_token", err: fmt.Errorf(`ent: validator failed for field "Users.refresh_token": %w`, err)}
+		}
+	}
 	if _, ok := uc.mutation.Deleted(); !ok {
 		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "Users.deleted"`)}
 	}
@@ -327,6 +355,14 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Description(); ok {
 		_spec.SetField(users.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := uc.mutation.AccessToken(); ok {
+		_spec.SetField(users.FieldAccessToken, field.TypeString, value)
+		_node.AccessToken = value
+	}
+	if value, ok := uc.mutation.RefreshToken(); ok {
+		_spec.SetField(users.FieldRefreshToken, field.TypeString, value)
+		_node.RefreshToken = value
 	}
 	if value, ok := uc.mutation.Deleted(); ok {
 		_spec.SetField(users.FieldDeleted, field.TypeBool, value)

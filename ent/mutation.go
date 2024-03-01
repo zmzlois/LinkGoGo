@@ -775,6 +775,8 @@ type UsersMutation struct {
 	email              *string
 	avatar             *string
 	description        *string
+	access_token       *string
+	refresh_token      *string
 	deleted            *bool
 	created_at         *time.Time
 	updated_at         *time.Time
@@ -1179,6 +1181,78 @@ func (m *UsersMutation) ResetDescription() {
 	m.description = nil
 }
 
+// SetAccessToken sets the "access_token" field.
+func (m *UsersMutation) SetAccessToken(s string) {
+	m.access_token = &s
+}
+
+// AccessToken returns the value of the "access_token" field in the mutation.
+func (m *UsersMutation) AccessToken() (r string, exists bool) {
+	v := m.access_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccessToken returns the old "access_token" field's value of the Users entity.
+// If the Users object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsersMutation) OldAccessToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccessToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccessToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccessToken: %w", err)
+	}
+	return oldValue.AccessToken, nil
+}
+
+// ResetAccessToken resets all changes to the "access_token" field.
+func (m *UsersMutation) ResetAccessToken() {
+	m.access_token = nil
+}
+
+// SetRefreshToken sets the "refresh_token" field.
+func (m *UsersMutation) SetRefreshToken(s string) {
+	m.refresh_token = &s
+}
+
+// RefreshToken returns the value of the "refresh_token" field in the mutation.
+func (m *UsersMutation) RefreshToken() (r string, exists bool) {
+	v := m.refresh_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRefreshToken returns the old "refresh_token" field's value of the Users entity.
+// If the Users object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsersMutation) OldRefreshToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRefreshToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRefreshToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRefreshToken: %w", err)
+	}
+	return oldValue.RefreshToken, nil
+}
+
+// ResetRefreshToken resets all changes to the "refresh_token" field.
+func (m *UsersMutation) ResetRefreshToken() {
+	m.refresh_token = nil
+}
+
 // SetDeleted sets the "deleted" field.
 func (m *UsersMutation) SetDeleted(b bool) {
 	m.deleted = &b
@@ -1375,7 +1449,7 @@ func (m *UsersMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UsersMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 13)
 	if m.external_id != nil {
 		fields = append(fields, users.FieldExternalID)
 	}
@@ -1399,6 +1473,12 @@ func (m *UsersMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, users.FieldDescription)
+	}
+	if m.access_token != nil {
+		fields = append(fields, users.FieldAccessToken)
+	}
+	if m.refresh_token != nil {
+		fields = append(fields, users.FieldRefreshToken)
 	}
 	if m.deleted != nil {
 		fields = append(fields, users.FieldDeleted)
@@ -1433,6 +1513,10 @@ func (m *UsersMutation) Field(name string) (ent.Value, bool) {
 		return m.Avatar()
 	case users.FieldDescription:
 		return m.Description()
+	case users.FieldAccessToken:
+		return m.AccessToken()
+	case users.FieldRefreshToken:
+		return m.RefreshToken()
 	case users.FieldDeleted:
 		return m.Deleted()
 	case users.FieldCreatedAt:
@@ -1464,6 +1548,10 @@ func (m *UsersMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldAvatar(ctx)
 	case users.FieldDescription:
 		return m.OldDescription(ctx)
+	case users.FieldAccessToken:
+		return m.OldAccessToken(ctx)
+	case users.FieldRefreshToken:
+		return m.OldRefreshToken(ctx)
 	case users.FieldDeleted:
 		return m.OldDeleted(ctx)
 	case users.FieldCreatedAt:
@@ -1534,6 +1622,20 @@ func (m *UsersMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case users.FieldAccessToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccessToken(v)
+		return nil
+	case users.FieldRefreshToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRefreshToken(v)
 		return nil
 	case users.FieldDeleted:
 		v, ok := value.(bool)
@@ -1628,6 +1730,12 @@ func (m *UsersMutation) ResetField(name string) error {
 		return nil
 	case users.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case users.FieldAccessToken:
+		m.ResetAccessToken()
+		return nil
+	case users.FieldRefreshToken:
+		m.ResetRefreshToken()
 		return nil
 	case users.FieldDeleted:
 		m.ResetDeleted()

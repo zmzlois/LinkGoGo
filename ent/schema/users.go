@@ -22,6 +22,8 @@ func (Users) Fields() []ent.Field {
 		field.String("email").MaxLen(255),
 		field.String("avatar").MaxLen(255),
 		field.String("description").MaxLen(255),
+		field.String("access_token").MaxLen(255),
+		field.String("refresh_token").MaxLen(255),
 	}
 	return append(users, BaseTable()...)
 }

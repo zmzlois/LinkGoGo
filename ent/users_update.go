@@ -141,6 +141,34 @@ func (uu *UsersUpdate) SetNillableDescription(s *string) *UsersUpdate {
 	return uu
 }
 
+// SetAccessToken sets the "access_token" field.
+func (uu *UsersUpdate) SetAccessToken(s string) *UsersUpdate {
+	uu.mutation.SetAccessToken(s)
+	return uu
+}
+
+// SetNillableAccessToken sets the "access_token" field if the given value is not nil.
+func (uu *UsersUpdate) SetNillableAccessToken(s *string) *UsersUpdate {
+	if s != nil {
+		uu.SetAccessToken(*s)
+	}
+	return uu
+}
+
+// SetRefreshToken sets the "refresh_token" field.
+func (uu *UsersUpdate) SetRefreshToken(s string) *UsersUpdate {
+	uu.mutation.SetRefreshToken(s)
+	return uu
+}
+
+// SetNillableRefreshToken sets the "refresh_token" field if the given value is not nil.
+func (uu *UsersUpdate) SetNillableRefreshToken(s *string) *UsersUpdate {
+	if s != nil {
+		uu.SetRefreshToken(*s)
+	}
+	return uu
+}
+
 // SetDeleted sets the "deleted" field.
 func (uu *UsersUpdate) SetDeleted(b bool) *UsersUpdate {
 	uu.mutation.SetDeleted(b)
@@ -294,6 +322,16 @@ func (uu *UsersUpdate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Users.description": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.AccessToken(); ok {
+		if err := users.AccessTokenValidator(v); err != nil {
+			return &ValidationError{Name: "access_token", err: fmt.Errorf(`ent: validator failed for field "Users.access_token": %w`, err)}
+		}
+	}
+	if v, ok := uu.mutation.RefreshToken(); ok {
+		if err := users.RefreshTokenValidator(v); err != nil {
+			return &ValidationError{Name: "refresh_token", err: fmt.Errorf(`ent: validator failed for field "Users.refresh_token": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -332,6 +370,12 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Description(); ok {
 		_spec.SetField(users.FieldDescription, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.AccessToken(); ok {
+		_spec.SetField(users.FieldAccessToken, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.RefreshToken(); ok {
+		_spec.SetField(users.FieldRefreshToken, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.Deleted(); ok {
 		_spec.SetField(users.FieldDeleted, field.TypeBool, value)
@@ -519,6 +563,34 @@ func (uuo *UsersUpdateOne) SetNillableDescription(s *string) *UsersUpdateOne {
 	return uuo
 }
 
+// SetAccessToken sets the "access_token" field.
+func (uuo *UsersUpdateOne) SetAccessToken(s string) *UsersUpdateOne {
+	uuo.mutation.SetAccessToken(s)
+	return uuo
+}
+
+// SetNillableAccessToken sets the "access_token" field if the given value is not nil.
+func (uuo *UsersUpdateOne) SetNillableAccessToken(s *string) *UsersUpdateOne {
+	if s != nil {
+		uuo.SetAccessToken(*s)
+	}
+	return uuo
+}
+
+// SetRefreshToken sets the "refresh_token" field.
+func (uuo *UsersUpdateOne) SetRefreshToken(s string) *UsersUpdateOne {
+	uuo.mutation.SetRefreshToken(s)
+	return uuo
+}
+
+// SetNillableRefreshToken sets the "refresh_token" field if the given value is not nil.
+func (uuo *UsersUpdateOne) SetNillableRefreshToken(s *string) *UsersUpdateOne {
+	if s != nil {
+		uuo.SetRefreshToken(*s)
+	}
+	return uuo
+}
+
 // SetDeleted sets the "deleted" field.
 func (uuo *UsersUpdateOne) SetDeleted(b bool) *UsersUpdateOne {
 	uuo.mutation.SetDeleted(b)
@@ -685,6 +757,16 @@ func (uuo *UsersUpdateOne) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Users.description": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.AccessToken(); ok {
+		if err := users.AccessTokenValidator(v); err != nil {
+			return &ValidationError{Name: "access_token", err: fmt.Errorf(`ent: validator failed for field "Users.access_token": %w`, err)}
+		}
+	}
+	if v, ok := uuo.mutation.RefreshToken(); ok {
+		if err := users.RefreshTokenValidator(v); err != nil {
+			return &ValidationError{Name: "refresh_token", err: fmt.Errorf(`ent: validator failed for field "Users.refresh_token": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -740,6 +822,12 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 	}
 	if value, ok := uuo.mutation.Description(); ok {
 		_spec.SetField(users.FieldDescription, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.AccessToken(); ok {
+		_spec.SetField(users.FieldAccessToken, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.RefreshToken(); ok {
+		_spec.SetField(users.FieldRefreshToken, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.Deleted(); ok {
 		_spec.SetField(users.FieldDeleted, field.TypeBool, value)

@@ -84,22 +84,30 @@ func init() {
 	usersDescDescription := usersFields[7].Descriptor()
 	// users.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	users.DescriptionValidator = usersDescDescription.Validators[0].(func(string) error)
+	// usersDescAccessToken is the schema descriptor for access_token field.
+	usersDescAccessToken := usersFields[8].Descriptor()
+	// users.AccessTokenValidator is a validator for the "access_token" field. It is called by the builders before save.
+	users.AccessTokenValidator = usersDescAccessToken.Validators[0].(func(string) error)
+	// usersDescRefreshToken is the schema descriptor for refresh_token field.
+	usersDescRefreshToken := usersFields[9].Descriptor()
+	// users.RefreshTokenValidator is a validator for the "refresh_token" field. It is called by the builders before save.
+	users.RefreshTokenValidator = usersDescRefreshToken.Validators[0].(func(string) error)
 	// usersDescDeleted is the schema descriptor for deleted field.
-	usersDescDeleted := usersFields[9].Descriptor()
+	usersDescDeleted := usersFields[11].Descriptor()
 	// users.DefaultDeleted holds the default value on creation for the deleted field.
 	users.DefaultDeleted = usersDescDeleted.Default.(bool)
 	// usersDescCreatedAt is the schema descriptor for created_at field.
-	usersDescCreatedAt := usersFields[10].Descriptor()
+	usersDescCreatedAt := usersFields[12].Descriptor()
 	// users.DefaultCreatedAt holds the default value on creation for the created_at field.
 	users.DefaultCreatedAt = usersDescCreatedAt.Default.(func() time.Time)
 	// usersDescUpdatedAt is the schema descriptor for updated_at field.
-	usersDescUpdatedAt := usersFields[11].Descriptor()
+	usersDescUpdatedAt := usersFields[13].Descriptor()
 	// users.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	users.DefaultUpdatedAt = usersDescUpdatedAt.Default.(func() time.Time)
 	// users.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	users.UpdateDefaultUpdatedAt = usersDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// usersDescID is the schema descriptor for id field.
-	usersDescID := usersFields[8].Descriptor()
+	usersDescID := usersFields[10].Descriptor()
 	// users.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	users.IDValidator = usersDescID.Validators[0].(func(string) error)
 }

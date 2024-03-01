@@ -44,6 +44,8 @@ var (
 		{Name: "email", Type: field.TypeString, Size: 255},
 		{Name: "avatar", Type: field.TypeString, Size: 255},
 		{Name: "description", Type: field.TypeString, Size: 255},
+		{Name: "access_token", Type: field.TypeString, Size: 255},
+		{Name: "refresh_token", Type: field.TypeString, Size: 255},
 		{Name: "deleted", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},

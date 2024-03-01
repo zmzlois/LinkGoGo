@@ -33,6 +33,10 @@ type Users struct {
 	Avatar string `json:"avatar,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
+	// AccessToken holds the value of the "access_token" field.
+	AccessToken string `json:"access_token,omitempty"`
+	// RefreshToken holds the value of the "refresh_token" field.
+	RefreshToken string `json:"refresh_token,omitempty"`
 	// Deleted holds the value of the "deleted" field.
 	Deleted bool `json:"deleted,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -70,7 +74,7 @@ func (*Users) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case users.FieldDeleted:
 			values[i] = new(sql.NullBool)
-		case users.FieldID, users.FieldExternalID, users.FieldUsername, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription:
+		case users.FieldID, users.FieldExternalID, users.FieldUsername, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken:
 			values[i] = new(sql.NullString)
 		case users.FieldCreatedAt, users.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -142,6 +146,18 @@ func (u *Users) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
 				u.Description = value.String
+			}
+		case users.FieldAccessToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field access_token", values[i])
+			} else if value.Valid {
+				u.AccessToken = value.String
+			}
+		case users.FieldRefreshToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field refresh_token", values[i])
+			} else if value.Valid {
+				u.RefreshToken = value.String
 			}
 		case users.FieldDeleted:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -225,6 +241,12 @@ func (u *Users) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(u.Description)
+	builder.WriteString(", ")
+	builder.WriteString("access_token=")
+	builder.WriteString(u.AccessToken)
+	builder.WriteString(", ")
+	builder.WriteString("refresh_token=")
+	builder.WriteString(u.RefreshToken)
 	builder.WriteString(", ")
 	builder.WriteString("deleted=")
 	builder.WriteString(fmt.Sprintf("%v", u.Deleted))

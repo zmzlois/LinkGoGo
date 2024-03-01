@@ -30,6 +30,10 @@ const (
 	FieldAvatar = "avatar"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldAccessToken holds the string denoting the access_token field in the database.
+	FieldAccessToken = "access_token"
+	// FieldRefreshToken holds the string denoting the refresh_token field in the database.
+	FieldRefreshToken = "refresh_token"
 	// FieldDeleted holds the string denoting the deleted field in the database.
 	FieldDeleted = "deleted"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -60,6 +64,8 @@ var Columns = []string{
 	FieldEmail,
 	FieldAvatar,
 	FieldDescription,
+	FieldAccessToken,
+	FieldRefreshToken,
 	FieldDeleted,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -92,6 +98,10 @@ var (
 	AvatarValidator func(string) error
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	DescriptionValidator func(string) error
+	// AccessTokenValidator is a validator for the "access_token" field. It is called by the builders before save.
+	AccessTokenValidator func(string) error
+	// RefreshTokenValidator is a validator for the "refresh_token" field. It is called by the builders before save.
+	RefreshTokenValidator func(string) error
 	// DefaultDeleted holds the default value on creation for the "deleted" field.
 	DefaultDeleted bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -150,6 +160,16 @@ func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
 // ByDescription orders the results by the description field.
 func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
+// ByAccessToken orders the results by the access_token field.
+func ByAccessToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccessToken, opts...).ToFunc()
+}
+
+// ByRefreshToken orders the results by the refresh_token field.
+func ByRefreshToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRefreshToken, opts...).ToFunc()
 }
 
 // ByDeleted orders the results by the deleted field.
