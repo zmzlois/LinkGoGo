@@ -68,7 +68,7 @@ func SentryInit() {
 
 }
 
-var sentryHandler = sentryhttp.New(sentryhttp.Options{
+var Sh = sentryhttp.New(sentryhttp.Options{
 	Repanic:         true,
 	WaitForDelivery: true,
 	Timeout:         2 * time.Second,
