@@ -57,6 +57,20 @@ func (uu *UsersUpdate) SetNillableUsername(s *string) *UsersUpdate {
 	return uu
 }
 
+// SetGlobalName sets the "global_name" field.
+func (uu *UsersUpdate) SetGlobalName(s string) *UsersUpdate {
+	uu.mutation.SetGlobalName(s)
+	return uu
+}
+
+// SetNillableGlobalName sets the "global_name" field if the given value is not nil.
+func (uu *UsersUpdate) SetNillableGlobalName(s *string) *UsersUpdate {
+	if s != nil {
+		uu.SetGlobalName(*s)
+	}
+	return uu
+}
+
 // SetSlug sets the "slug" field.
 func (uu *UsersUpdate) SetSlug(s string) *UsersUpdate {
 	uu.mutation.SetSlug(s)
@@ -292,6 +306,11 @@ func (uu *UsersUpdate) check() error {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "Users.username": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.GlobalName(); ok {
+		if err := users.GlobalNameValidator(v); err != nil {
+			return &ValidationError{Name: "global_name", err: fmt.Errorf(`ent: validator failed for field "Users.global_name": %w`, err)}
+		}
+	}
 	if v, ok := uu.mutation.Slug(); ok {
 		if err := users.SlugValidator(v); err != nil {
 			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Users.slug": %w`, err)}
@@ -352,6 +371,9 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Username(); ok {
 		_spec.SetField(users.FieldUsername, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.GlobalName(); ok {
+		_spec.SetField(users.FieldGlobalName, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.Slug(); ok {
 		_spec.SetField(users.FieldSlug, field.TypeString, value)
@@ -475,6 +497,20 @@ func (uuo *UsersUpdateOne) SetUsername(s string) *UsersUpdateOne {
 func (uuo *UsersUpdateOne) SetNillableUsername(s *string) *UsersUpdateOne {
 	if s != nil {
 		uuo.SetUsername(*s)
+	}
+	return uuo
+}
+
+// SetGlobalName sets the "global_name" field.
+func (uuo *UsersUpdateOne) SetGlobalName(s string) *UsersUpdateOne {
+	uuo.mutation.SetGlobalName(s)
+	return uuo
+}
+
+// SetNillableGlobalName sets the "global_name" field if the given value is not nil.
+func (uuo *UsersUpdateOne) SetNillableGlobalName(s *string) *UsersUpdateOne {
+	if s != nil {
+		uuo.SetGlobalName(*s)
 	}
 	return uuo
 }
@@ -727,6 +763,11 @@ func (uuo *UsersUpdateOne) check() error {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "Users.username": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.GlobalName(); ok {
+		if err := users.GlobalNameValidator(v); err != nil {
+			return &ValidationError{Name: "global_name", err: fmt.Errorf(`ent: validator failed for field "Users.global_name": %w`, err)}
+		}
+	}
 	if v, ok := uuo.mutation.Slug(); ok {
 		if err := users.SlugValidator(v); err != nil {
 			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Users.slug": %w`, err)}
@@ -804,6 +845,9 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 	}
 	if value, ok := uuo.mutation.Username(); ok {
 		_spec.SetField(users.FieldUsername, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.GlobalName(); ok {
+		_spec.SetField(users.FieldGlobalName, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.Slug(); ok {
 		_spec.SetField(users.FieldSlug, field.TypeString, value)

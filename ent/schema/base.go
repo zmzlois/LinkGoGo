@@ -6,13 +6,13 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 func BaseTable() []ent.Field {
 	return []ent.Field{
-		field.String("id").
-			Unique().
-			MaxLen(255),
+		field.UUID("id", uuid.UUID{}).
+			Default(uuid.New).Unique(),
 		field.Bool("deleted").
 			Default(false),
 		field.Time("created_at").

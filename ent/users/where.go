@@ -75,6 +75,11 @@ func Username(v string) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldUsername, v))
 }
 
+// GlobalName applies equality check predicate on the "global_name" field. It's identical to GlobalNameEQ.
+func GlobalName(v string) predicate.Users {
+	return predicate.Users(sql.FieldEQ(FieldGlobalName, v))
+}
+
 // Slug applies equality check predicate on the "slug" field. It's identical to SlugEQ.
 func Slug(v string) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldSlug, v))
@@ -258,6 +263,71 @@ func UsernameEqualFold(v string) predicate.Users {
 // UsernameContainsFold applies the ContainsFold predicate on the "username" field.
 func UsernameContainsFold(v string) predicate.Users {
 	return predicate.Users(sql.FieldContainsFold(FieldUsername, v))
+}
+
+// GlobalNameEQ applies the EQ predicate on the "global_name" field.
+func GlobalNameEQ(v string) predicate.Users {
+	return predicate.Users(sql.FieldEQ(FieldGlobalName, v))
+}
+
+// GlobalNameNEQ applies the NEQ predicate on the "global_name" field.
+func GlobalNameNEQ(v string) predicate.Users {
+	return predicate.Users(sql.FieldNEQ(FieldGlobalName, v))
+}
+
+// GlobalNameIn applies the In predicate on the "global_name" field.
+func GlobalNameIn(vs ...string) predicate.Users {
+	return predicate.Users(sql.FieldIn(FieldGlobalName, vs...))
+}
+
+// GlobalNameNotIn applies the NotIn predicate on the "global_name" field.
+func GlobalNameNotIn(vs ...string) predicate.Users {
+	return predicate.Users(sql.FieldNotIn(FieldGlobalName, vs...))
+}
+
+// GlobalNameGT applies the GT predicate on the "global_name" field.
+func GlobalNameGT(v string) predicate.Users {
+	return predicate.Users(sql.FieldGT(FieldGlobalName, v))
+}
+
+// GlobalNameGTE applies the GTE predicate on the "global_name" field.
+func GlobalNameGTE(v string) predicate.Users {
+	return predicate.Users(sql.FieldGTE(FieldGlobalName, v))
+}
+
+// GlobalNameLT applies the LT predicate on the "global_name" field.
+func GlobalNameLT(v string) predicate.Users {
+	return predicate.Users(sql.FieldLT(FieldGlobalName, v))
+}
+
+// GlobalNameLTE applies the LTE predicate on the "global_name" field.
+func GlobalNameLTE(v string) predicate.Users {
+	return predicate.Users(sql.FieldLTE(FieldGlobalName, v))
+}
+
+// GlobalNameContains applies the Contains predicate on the "global_name" field.
+func GlobalNameContains(v string) predicate.Users {
+	return predicate.Users(sql.FieldContains(FieldGlobalName, v))
+}
+
+// GlobalNameHasPrefix applies the HasPrefix predicate on the "global_name" field.
+func GlobalNameHasPrefix(v string) predicate.Users {
+	return predicate.Users(sql.FieldHasPrefix(FieldGlobalName, v))
+}
+
+// GlobalNameHasSuffix applies the HasSuffix predicate on the "global_name" field.
+func GlobalNameHasSuffix(v string) predicate.Users {
+	return predicate.Users(sql.FieldHasSuffix(FieldGlobalName, v))
+}
+
+// GlobalNameEqualFold applies the EqualFold predicate on the "global_name" field.
+func GlobalNameEqualFold(v string) predicate.Users {
+	return predicate.Users(sql.FieldEqualFold(FieldGlobalName, v))
+}
+
+// GlobalNameContainsFold applies the ContainsFold predicate on the "global_name" field.
+func GlobalNameContainsFold(v string) predicate.Users {
+	return predicate.Users(sql.FieldContainsFold(FieldGlobalName, v))
 }
 
 // SlugEQ applies the EQ predicate on the "slug" field.

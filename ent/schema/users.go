@@ -16,6 +16,7 @@ func (Users) Fields() []ent.Field {
 	users := []ent.Field{
 		field.String("external_id").MaxLen(255),
 		field.String("username").MaxLen(255),
+		field.String("global_name").MaxLen(255),
 		field.String("slug").MaxLen(255),
 		field.String("first_name").MaxLen(255),
 		field.String("last_name").MaxLen(255),

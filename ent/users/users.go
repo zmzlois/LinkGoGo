@@ -18,6 +18,8 @@ const (
 	FieldExternalID = "external_id"
 	// FieldUsername holds the string denoting the username field in the database.
 	FieldUsername = "username"
+	// FieldGlobalName holds the string denoting the global_name field in the database.
+	FieldGlobalName = "global_name"
 	// FieldSlug holds the string denoting the slug field in the database.
 	FieldSlug = "slug"
 	// FieldFirstName holds the string denoting the first_name field in the database.
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldID,
 	FieldExternalID,
 	FieldUsername,
+	FieldGlobalName,
 	FieldSlug,
 	FieldFirstName,
 	FieldLastName,
@@ -86,6 +89,8 @@ var (
 	ExternalIDValidator func(string) error
 	// UsernameValidator is a validator for the "username" field. It is called by the builders before save.
 	UsernameValidator func(string) error
+	// GlobalNameValidator is a validator for the "global_name" field. It is called by the builders before save.
+	GlobalNameValidator func(string) error
 	// SlugValidator is a validator for the "slug" field. It is called by the builders before save.
 	SlugValidator func(string) error
 	// FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
@@ -130,6 +135,11 @@ func ByExternalID(opts ...sql.OrderTermOption) OrderOption {
 // ByUsername orders the results by the username field.
 func ByUsername(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUsername, opts...).ToFunc()
+}
+
+// ByGlobalName orders the results by the global_name field.
+func ByGlobalName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGlobalName, opts...).ToFunc()
 }
 
 // BySlug orders the results by the slug field.

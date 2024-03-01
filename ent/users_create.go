@@ -33,6 +33,12 @@ func (uc *UsersCreate) SetUsername(s string) *UsersCreate {
 	return uc
 }
 
+// SetGlobalName sets the "global_name" field.
+func (uc *UsersCreate) SetGlobalName(s string) *UsersCreate {
+	uc.mutation.SetGlobalName(s)
+	return uc
+}
+
 // SetSlug sets the "slug" field.
 func (uc *UsersCreate) SetSlug(s string) *UsersCreate {
 	uc.mutation.SetSlug(s)
@@ -211,6 +217,14 @@ func (uc *UsersCreate) check() error {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "Users.username": %w`, err)}
 		}
 	}
+	if _, ok := uc.mutation.GlobalName(); !ok {
+		return &ValidationError{Name: "global_name", err: errors.New(`ent: missing required field "Users.global_name"`)}
+	}
+	if v, ok := uc.mutation.GlobalName(); ok {
+		if err := users.GlobalNameValidator(v); err != nil {
+			return &ValidationError{Name: "global_name", err: fmt.Errorf(`ent: validator failed for field "Users.global_name": %w`, err)}
+		}
+	}
 	if _, ok := uc.mutation.Slug(); !ok {
 		return &ValidationError{Name: "slug", err: errors.New(`ent: missing required field "Users.slug"`)}
 	}
@@ -331,6 +345,10 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Username(); ok {
 		_spec.SetField(users.FieldUsername, field.TypeString, value)
 		_node.Username = value
+	}
+	if value, ok := uc.mutation.GlobalName(); ok {
+		_spec.SetField(users.FieldGlobalName, field.TypeString, value)
+		_node.GlobalName = value
 	}
 	if value, ok := uc.mutation.Slug(); ok {
 		_spec.SetField(users.FieldSlug, field.TypeString, value)

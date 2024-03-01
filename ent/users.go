@@ -21,6 +21,8 @@ type Users struct {
 	ExternalID string `json:"external_id,omitempty"`
 	// Username holds the value of the "username" field.
 	Username string `json:"username,omitempty"`
+	// GlobalName holds the value of the "global_name" field.
+	GlobalName string `json:"global_name,omitempty"`
 	// Slug holds the value of the "slug" field.
 	Slug string `json:"slug,omitempty"`
 	// FirstName holds the value of the "first_name" field.
@@ -74,7 +76,7 @@ func (*Users) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case users.FieldDeleted:
 			values[i] = new(sql.NullBool)
-		case users.FieldID, users.FieldExternalID, users.FieldUsername, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken:
+		case users.FieldID, users.FieldExternalID, users.FieldUsername, users.FieldGlobalName, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken:
 			values[i] = new(sql.NullString)
 		case users.FieldCreatedAt, users.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -110,6 +112,12 @@ func (u *Users) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field username", values[i])
 			} else if value.Valid {
 				u.Username = value.String
+			}
+		case users.FieldGlobalName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field global_name", values[i])
+			} else if value.Valid {
+				u.GlobalName = value.String
 			}
 		case users.FieldSlug:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -223,6 +231,9 @@ func (u *Users) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("username=")
 	builder.WriteString(u.Username)
+	builder.WriteString(", ")
+	builder.WriteString("global_name=")
+	builder.WriteString(u.GlobalName)
 	builder.WriteString(", ")
 	builder.WriteString("slug=")
 	builder.WriteString(u.Slug)

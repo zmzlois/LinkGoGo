@@ -38,6 +38,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true, Size: 255},
 		{Name: "external_id", Type: field.TypeString, Size: 255},
 		{Name: "username", Type: field.TypeString, Size: 255},
+		{Name: "global_name", Type: field.TypeString, Size: 255},
 		{Name: "slug", Type: field.TypeString, Size: 255},
 		{Name: "first_name", Type: field.TypeString, Size: 255},
 		{Name: "last_name", Type: field.TypeString, Size: 255},

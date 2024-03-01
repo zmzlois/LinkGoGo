@@ -769,6 +769,7 @@ type UsersMutation struct {
 	id                 *string
 	external_id        *string
 	username           *string
+	global_name        *string
 	slug               *string
 	first_name         *string
 	last_name          *string
@@ -963,6 +964,42 @@ func (m *UsersMutation) OldUsername(ctx context.Context) (v string, err error) {
 // ResetUsername resets all changes to the "username" field.
 func (m *UsersMutation) ResetUsername() {
 	m.username = nil
+}
+
+// SetGlobalName sets the "global_name" field.
+func (m *UsersMutation) SetGlobalName(s string) {
+	m.global_name = &s
+}
+
+// GlobalName returns the value of the "global_name" field in the mutation.
+func (m *UsersMutation) GlobalName() (r string, exists bool) {
+	v := m.global_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGlobalName returns the old "global_name" field's value of the Users entity.
+// If the Users object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsersMutation) OldGlobalName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGlobalName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGlobalName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGlobalName: %w", err)
+	}
+	return oldValue.GlobalName, nil
+}
+
+// ResetGlobalName resets all changes to the "global_name" field.
+func (m *UsersMutation) ResetGlobalName() {
+	m.global_name = nil
 }
 
 // SetSlug sets the "slug" field.
@@ -1449,12 +1486,15 @@ func (m *UsersMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UsersMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.external_id != nil {
 		fields = append(fields, users.FieldExternalID)
 	}
 	if m.username != nil {
 		fields = append(fields, users.FieldUsername)
+	}
+	if m.global_name != nil {
+		fields = append(fields, users.FieldGlobalName)
 	}
 	if m.slug != nil {
 		fields = append(fields, users.FieldSlug)
@@ -1501,6 +1541,8 @@ func (m *UsersMutation) Field(name string) (ent.Value, bool) {
 		return m.ExternalID()
 	case users.FieldUsername:
 		return m.Username()
+	case users.FieldGlobalName:
+		return m.GlobalName()
 	case users.FieldSlug:
 		return m.Slug()
 	case users.FieldFirstName:
@@ -1536,6 +1578,8 @@ func (m *UsersMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldExternalID(ctx)
 	case users.FieldUsername:
 		return m.OldUsername(ctx)
+	case users.FieldGlobalName:
+		return m.OldGlobalName(ctx)
 	case users.FieldSlug:
 		return m.OldSlug(ctx)
 	case users.FieldFirstName:
@@ -1580,6 +1624,13 @@ func (m *UsersMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUsername(v)
+		return nil
+	case users.FieldGlobalName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGlobalName(v)
 		return nil
 	case users.FieldSlug:
 		v, ok := value.(string)
@@ -1712,6 +1763,9 @@ func (m *UsersMutation) ResetField(name string) error {
 		return nil
 	case users.FieldUsername:
 		m.ResetUsername()
+		return nil
+	case users.FieldGlobalName:
+		m.ResetGlobalName()
 		return nil
 	case users.FieldSlug:
 		m.ResetSlug()
