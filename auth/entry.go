@@ -2,11 +2,31 @@ package auth
 
 import (
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 )
 
 var RequestClient *http.Client = &http.Client{}
+
+func Cred() *Client {
+	err := godotenv.Load()
+
+	if err != nil {
+		panic("Error loading .env file")
+	}
+
+	// Create a new oauth2 config
+	var cred *Client = &Client{
+		ClientId:     os.Getenv("DISCORD_CLIENT_ID"),
+		ClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
+		RedirectUri:  os.Getenv("DISCORD_REDIRECT_URI"),
+	}
+
+	return cred
+
+}
 
 var Endpoint = oauth2.Endpoint{
 	AuthURL:   "https://discord.com/api/oauth2/authorize",
