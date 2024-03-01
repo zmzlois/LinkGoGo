@@ -10,11 +10,11 @@ import (
 
 var RequestClient *http.Client = &http.Client{}
 
-func Cred() *Client {
+func AuthCred() *Client {
 	err := godotenv.Load()
 
 	if err != nil {
-		panic("Error loading .env file")
+		panic("[Authentication] Error loading environment variables")
 	}
 
 	// Create a new oauth2 config
