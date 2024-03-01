@@ -13,13 +13,14 @@ import (
 	"time"
 
 	"github.com/getsentry/sentry-go"
-	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
+	dsc "github.com/realTristan/disgoauth"
+
 	"github.com/zmzlois/LinkGoGo/auth"
+	"github.com/zmzlois/LinkGoGo/monitor"
 	"github.com/zmzlois/LinkGoGo/web/pages"
-	"golang.org/x/oauth2"
 )
 
 func main() {
@@ -33,54 +34,25 @@ func main() {
 
 	fmt.Printf("Port is trying to listening on %s\n\n", port)
 
-	sentryDSN := os.Getenv("SENTRY_DSN")
-
-	if err := sentry.Init(sentry.ClientOptions{
-		Dsn: sentryDSN,
-		BeforeSend: func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
-			if hint.Context != nil {
-				if req, ok := hint.Context.Value(sentry.RequestContextKey).(*http.Request); ok {
-					fmt.Println("Request URL: %s", req.URL)
-				}
-			}
-
-			return event
-		},
-		Debug:            true,
-		AttachStacktrace: true,
-		EnableTracing:    true,
-		TracesSampleRate: 1.0,
-	}); err != nil {
-		fmt.Printf("Sentry initialization failed: %v\n", err)
-	}
+	// Initialize sentry
+	monitor.SentryInit()
 
 	// Flush buffered events before the program terminates.
 	// Set the timeout to the maximum duration the program can afford to wait.
 	defer sentry.Flush(2 * time.Second)
 
-	sentryHandler := sentryhttp.New(sentryhttp.Options{
-		Repanic:         true,
-		WaitForDelivery: true,
-		Timeout:         2 * time.Second,
-	})
-
 	app := chi.NewRouter()
 
 	app.Use(middleware.Logger)
 
-	var cred *auth.Client = &auth.Client{
-		ClientId:     os.Getenv("DISCORD_CLIENT_ID"),
-		ClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
-		RedirectUri:  os.Getenv("DISCORD_REDIRECT_URI"),
-	}
-
-	// Create a route along /files that will serve contents from
+	// Serving static files: Create a route along /files that will serve contents from
 	// the ./data/ folder.
 	workDir, _ := os.Getwd()
 
-	fmt.Println("Work directory: ", workDir)
+	fmt.Printf("WorkDir: %s\n", workDir)
 	filesDir := http.Dir(filepath.Join(workDir, "/web/assets"))
-	fmt.Println("Root: ", filesDir)
+
+	fmt.Printf("FilesDir: %s\n", filesDir)
 	FileServer(app, "/", filesDir)
 
 	app.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -92,51 +64,69 @@ func main() {
 
 	})
 
-	conf := &oauth2.Config{
-		RedirectURL:  cred.RedirectUri,
+	var cred = auth.Cred()
+
+	ds := dsc.Init(&dsc.Client{
+		RedirectURI:  cred.RedirectUri,
 		ClientID:     cred.ClientId,
 		ClientSecret: cred.ClientSecret,
 		Scopes:       []string{auth.ScopeIdentify},
-		Endpoint:     auth.Endpoint,
-	}
+	})
 
-	app.Get("/discord-oauth", sentryHandler.HandleFunc(func(w http.ResponseWriter, r *http.Request) {
+	var state string
 
-		state, err := auth.StateGenerator()
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
-			panic(fmt.Sprintf("Error generating state: %s", err))
-		}
+	// Once user hit discord login button
+	app.Get("/discord-oauth", func(w http.ResponseWriter, r *http.Request) {
 
-		http.Redirect(w, r, conf.AuthCodeURL(state), http.StatusTemporaryRedirect)
-
-	}),
-	)
-
-	app.Get("/discord-redirect", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("After log in redirected from discord")
+		ds.RedirectHandler(w, r, state)
 
 	})
 
-	// app.Group("/user", func(r chi.Router) {
+	// On discord's authentication page they will be redirected to this page after authentication
 
-	// 	r.Use(handlers.ProtectedRoutes(r))
+	app.Get("/discord-redirect", func(w http.ResponseWriter, r *http.Request) {
+		code := r.URL.Query()["code"][0]
 
-	// 	r.Get("/edit", func(w http.ResponseWriter, r *http.Request) {
+		token, _ := ds.GetOnlyAccessToken(code)
 
-	// 		pages.EditPage().Render(r.Context(), w)
-	// 	})
+		// get user data to store in the database and also to display on the page
+		result, _ := dsc.GetUserData(token)
 
-	// 	r.Get("/account", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(result)
 
-	// 	})
+		http.Redirect(w, r, "/edit", http.StatusFound)
 
-	// 	r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
+	})
 
-	// 	})
+	app.Group(func(r chi.Router) {
 
-	// })
+		// r.Use(handlers.ProtectedRoutes(r))
+
+		r.Get("/edit", func(w http.ResponseWriter, r *http.Request) {
+			fmt.Printf("URL: %s\n", r.URL.Path)
+
+			pages.EditPage().Render(r.Context(), w)
+		})
+
+		r.Get("/account", func(w http.ResponseWriter, r *http.Request) {
+
+		})
+
+		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
+
+		})
+
+	})
+
+	app.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		pages.NotFound().Render(r.Context(), w)
+	},
+	)
+
+	app.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
+		pages.NotFound().Render(r.Context(), w)
+	},
+	)
 
 	log.Fatal(http.ListenAndServe(port, app))
 
@@ -146,12 +136,14 @@ func main() {
 // FileServer conveniently sets up a http.FileServer handler to serve
 // static files from a http.FileSystem.
 func FileServer(r chi.Router, path string, root http.FileSystem) {
+
+	fmt.Printf("Path: %s | Root: %s\n", path, root)
 	if strings.ContainsAny(path, "{}*") {
 		panic("FileServer does not permit any URL parameters.")
 	}
 
 	if path != "/" && path[len(path)-1] != '/' {
-		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
+		r.Get(path, http.RedirectHandler(path+"/", http.StatusMovedPermanently).ServeHTTP)
 		path += "/"
 	}
 	path += "*"
