@@ -1,0 +1,14 @@
+package pages 
+
+import "github.com/zmzlois/LinkGoGo/web/templates/shared"
+
+templ NotFound() {
+	@shared.Page("Not Found") {
+		@shared.Background() {
+			<div class="container">
+				<h1>404</h1>
+				<p>Page not found</p>
+			</div>
+		}
+	}
+}
