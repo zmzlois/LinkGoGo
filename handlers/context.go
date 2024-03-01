@@ -37,7 +37,7 @@ func authFailed(authenticate Realm) func(next http.Handler) http.Handler {
 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Add("WWW-Authenticate", fmt.Sprintf(`Basic real=%s`, authenticate))
+			w.Header().Add("WWW-Authenticate", fmt.Sprintf(`Basic realm=%s`, authenticate))
 			w.WriteHeader(http.StatusUnauthorized)
 			http.Redirect(w, r, "/failed", http.StatusUnauthorized)
 		})
