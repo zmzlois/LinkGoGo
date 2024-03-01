@@ -19,6 +19,7 @@ import (
 	dsc "github.com/realTristan/disgoauth"
 
 	"github.com/zmzlois/LinkGoGo/auth"
+	"github.com/zmzlois/LinkGoGo/handlers"
 	"github.com/zmzlois/LinkGoGo/monitor"
 	"github.com/zmzlois/LinkGoGo/web/pages"
 )
@@ -70,7 +71,7 @@ func main() {
 		RedirectURI:  cred.RedirectUri,
 		ClientID:     cred.ClientId,
 		ClientSecret: cred.ClientSecret,
-		Scopes:       []string{auth.ScopeIdentify},
+		Scopes:       []string{dsc.ScopeIdentify},
 	})
 
 	var state string
@@ -85,16 +86,7 @@ func main() {
 	// On discord's authentication page they will be redirected to this page after authentication
 
 	app.Get("/discord-redirect", func(w http.ResponseWriter, r *http.Request) {
-		code := r.URL.Query()["code"][0]
-
-		token, _ := ds.GetOnlyAccessToken(code)
-
-		// get user data to store in the database and also to display on the page
-		result, _ := dsc.GetUserData(token)
-
-		fmt.Println(result)
-
-		http.Redirect(w, r, "/edit", http.StatusFound)
+		handlers.RedirectHandler(ds)(w, r)
 
 	})
 
@@ -116,6 +108,14 @@ func main() {
 
 		})
 
+	})
+
+	app.Get("/failed", func(w http.ResponseWriter, r *http.Request) {
+		// pages.FailedPage().Render(r.Context(), w)
+
+		// set time out and redirect to home page
+		time.Sleep(5 * time.Second)
+		http.Redirect(w, r, "/", http.StatusFound)
 	})
 
 	app.NotFound(func(w http.ResponseWriter, r *http.Request) {
