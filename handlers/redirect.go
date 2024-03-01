@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -32,10 +31,28 @@ func RedirectHandler(ds *dsc.Client) func(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func CreateUser(userData map[string]interface{}) {
+// func CreateUser(userData map[string]interface{}) func(w http.ResponseWriter, r *http.Request) {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		ctx := context.Background()
+// 		db, err := DatabaseClient(ctx)
 
-	ctx := context.Background()
-	db := DatabaseClient(ctx)
-	defer db.Close()
+// 		if err != nil {
+// 			log.Printf("failed to create database client: %v", err)
+// 		}
 
-}
+// 		task, err := db.Users.Create().
+// 			SetUsername(userData["username"].(string)).
+// 			SetEmail(userData["email"].(string)).
+// 			SetAccessToken(userData["access_token"].(string)).
+// 			SetAvatar(userData["avatar"].(string)).
+// 			SetGlobalName(userData["global_name"].(string)).
+// 			Save(ctx)
+
+// 		if err != nil {
+// 			w.Write([]byte("Something went wrong when we are creating your account, please come back again later"))
+// 		}
+
+// 		fmt.Println(task)
+
+// 	}
+// }
