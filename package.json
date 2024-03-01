@@ -10,7 +10,8 @@
     "dev:go": "nodemon --signal SIGTERM --watch '*/**' --ext go,css --exec \"go run main.go\"",
     "dev:templates": "nodemon --signal SIGTERM --watch '*/**' --ext templ --exec \"templ generate\"",
     "node:install": "pnpm install",
-    "go:install": "go mod tidy"
+    "go:install": "go mod tidy",
+    "db": "docker compose up -d"
   },
   "author": "",
   "license": "ISC",
