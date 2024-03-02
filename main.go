@@ -16,9 +16,10 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
+	"github.com/realTristan/disgoauth"
+
 	dsc "github.com/realTristan/disgoauth"
 	"github.com/zmzlois/LinkGoGo/auth"
-	"github.com/zmzlois/LinkGoGo/handlers"
 	"github.com/zmzlois/LinkGoGo/monitor"
 	m "github.com/zmzlois/LinkGoGo/monitor"
 	"github.com/zmzlois/LinkGoGo/web/pages"
@@ -37,6 +38,7 @@ func main() {
 
 	// Initialize sentry
 	monitor.SentryInit()
+	// db := handlers.DatabaseClient()
 
 	// Flush buffered events before the program terminates.
 	// Set the timeout to the maximum duration the program can afford to wait.
@@ -63,24 +65,38 @@ func main() {
 
 	var cred = auth.AuthCred()
 
-	ds := dsc.Init(&dsc.Client{
-		RedirectURI:  cred.RedirectUri,
-		ClientID:     cred.ClientId,
+	var ds *dsc.Client = dsc.Init(&dsc.Client{
+		RedirectURI: cred.RedirectURI,
+		// RefreshRedirectURI: cred.RefreshRedirectURI,
+		ClientID:     cred.ClientID,
 		ClientSecret: cred.ClientSecret,
-		Scopes:       []string{dsc.ScopeIdentify},
+		Scopes:       []string{auth.ScopeIdentify},
 	})
 
-	var state string
+	//var state string
 
 	// Once user hit discord login button
 	app.Get("/discord-oauth", func(w http.ResponseWriter, r *http.Request) {
-		ds.RedirectHandler(w, r, state)
+		ds.RedirectHandler(w, r, "")
 	})
 
 	// On discord's authentication page they will be redirected to this page after authentication
 
 	app.Get("/discord-redirect", func(w http.ResponseWriter, r *http.Request) {
-		handlers.RedirectHandler(ds)(w, r)
+		// handlers.AuthenticationHandler(ds)(w, r)
+		// Define Variables
+		var (
+			// Get the code from the redirect parameters (&code=...)
+			codeFromURLParamaters = r.URL.Query()["code"][0]
+
+			// Get the access token using the above codeFromURLParamaters
+			accessToken, _ = ds.GetOnlyAccessToken(codeFromURLParamaters)
+
+			// Get the authorized user's data using the above accessToken
+			userData, _ = disgoauth.GetUserData(accessToken)
+		)
+		// Print the user data map
+		fmt.Println(w, userData)
 
 	})
 
@@ -100,6 +116,7 @@ func main() {
 
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 
+			http.Redirect(w, r, "/", http.StatusFound)
 		})
 
 	})
