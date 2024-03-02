@@ -11,6 +11,7 @@ import "io"
 import "bytes"
 
 import (
+	"github.com/zmzlois/LinkGoGo/web/templates/partials"
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
 )
 
@@ -39,7 +40,111 @@ func EditPage() templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/user/logout\"><span>Logout</span></a><div><h1>Create link</h1><form action=\"/create\" method=\"post\"><input type=\"text\" name=\"url\" placeholder=\"URL\"> <input type=\"text\" name=\"title\" placeholder=\"Title\"> <input type=\"submit\" value=\"Create\"></form></div>")
+				templ_7745c5c3_Var4 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+					if !templ_7745c5c3_IsBuffer {
+						templ_7745c5c3_Buffer = templ.GetBuffer()
+						defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex justify-end\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Var5 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+						if !templ_7745c5c3_IsBuffer {
+							templ_7745c5c3_Buffer = templ.GetBuffer()
+							defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+						}
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/logout\" class=\"px-4 py-2\">Logout</a>")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						if !templ_7745c5c3_IsBuffer {
+							_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
+						}
+						return templ_7745c5c3_Err
+					})
+					templ_7745c5c3_Err = partials.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					if !templ_7745c5c3_IsBuffer {
+						_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
+					}
+					return templ_7745c5c3_Err
+				})
+				templ_7745c5c3_Err = shared.Container().Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var6 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+					if !templ_7745c5c3_IsBuffer {
+						templ_7745c5c3_Buffer = templ.GetBuffer()
+						defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"py-8 flex flex-col items-center gap-4\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = partials.EditProfilePicture().Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"gap-2 flex flex-col items-center w-1/4\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = partials.EditName().Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = partials.EditBio().Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					if !templ_7745c5c3_IsBuffer {
+						_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
+					}
+					return templ_7745c5c3_Err
+				})
+				templ_7745c5c3_Err = shared.Container().Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var7 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+					if !templ_7745c5c3_IsBuffer {
+						templ_7745c5c3_Buffer = templ.GetBuffer()
+						defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"py-4\" class=\"flex flex-col gap-4\"><h1>Create link</h1><form action=\"/create\" method=\"post\" class=\"flex flex-col gap-2\"><input type=\"text\" name=\"url\" placeholder=\"URL\" class=\"rounded-sm\"> <input type=\"text\" name=\"title\" placeholder=\"Title\" class=\"rounded-sm\"> <input type=\"submit\" value=\"Create\"></form></div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					if !templ_7745c5c3_IsBuffer {
+						_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
+					}
+					return templ_7745c5c3_Err
+				})
+				templ_7745c5c3_Err = shared.Container().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

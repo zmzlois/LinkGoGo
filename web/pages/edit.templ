@@ -2,20 +2,38 @@ package pages
 
 import (
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
+	"github.com/zmzlois/LinkGoGo/web/templates/partials"
 )
 
 templ EditPage() {
 	@shared.Page("Create link") {
 		@shared.Background() {
-			<a href="/user/logout"><span>Logout</span></a>
-			<div>
-				<h1>Create link</h1>
-				<form action="/create" method="post">
-					<input type="text" name="url" placeholder="URL"/>
-					<input type="text" name="title" placeholder="Title"/>
-					<input type="submit" value="Create"/>
-				</form>
-			</div>
+			@shared.Container() {
+				<div class="flex justify-end">
+					@partials.Button() {
+						<a href="/logout" class="px-4 py-2">Logout</a>
+					}
+				</div>
+			}
+			@shared.Container() {
+				<div class="py-8 flex flex-col items-center gap-4">
+					@partials.EditProfilePicture()
+					<div class="gap-2 flex flex-col items-center w-1/4">
+						@partials.EditName()
+						@partials.EditBio()
+					</div>
+				</div>
+			}
+			@shared.Container() {
+				<div class="py-4" class="flex flex-col gap-4">
+					<h1>Create link</h1>
+					<form action="/create" method="post" class="flex flex-col gap-2">
+						<input type="text" name="url" placeholder="URL" class="rounded-sm"/>
+						<input type="text" name="title" placeholder="Title" class="rounded-sm"/>
+						<input type="submit" value="Create"/>
+					</form>
+				</div>
+			}
 		}
 	}
 }
