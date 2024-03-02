@@ -9,6 +9,7 @@
     "dev:css": "tailwindcss -i web/assets/tailwind.css -o web/assets/dist/style.css --watch --jit",
     "dev:go": "nodemon --signal SIGTERM --watch '*/**' --ext go,css --exec \"go run main.go\"",
     "dev:templates": "nodemon --signal SIGTERM --watch '*/**' --ext templ --exec \"templ generate\"",
+    "db:generate": "go generate ./ent",
     "node:install": "pnpm install",
     "go:install": "go mod tidy",
     "db": "docker compose up -d"
