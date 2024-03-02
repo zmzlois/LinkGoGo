@@ -1,115 +1,321 @@
 package auth
 
+// Import Packages
 import (
 	"bytes"
-	"fmt"
-
+	"encoding/base64"
 	"encoding/json"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/valyala/fasthttp"
+	"fmt"
+	"io"
+	"net/http"
 )
 
-type TokenResponse struct {
-	AccessToken  string `json:"access_token"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int    `json:"expires_in"`
-	RefreshToken string `json:"refresh_token"`
-	Scope        string `json:"scope"`
+// The accessTokenBody() function is used to return
+// the request body bytes being used in the
+// GetAccessToken() function
+func (dc *Client) accessTokenBody(code string) *bytes.Buffer {
+	return bytes.NewBuffer([]byte(fmt.Sprintf(
+		"client_id=%s&client_secret=%s&grant_type=authorization_code&redirect_uri=%s&code=%s&scope=identify",
+		dc.ClientID, dc.ClientSecret, dc.RedirectURI, code,
+	)))
 }
 
-type RequestBody struct {
-	GrantType   string `json:"grant_type"`
-	Code        string `json:"code"`
-	RedirectUri string `json:"redirect_uri"`
+// The refreshAccessTokenBody() function is used to return
+// the request body bytes being used in the
+// RefreshAccessToken() function
+func (dc *Client) refreshAccessTokenBody(refreshToken string) *bytes.Buffer {
+	return bytes.NewBuffer([]byte(fmt.Sprintf(
+		"client_id=%s&client_secret=%s&grant_type=refresh_token&redirect_uri=%s&refresh_token=%s",
+		dc.ClientID, dc.ClientSecret, dc.RefreshRedirectURI, refreshToken,
+	)))
 }
 
-type Auth struct {
-	ClientId     string `json:"client_id"`
-	ClientSecret string `json:"client_secret"`
-}
+// The credentialsAccessTokenBody() function is used to return
+// the request body bytes being used in the
+// GetCredentialsAccessToken() function
+//
+// Using append() and a byte slice is much faster than
+// using += to a string!
+func credentialsAccessTokenBody(scopes []string) *bytes.Buffer {
+	var body []byte = []byte("grant_type=client_credentials")
 
-func (dc *Client) GetAccessToken(c *fiber.Ctx) error {
+	// Check to make sure the user provided a
+	// valid amount of scopes
+	if len(scopes) > 0 {
+		body = append(body, "&scope="...)
 
-	code := c.Cookies("discord_code")
+		// For each of the scopes
+		for i := 0; i < len(scopes); i++ {
+			// Append the scope to the url
+			body = append(body, scopes[i]...)
 
-	fmt.Println("Code obtained from redirect: ", code)
-	// state := c.Cookies("state")
-
-	// dc := new(auth.Client)
-
-	var Url string = "https://discord.com/api/oauth2/token"
-
-	data := RequestBody{
-		GrantType:   "authorization_code",
-		Code:        code,
-		RedirectUri: dc.RedirectUri,
+			// If there are multiple scopes and the
+			// current index isn't the last scope
+			if i != len(scopes)+1 {
+				// Append %20 (space)
+				body = append(body, "%20"...)
+			}
+		}
 	}
+	// Return the url bytes
+	return bytes.NewBuffer(body)
+}
 
-	// auth := Auth{
-	// 	ClientId:     dc.ClientId,
-	// 	ClientSecret: dc.ClientSecret,
-	// }
-	requestBody, err := json.Marshal(data)
-	authData := fmt.Sprintf("%s,%s \n", dc.ClientId, dc.ClientSecret)
-
-	agent := fasthttp.AcquireRequest()
-
-	defer fasthttp.ReleaseRequest(agent)
-	agent.Header.SetMethod("POST")
-
-	agent.SetRequestURI(Url)
-	agent.SetBody(requestBody)
-	agent.Header.SetContentType("application/x-www-form-urlencoded")
-	agent.PostArgs().Add("auth", authData)
-
-	fmt.Printf("Post Args: %v\n", agent.PostArgs())
-
-	resp := fasthttp.AcquireResponse()
-
-	defer fasthttp.ReleaseResponse(resp)
-
-	client := fasthttp.Client{}
-
-	// Perform the request
-
-	if err := client.Do(agent, resp); err != nil {
-		panic(fmt.Sprintf("[fasthttp client error]: %s \n\n", err))
-	}
-
+// The accessTokenRequestObject() function is used to establish
+// a new request object that will be used for sending
+// the api request to the discord oauth token endpoint.
+func (dc *Client) accessTokenRequestObject(body *bytes.Buffer, creds bool) (*http.Request, error) {
+	// Establish a new request object
+	var req, err = http.NewRequest("POST",
+		"https://discordapp.com/api/oauth2/token", body,
+	)
+	// Handle the error
 	if err != nil {
-		panic(fmt.Sprintf("Request for access token failed with discord: %s \n", err))
-		// return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-		// 	"message": "Request for access token failed with discord: %s",
-		// 	"error":   err,
-		// })
+		return req, err
 	}
 
-	fmt.Printf("Response: %v\n", resp)
+	// Set the request object's headers
+	req.Header = http.Header{
+		"Content-Type": []string{"application/x-www-form-urlencoded"},
+		"Accept":       []string{"application/json"},
+	}
+	// If using the credentials access token endpoint
+	if creds {
+		// Base64 encode the client id and secret
+		var auth string = base64.StdEncoding.EncodeToString([]byte(dc.ClientID + ":" + dc.ClientSecret))
 
-	if resp.StatusCode() != fasthttp.StatusOK {
-		fmt.Printf("[Access Token Discord]: expected status code 200, got %d \n\n", resp.StatusCode())
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": fmt.Sprintf("expected status code 200, got %d \n", resp.StatusCode()),
-		})
+		// Set the authorization header
+		req.Header["Authorization"] = []string{"Basic " + auth}
+	}
+	return req, nil
+}
 
+// The accessTokenRequest() function is used to send an api
+// request to discord's oauth2/token endpoint.
+// The function returns the data required for
+// accessing the authorized users data
+func (dc *Client) accessTokenRequest(req *http.Request) (map[string]interface{}, error) {
+	// Send the http request
+	resp, err := RequestClient.Do(req)
+
+	// Handle the error
+	// If the response status isn't a success
+	if resp.StatusCode != 200 || err != nil {
+		// Read the http body
+		body, _err := io.ReadAll(resp.Body)
+
+		// Handle the read body error
+		if _err != nil {
+			return map[string]interface{}{}, _err
+		}
+		// Handle http response error
+		return map[string]interface{}{},
+			fmt.Errorf("status: %d, code: %v, body: %s",
+				resp.StatusCode, err, string(body))
 	}
 
-	// Verify the content type
-	contentType := resp.Header.Peek("Content-Type")
-	if bytes.Index(contentType, []byte("application/json")) != 0 {
-		fmt.Printf("Expected content type application/json but got %s\n", contentType)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": fmt.Sprintf("Expected content type application/json but got %s", contentType),
-		})
+	// Readable golang map used for storing
+	// the response body
+	var data map[string]interface{}
+
+	// Decode the data and handle errors
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return map[string]interface{}{}, err
+	}
+	return data, nil
+}
+
+/////////////////////////////////////////
+// Get Access Token
+/////////////////////////////////////////
+
+// The GetAccessToken() function is used to get the users
+// bearer access token, refresh token, the token expiry
+// and any errors that occured.
+func (dc *Client) GetAccessToken(code string) (map[string]interface{}, string, string, int, error) {
+	// Define Variables
+	var (
+		// The Access Token Request Body
+		tokenBody *bytes.Buffer = dc.accessTokenBody(code)
+		// The Access Token Request Object
+		tokenReq, err = dc.accessTokenRequestObject(tokenBody, false)
+	)
+	// Handle the token request object error
+	if err != nil {
+		return nil, "", "", -1, err
+	}
+	// Get the token data map
+	var data, _err = dc.accessTokenRequest(tokenReq)
+
+	// Handle the token request error
+	if _err != nil {
+		return nil, "", "", -1, _err
+	}
+	// The Bearer access token
+	var accessToken string = data["token_type"].(string) + " " + data["access_token"].(string)
+
+	// Return the bearer token from said data
+	return data, accessToken, data["refresh_token"].(string), data["expires_in"].(int), nil
+}
+
+/////////////////////////////////////////
+// Get Only Access Token
+/////////////////////////////////////////
+
+// The GetOnlyAccessToken() function is used to get
+// the users bearer access token.
+func (dc *Client) GetOnlyAccessToken(code string) (string, error) {
+	// Define Variables
+	var (
+		// The Access Token Request Body
+		tokenBody *bytes.Buffer = dc.accessTokenBody(code)
+		// The Access Token Request Object
+		tokenReq, err = dc.accessTokenRequestObject(tokenBody, false)
+	)
+	// Handle the token request object error
+	if err != nil {
+		return "", err
+	}
+	// Get the token data map
+	var data, _err = dc.accessTokenRequest(tokenReq)
+
+	// Handle the token request error
+	if _err != nil {
+		return "", _err
+	}
+	// The Bearer access token
+	var accessToken string = data["token_type"].(string) + " " + data["access_token"].(string)
+
+	// Return the bearer token from said data
+	return accessToken, nil
+}
+
+/////////////////////////////////////////
+// Get Access Token + Data
+/////////////////////////////////////////
+
+// The GetAccessTokenMap() function is used to return all
+// the map data revolving around the access token
+func (dc *Client) GetAccessTokenMap(code string) (map[string]interface{}, error) {
+	// Define Variables
+	var (
+		// The Access Token Request Body
+		tokenBody *bytes.Buffer = dc.accessTokenBody(code)
+		// The Access Token Request Object
+		tokenReq, err = dc.accessTokenRequestObject(tokenBody, false)
+	)
+	// Handle the token request object error
+	if err != nil {
+		return map[string]interface{}{}, err
+	}
+	return dc.accessTokenRequest(tokenReq)
+}
+
+/////////////////////////////////////////
+// Refresh Access Token
+/////////////////////////////////////////
+
+// The RefreshAccessToken() function is used to refresh
+// the users bearer authorization token.
+func (dc *Client) RefreshAccessToken(refreshToken string) (map[string]interface{}, error) {
+	// Define Variables
+	var (
+		// The Access Token Request Body
+		tokenBody *bytes.Buffer = dc.refreshAccessTokenBody(refreshToken)
+		// The Access Token Request Object
+		tokenReq, err = dc.accessTokenRequestObject(tokenBody, false)
+	)
+	// Handle the token request object error
+	if err != nil {
+		return map[string]interface{}{}, err
+	}
+	return dc.accessTokenRequest(tokenReq)
+}
+
+/////////////////////////////////////////
+// Get Credentials Access Token
+/////////////////////////////////////////
+
+// The GetCredentialsAccessToken() function is used to get
+// the credentials auth token, refresh token, the token expiry
+// timing, and any errors that had occured.
+func (dc *Client) GetCredentialsAccessToken(scopes []string) (string, string, int, error) {
+	// Define Variables
+	var (
+		// The Access Token Request Body
+		tokenBody *bytes.Buffer = credentialsAccessTokenBody(scopes)
+		// The Access Token Request Object
+		tokenReq, err = dc.accessTokenRequestObject(tokenBody, true)
+	)
+	// Handle the error
+	if err != nil {
+		return "", "", -1, err
+	}
+	// Send http request to get token data
+	var data, _err = dc.accessTokenRequest(tokenReq)
+
+	// Handle the token request error
+	if _err != nil {
+		return "", "", -1, _err
+	}
+	// The Bearer access token
+	var accessToken string = data["token_type"].(string) + " " + data["access_token"].(string)
+
+	// Return the bearer token from said data
+	return accessToken, data["refresh_token"].(string), data["expires_in"].(int), nil
+}
+
+/////////////////////////////////////////
+// Get Only Credentials Access Token
+/////////////////////////////////////////
+
+// The GetOnlyCredentialsAccessToken() function is used to get
+// the users credentials access bearer auth token.
+func (dc *Client) GetOnlyCredentialsAccessToken(scopes []string) (string, error) {
+	// Define Variables
+	var (
+		// The Access Token Request Body
+		tokenBody *bytes.Buffer = credentialsAccessTokenBody(scopes)
+		// The Access Token Request Object
+		tokenReq, err = dc.accessTokenRequestObject(tokenBody, true)
+	)
+	// Handle the error
+	if err != nil {
+		return "", err
 	}
 
-	// contentEncoding := resp.Header.Peek("Content-Encoding")
-	var body []byte
-	body = resp.Body()
+	// Send http request to get token data
+	var data, _err = dc.accessTokenRequest(tokenReq)
 
-	fmt.Printf("Response body is: %s", body)
+	// Handle the error
+	if _err != nil {
+		return "", _err
+	}
+	// The Bearer access token
+	var accessToken string = data["token_type"].(string) + " " + data["access_token"].(string)
 
-	// pass status code and body received by the proxy
-	return c.Status(resp.StatusCode()).Send(body)
+	// Return the bearer token from said data
+	return accessToken, nil
+}
+
+/////////////////////////////////////////
+// Get Credentials Access Token + Data
+/////////////////////////////////////////
+
+// The GetCredentialsAccessTokenMap() function
+// is used to return all the map data revolving
+// around the credentials access token
+func (dc *Client) GetCredentialsAccessTokenMap(scopes []string) (map[string]interface{}, error) {
+	// Define Variables
+	var (
+		// The Access Token Request Body
+		tokenBody *bytes.Buffer = credentialsAccessTokenBody(scopes)
+		// The Access Token Request Object
+		tokenReq, err = dc.accessTokenRequestObject(tokenBody, true)
+	)
+	// Handle the token request object error
+	if err != nil {
+		return map[string]interface{}{}, err
+	}
+	return dc.accessTokenRequest(tokenReq)
 }

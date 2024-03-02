@@ -8,8 +8,8 @@ func (c *Client) implicitGrant() string {
 	// return the Auth URL to a formatted string that contains the client id, redirect uri and response type
 	return fmt.Sprintf(
 		"https://discord.com/api/oauth2/authorize?client_id=%s&redirect_uri=%s&response_type=token",
-		c.ClientId,
-		c.RedirectUri,
+		c.ClientID,
+		c.RedirectURI,
 	)
 }
 
@@ -26,8 +26,8 @@ func (c *Client) explicitGrant() string {
 	// return the OAuth URL to a formatted string containing the client id, redirect uri, response type and prompt parameter
 	return fmt.Sprintf(
 		"https://discord.com/api/oauth2/authorize?client_id=%s&redirect_uri=%s&response_type=code%s",
-		c.ClientId,
-		c.RedirectUri,
+		c.ClientID,
+		c.RefreshRedirectURI,
 		prompt,
 	)
 

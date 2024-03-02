@@ -19,9 +19,10 @@ func AuthCred() *Client {
 
 	// Create a new oauth2 config
 	var cred *Client = &Client{
-		ClientId:     os.Getenv("DISCORD_CLIENT_ID"),
-		ClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
-		RedirectUri:  os.Getenv("DISCORD_REDIRECT_URI"),
+		ClientID:           os.Getenv("DISCORD_CLIENT_ID"),
+		ClientSecret:       os.Getenv("DISCORD_CLIENT_SECRET"),
+		RedirectURI:        os.Getenv("DISCORD_REDIRECT_URI"),
+		RefreshRedirectURI: os.Getenv("DISCORD_REFRESH_REDIRECT_URI"),
 	}
 
 	return cred
@@ -42,84 +43,99 @@ const (
 )
 
 type Client struct {
-	ClientId     string
-	ClientSecret string
-	Endpoint     string
-	RedirectUri  string   // click on sign in button and then where?
-	RefreshUri   string   // Redirect URI for refresh token
-	Scopes       []string // Application scope
-	AuthUrl      string   // not required, provide one or not providing one are both fine, if none generate one
-	Prompt       string   // Consent prompt parameter for auth reapproval
-	Implicit     bool     // Whether using implicit grant for access token
+	ClientID           string
+	ClientSecret       string
+	Endpoint           string
+	RedirectURI        string   // click on sign in button and then where?
+	RefreshRedirectURI string   // Redirect URI for refresh token
+	Scopes             []string // Application scope
+
+	OAuthURL string // not required, provide one or not providing one are both fine, if none generate one
+	Prompt   string // Consent prompt parameter for auth reapproval
+	Implicit bool   // Whether using implicit grant for access token
 }
 
-// Make sure all the required fields are provided
-func (c *Client) DiscordFieldValidation() {
-
-	if len(c.ClientId) == 0 {
-		panic("Client ID is required for discord oauth.")
+func (dc *Client) checkStructErrors() {
+	// Make sure the user has provided
+	// a valid client id
+	if len(dc.ClientID) < 1 {
+		panic("DisGOAuth Error: invalid ClientID in Client (ClientID: string)")
 	}
-
-	if len(c.ClientSecret) == 0 {
-		panic("Client Secret is required for discord oauth.")
+	// Make sure the user has provided
+	// a valid client secret
+	if len(dc.ClientSecret) < 1 {
+		panic("DisGOAuth Error: invalid ClientSecret in Client (ClientSecret: string)")
 	}
-
-	if len(c.RedirectUri) == 0 {
-		panic("Redirect URI is required for discord oauth.")
+	// Make sure the user has provided
+	// a valid redirect uri
+	if len(dc.RedirectURI) < 1 {
+		panic("DisGOAuth Error: invalid RedirectURI in Client (RedirectURI: string)")
 	}
-
-	if len(c.Scopes) < 1 {
-		panic("Not enough scopes[] are provided for discord oauth.")
+	// Make sure the user has provided
+	// a sufficient number of scopes
+	if len(dc.Scopes) < 1 {
+		panic("DisGOAuth Error: not enough scopes in Client (Scopes: []string)")
 	}
-
 }
 
-// append scopes to OAuth URL, only run if the number of scope is valid
-
-func (c *Client) AppendScopesToAuthUrl(url []byte) string {
-
-	// use append() and a byte slice(url) is faster than using += to a string
-	// "..." is unpacking the string into individual bytes.
+// The appendScopes() function is used to append
+// the provided scopes to the OAuth URL. This function
+// is called from the InitOAuthURL() function and is
+// only ran if the number of provided scopes is valid.
+//
+// Using append() and a byte slice is much faster than
+// using += to a string!
+func (dc *Client) appendScopes(url []byte) string {
+	// Append the initial parameter name (scope)
 	url = append(url, "&scope="...)
 
-	for i := 0; i < len(c.Scopes); i++ {
+	// For each of the discord client's scopes
+	for i := 0; i < len(dc.Scopes); i++ {
+		// Append the scope to the OAuth URL
+		url = append(url, dc.Scopes[i]...)
 
-		url = append(url, c.Scopes[i]...)
-
-		// if there are more scopes to append, add a space before the last one
-		if i < len(c.Scopes)-1 {
+		// If there are multiple scopes and the
+		// current index isn't the last scope
+		if i != len(dc.Scopes)-1 {
+			// Append %20 (space)
 			url = append(url, "%20"...)
 		}
 	}
 	return string(url)
 }
 
-// only run if there is no previously provided OAuth URL
-func (c *Client) provideAuthUrl() string {
+// The initOAuthURL() function is used to initialize
+// a discord OAuth URL. This function is called from
+// the Init() function and is only ran if there is
+// no previously provided OAuth URL.
+func (dc *Client) initOAuthURL() string {
+	// Non Implicit OAuth
+	var tempUrl string = dc.nonImplicitOAuth() // implicit.go
 
-	// Explicit Grant
-	var tempUrl string = c.explicitGrant()
-
-	// Implicit Grant
-
-	if c.Implicit {
-		tempUrl = c.implicitGrant()
-
+	// Implicit OAuth
+	if dc.Implicit {
+		tempUrl = dc.implicitOAuth() // implicit.go
 	}
-
-	if len(c.Scopes) > 0 {
-		tempUrl = c.AppendScopesToAuthUrl([]byte(tempUrl))
+	// If user provided scopes
+	if len(dc.Scopes) > 0 {
+		// Append the scopes to the OAuth URL
+		tempUrl = dc.appendScopes([]byte(tempUrl)) // discord_client.go (this file)
 	}
 	return tempUrl
-
 }
 
-func DiscordInitialise(c *Client) *Client {
-	c.DiscordFieldValidation()
+// The Init() function is used to initalize
+// the required data for the discord oauth to work
+// It panics if required parameters are missing from
+// the provided Client struct
+func Init(dc *Client) *Client {
+	// Check for Client struct errors
+	dc.checkStructErrors() // discord_client.go (this file)
 
-	// normally the url needs to be 40 characters long
-	if len(c.AuthUrl) < 40 {
-		c.AuthUrl = c.provideAuthUrl()
+	// Initialize the OAuth URL
+	if len(dc.OAuthURL) < 40 {
+		dc.OAuthURL = dc.initOAuthURL() // discord_client.go (this file)
 	}
-	return c
+	// Return the discord client
+	return dc
 }
