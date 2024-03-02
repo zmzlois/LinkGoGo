@@ -7,66 +7,57 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id string) predicate.Links {
+func ID(id uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id string) predicate.Links {
+func IDEQ(id uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id string) predicate.Links {
+func IDNEQ(id uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...string) predicate.Links {
+func IDIn(ids ...uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...string) predicate.Links {
+func IDNotIn(ids ...uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id string) predicate.Links {
+func IDGT(id uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id string) predicate.Links {
+func IDGTE(id uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id string) predicate.Links {
+func IDLT(id uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id string) predicate.Links {
+func IDLTE(id uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldLTE(FieldID, id))
 }
 
-// IDEqualFold applies the EqualFold predicate on the ID field.
-func IDEqualFold(id string) predicate.Links {
-	return predicate.Links(sql.FieldEqualFold(FieldID, id))
-}
-
-// IDContainsFold applies the ContainsFold predicate on the ID field.
-func IDContainsFold(id string) predicate.Links {
-	return predicate.Links(sql.FieldContainsFold(FieldID, id))
-}
-
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v string) predicate.Links {
+func UserID(v uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldEQ(FieldUserID, v))
 }
 
@@ -101,78 +92,23 @@ func UpdatedAt(v time.Time) predicate.Links {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v string) predicate.Links {
+func UserIDEQ(v uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v string) predicate.Links {
+func UserIDNEQ(v uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...string) predicate.Links {
+func UserIDIn(vs ...uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...string) predicate.Links {
+func UserIDNotIn(vs ...uuid.UUID) predicate.Links {
 	return predicate.Links(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v string) predicate.Links {
-	return predicate.Links(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v string) predicate.Links {
-	return predicate.Links(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v string) predicate.Links {
-	return predicate.Links(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v string) predicate.Links {
-	return predicate.Links(sql.FieldLTE(FieldUserID, v))
-}
-
-// UserIDContains applies the Contains predicate on the "user_id" field.
-func UserIDContains(v string) predicate.Links {
-	return predicate.Links(sql.FieldContains(FieldUserID, v))
-}
-
-// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
-func UserIDHasPrefix(v string) predicate.Links {
-	return predicate.Links(sql.FieldHasPrefix(FieldUserID, v))
-}
-
-// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
-func UserIDHasSuffix(v string) predicate.Links {
-	return predicate.Links(sql.FieldHasSuffix(FieldUserID, v))
-}
-
-// UserIDIsNil applies the IsNil predicate on the "user_id" field.
-func UserIDIsNil() predicate.Links {
-	return predicate.Links(sql.FieldIsNull(FieldUserID))
-}
-
-// UserIDNotNil applies the NotNil predicate on the "user_id" field.
-func UserIDNotNil() predicate.Links {
-	return predicate.Links(sql.FieldNotNull(FieldUserID))
-}
-
-// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
-func UserIDEqualFold(v string) predicate.Links {
-	return predicate.Links(sql.FieldEqualFold(FieldUserID, v))
-}
-
-// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
-func UserIDContainsFold(v string) predicate.Links {
-	return predicate.Links(sql.FieldContainsFold(FieldUserID, v))
 }
 
 // URLEQ applies the EQ predicate on the "url" field.

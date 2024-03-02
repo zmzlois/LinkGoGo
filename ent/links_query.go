@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
 	"github.com/zmzlois/LinkGoGo/ent/users"
@@ -105,8 +106,8 @@ func (lq *LinksQuery) FirstX(ctx context.Context) *Links {
 
 // FirstID returns the first Links ID from the query.
 // Returns a *NotFoundError when no Links ID was found.
-func (lq *LinksQuery) FirstID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (lq *LinksQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = lq.Limit(1).IDs(setContextOp(ctx, lq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -118,7 +119,7 @@ func (lq *LinksQuery) FirstID(ctx context.Context) (id string, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (lq *LinksQuery) FirstIDX(ctx context.Context) string {
+func (lq *LinksQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := lq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -156,8 +157,8 @@ func (lq *LinksQuery) OnlyX(ctx context.Context) *Links {
 // OnlyID is like Only, but returns the only Links ID in the query.
 // Returns a *NotSingularError when more than one Links ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (lq *LinksQuery) OnlyID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (lq *LinksQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = lq.Limit(2).IDs(setContextOp(ctx, lq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -173,7 +174,7 @@ func (lq *LinksQuery) OnlyID(ctx context.Context) (id string, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (lq *LinksQuery) OnlyIDX(ctx context.Context) string {
+func (lq *LinksQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := lq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -201,7 +202,7 @@ func (lq *LinksQuery) AllX(ctx context.Context) []*Links {
 }
 
 // IDs executes the query and returns a list of Links IDs.
-func (lq *LinksQuery) IDs(ctx context.Context) (ids []string, err error) {
+func (lq *LinksQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 	if lq.ctx.Unique == nil && lq.path != nil {
 		lq.Unique(true)
 	}
@@ -213,7 +214,7 @@ func (lq *LinksQuery) IDs(ctx context.Context) (ids []string, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (lq *LinksQuery) IDsX(ctx context.Context) []string {
+func (lq *LinksQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := lq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -297,7 +298,7 @@ func (lq *LinksQuery) WithUser(opts ...func(*UsersQuery)) *LinksQuery {
 // Example:
 //
 //	var v []struct {
-//		UserID string `json:"user_id,omitempty"`
+//		UserID uuid.UUID `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -320,7 +321,7 @@ func (lq *LinksQuery) GroupBy(field string, fields ...string) *LinksGroupBy {
 // Example:
 //
 //	var v []struct {
-//		UserID string `json:"user_id,omitempty"`
+//		UserID uuid.UUID `json:"user_id,omitempty"`
 //	}
 //
 //	client.Links.Query().
@@ -401,8 +402,8 @@ func (lq *LinksQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Links,
 }
 
 func (lq *LinksQuery) loadUser(ctx context.Context, query *UsersQuery, nodes []*Links, init func(*Links), assign func(*Links, *Users)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*Links)
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Links)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
@@ -440,7 +441,7 @@ func (lq *LinksQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (lq *LinksQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(links.Table, links.Columns, sqlgraph.NewFieldSpec(links.FieldID, field.TypeString))
+	_spec := sqlgraph.NewQuerySpec(links.Table, links.Columns, sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID))
 	_spec.From = lq.sql
 	if unique := lq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

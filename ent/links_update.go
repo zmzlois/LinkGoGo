@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
 	"github.com/zmzlois/LinkGoGo/ent/users"
@@ -30,22 +31,16 @@ func (lu *LinksUpdate) Where(ps ...predicate.Links) *LinksUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (lu *LinksUpdate) SetUserID(s string) *LinksUpdate {
-	lu.mutation.SetUserID(s)
+func (lu *LinksUpdate) SetUserID(u uuid.UUID) *LinksUpdate {
+	lu.mutation.SetUserID(u)
 	return lu
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (lu *LinksUpdate) SetNillableUserID(s *string) *LinksUpdate {
-	if s != nil {
-		lu.SetUserID(*s)
+func (lu *LinksUpdate) SetNillableUserID(u *uuid.UUID) *LinksUpdate {
+	if u != nil {
+		lu.SetUserID(*u)
 	}
-	return lu
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (lu *LinksUpdate) ClearUserID() *LinksUpdate {
-	lu.mutation.ClearUserID()
 	return lu
 }
 
@@ -179,11 +174,6 @@ func (lu *LinksUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (lu *LinksUpdate) check() error {
-	if v, ok := lu.mutation.UserID(); ok {
-		if err := links.UserIDValidator(v); err != nil {
-			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Links.user_id": %w`, err)}
-		}
-	}
 	if v, ok := lu.mutation.URL(); ok {
 		if err := links.URLValidator(v); err != nil {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Links.url": %w`, err)}
@@ -199,6 +189,9 @@ func (lu *LinksUpdate) check() error {
 			return &ValidationError{Name: "image", err: fmt.Errorf(`ent: validator failed for field "Links.image": %w`, err)}
 		}
 	}
+	if _, ok := lu.mutation.UserID(); lu.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Links.user"`)
+	}
 	return nil
 }
 
@@ -206,7 +199,7 @@ func (lu *LinksUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := lu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(links.Table, links.Columns, sqlgraph.NewFieldSpec(links.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(links.Table, links.Columns, sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID))
 	if ps := lu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -240,7 +233,7 @@ func (lu *LinksUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{links.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -253,7 +246,7 @@ func (lu *LinksUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{links.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -282,22 +275,16 @@ type LinksUpdateOne struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (luo *LinksUpdateOne) SetUserID(s string) *LinksUpdateOne {
-	luo.mutation.SetUserID(s)
+func (luo *LinksUpdateOne) SetUserID(u uuid.UUID) *LinksUpdateOne {
+	luo.mutation.SetUserID(u)
 	return luo
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (luo *LinksUpdateOne) SetNillableUserID(s *string) *LinksUpdateOne {
-	if s != nil {
-		luo.SetUserID(*s)
+func (luo *LinksUpdateOne) SetNillableUserID(u *uuid.UUID) *LinksUpdateOne {
+	if u != nil {
+		luo.SetUserID(*u)
 	}
-	return luo
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (luo *LinksUpdateOne) ClearUserID() *LinksUpdateOne {
-	luo.mutation.ClearUserID()
 	return luo
 }
 
@@ -444,11 +431,6 @@ func (luo *LinksUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (luo *LinksUpdateOne) check() error {
-	if v, ok := luo.mutation.UserID(); ok {
-		if err := links.UserIDValidator(v); err != nil {
-			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Links.user_id": %w`, err)}
-		}
-	}
 	if v, ok := luo.mutation.URL(); ok {
 		if err := links.URLValidator(v); err != nil {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Links.url": %w`, err)}
@@ -464,6 +446,9 @@ func (luo *LinksUpdateOne) check() error {
 			return &ValidationError{Name: "image", err: fmt.Errorf(`ent: validator failed for field "Links.image": %w`, err)}
 		}
 	}
+	if _, ok := luo.mutation.UserID(); luo.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Links.user"`)
+	}
 	return nil
 }
 
@@ -471,7 +456,7 @@ func (luo *LinksUpdateOne) sqlSave(ctx context.Context) (_node *Links, err error
 	if err := luo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(links.Table, links.Columns, sqlgraph.NewFieldSpec(links.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(links.Table, links.Columns, sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID))
 	id, ok := luo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Links.id" for update`)}
@@ -522,7 +507,7 @@ func (luo *LinksUpdateOne) sqlSave(ctx context.Context) (_node *Links, err error
 			Columns: []string{links.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -535,7 +520,7 @@ func (luo *LinksUpdateOne) sqlSave(ctx context.Context) (_node *Links, err error
 			Columns: []string{links.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

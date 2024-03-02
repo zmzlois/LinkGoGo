@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
 	"github.com/zmzlois/LinkGoGo/ent/users"
@@ -218,14 +219,14 @@ func (uu *UsersUpdate) SetUpdatedAt(t time.Time) *UsersUpdate {
 }
 
 // AddUsersLinkIDs adds the "users_links" edge to the Links entity by IDs.
-func (uu *UsersUpdate) AddUsersLinkIDs(ids ...string) *UsersUpdate {
+func (uu *UsersUpdate) AddUsersLinkIDs(ids ...uuid.UUID) *UsersUpdate {
 	uu.mutation.AddUsersLinkIDs(ids...)
 	return uu
 }
 
 // AddUsersLinks adds the "users_links" edges to the Links entity.
 func (uu *UsersUpdate) AddUsersLinks(l ...*Links) *UsersUpdate {
-	ids := make([]string, len(l))
+	ids := make([]uuid.UUID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -244,14 +245,14 @@ func (uu *UsersUpdate) ClearUsersLinks() *UsersUpdate {
 }
 
 // RemoveUsersLinkIDs removes the "users_links" edge to Links entities by IDs.
-func (uu *UsersUpdate) RemoveUsersLinkIDs(ids ...string) *UsersUpdate {
+func (uu *UsersUpdate) RemoveUsersLinkIDs(ids ...uuid.UUID) *UsersUpdate {
 	uu.mutation.RemoveUsersLinkIDs(ids...)
 	return uu
 }
 
 // RemoveUsersLinks removes "users_links" edges to Links entities.
 func (uu *UsersUpdate) RemoveUsersLinks(l ...*Links) *UsersUpdate {
-	ids := make([]string, len(l))
+	ids := make([]uuid.UUID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -358,7 +359,7 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := uu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(users.Table, users.Columns, sqlgraph.NewFieldSpec(users.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(users.Table, users.Columns, sqlgraph.NewFieldSpec(users.FieldID, field.TypeUUID))
 	if ps := uu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -416,7 +417,7 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{users.UsersLinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -429,7 +430,7 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{users.UsersLinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -445,7 +446,7 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{users.UsersLinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -662,14 +663,14 @@ func (uuo *UsersUpdateOne) SetUpdatedAt(t time.Time) *UsersUpdateOne {
 }
 
 // AddUsersLinkIDs adds the "users_links" edge to the Links entity by IDs.
-func (uuo *UsersUpdateOne) AddUsersLinkIDs(ids ...string) *UsersUpdateOne {
+func (uuo *UsersUpdateOne) AddUsersLinkIDs(ids ...uuid.UUID) *UsersUpdateOne {
 	uuo.mutation.AddUsersLinkIDs(ids...)
 	return uuo
 }
 
 // AddUsersLinks adds the "users_links" edges to the Links entity.
 func (uuo *UsersUpdateOne) AddUsersLinks(l ...*Links) *UsersUpdateOne {
-	ids := make([]string, len(l))
+	ids := make([]uuid.UUID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -688,14 +689,14 @@ func (uuo *UsersUpdateOne) ClearUsersLinks() *UsersUpdateOne {
 }
 
 // RemoveUsersLinkIDs removes the "users_links" edge to Links entities by IDs.
-func (uuo *UsersUpdateOne) RemoveUsersLinkIDs(ids ...string) *UsersUpdateOne {
+func (uuo *UsersUpdateOne) RemoveUsersLinkIDs(ids ...uuid.UUID) *UsersUpdateOne {
 	uuo.mutation.RemoveUsersLinkIDs(ids...)
 	return uuo
 }
 
 // RemoveUsersLinks removes "users_links" edges to Links entities.
 func (uuo *UsersUpdateOne) RemoveUsersLinks(l ...*Links) *UsersUpdateOne {
-	ids := make([]string, len(l))
+	ids := make([]uuid.UUID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -815,7 +816,7 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 	if err := uuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(users.Table, users.Columns, sqlgraph.NewFieldSpec(users.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(users.Table, users.Columns, sqlgraph.NewFieldSpec(users.FieldID, field.TypeUUID))
 	id, ok := uuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Users.id" for update`)}
@@ -890,7 +891,7 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 			Columns: []string{users.UsersLinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -903,7 +904,7 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 			Columns: []string{users.UsersLinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -919,7 +920,7 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 			Columns: []string{users.UsersLinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

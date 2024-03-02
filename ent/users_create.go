@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/users"
 )
@@ -130,20 +131,28 @@ func (uc *UsersCreate) SetNillableUpdatedAt(t *time.Time) *UsersCreate {
 }
 
 // SetID sets the "id" field.
-func (uc *UsersCreate) SetID(s string) *UsersCreate {
-	uc.mutation.SetID(s)
+func (uc *UsersCreate) SetID(u uuid.UUID) *UsersCreate {
+	uc.mutation.SetID(u)
+	return uc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableID(u *uuid.UUID) *UsersCreate {
+	if u != nil {
+		uc.SetID(*u)
+	}
 	return uc
 }
 
 // AddUsersLinkIDs adds the "users_links" edge to the Links entity by IDs.
-func (uc *UsersCreate) AddUsersLinkIDs(ids ...string) *UsersCreate {
+func (uc *UsersCreate) AddUsersLinkIDs(ids ...uuid.UUID) *UsersCreate {
 	uc.mutation.AddUsersLinkIDs(ids...)
 	return uc
 }
 
 // AddUsersLinks adds the "users_links" edges to the Links entity.
 func (uc *UsersCreate) AddUsersLinks(l ...*Links) *UsersCreate {
-	ids := make([]string, len(l))
+	ids := make([]uuid.UUID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -196,6 +205,10 @@ func (uc *UsersCreate) defaults() {
 	if _, ok := uc.mutation.UpdatedAt(); !ok {
 		v := users.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := uc.mutation.ID(); !ok {
+		v := users.DefaultID()
+		uc.mutation.SetID(v)
 	}
 }
 
@@ -298,11 +311,6 @@ func (uc *UsersCreate) check() error {
 	if _, ok := uc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Users.updated_at"`)}
 	}
-	if v, ok := uc.mutation.ID(); ok {
-		if err := users.IDValidator(v); err != nil {
-			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Users.id": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -318,10 +326,10 @@ func (uc *UsersCreate) sqlSave(ctx context.Context) (*Users, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected Users.ID type: %T", _spec.ID.Value)
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
 		}
 	}
 	uc.mutation.id = &_node.ID
@@ -332,11 +340,11 @@ func (uc *UsersCreate) sqlSave(ctx context.Context) (*Users, error) {
 func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Users{config: uc.config}
-		_spec = sqlgraph.NewCreateSpec(users.Table, sqlgraph.NewFieldSpec(users.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(users.Table, sqlgraph.NewFieldSpec(users.FieldID, field.TypeUUID))
 	)
 	if id, ok := uc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := uc.mutation.ExternalID(); ok {
 		_spec.SetField(users.FieldExternalID, field.TypeString, value)
@@ -402,7 +410,7 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 			Columns: []string{users.UsersLinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -11,6 +11,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
 	"github.com/zmzlois/LinkGoGo/ent/users"
@@ -34,7 +35,7 @@ type LinksMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *string
+	id            *uuid.UUID
 	url           *string
 	title         *string
 	image         *string
@@ -42,7 +43,7 @@ type LinksMutation struct {
 	created_at    *time.Time
 	updated_at    *time.Time
 	clearedFields map[string]struct{}
-	user          *string
+	user          *uuid.UUID
 	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*Links, error)
@@ -69,7 +70,7 @@ func newLinksMutation(c config, op Op, opts ...linksOption) *LinksMutation {
 }
 
 // withLinksID sets the ID field of the mutation.
-func withLinksID(id string) linksOption {
+func withLinksID(id uuid.UUID) linksOption {
 	return func(m *LinksMutation) {
 		var (
 			err   error
@@ -121,13 +122,13 @@ func (m LinksMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Links entities.
-func (m *LinksMutation) SetID(id string) {
+func (m *LinksMutation) SetID(id uuid.UUID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *LinksMutation) ID() (id string, exists bool) {
+func (m *LinksMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -138,12 +139,12 @@ func (m *LinksMutation) ID() (id string, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *LinksMutation) IDs(ctx context.Context) ([]string, error) {
+func (m *LinksMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []string{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -154,12 +155,12 @@ func (m *LinksMutation) IDs(ctx context.Context) ([]string, error) {
 }
 
 // SetUserID sets the "user_id" field.
-func (m *LinksMutation) SetUserID(s string) {
-	m.user = &s
+func (m *LinksMutation) SetUserID(u uuid.UUID) {
+	m.user = &u
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *LinksMutation) UserID() (r string, exists bool) {
+func (m *LinksMutation) UserID() (r uuid.UUID, exists bool) {
 	v := m.user
 	if v == nil {
 		return
@@ -170,7 +171,7 @@ func (m *LinksMutation) UserID() (r string, exists bool) {
 // OldUserID returns the old "user_id" field's value of the Links entity.
 // If the Links object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LinksMutation) OldUserID(ctx context.Context) (v string, err error) {
+func (m *LinksMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -184,22 +185,9 @@ func (m *LinksMutation) OldUserID(ctx context.Context) (v string, err error) {
 	return oldValue.UserID, nil
 }
 
-// ClearUserID clears the value of the "user_id" field.
-func (m *LinksMutation) ClearUserID() {
-	m.user = nil
-	m.clearedFields[links.FieldUserID] = struct{}{}
-}
-
-// UserIDCleared returns if the "user_id" field was cleared in this mutation.
-func (m *LinksMutation) UserIDCleared() bool {
-	_, ok := m.clearedFields[links.FieldUserID]
-	return ok
-}
-
 // ResetUserID resets all changes to the "user_id" field.
 func (m *LinksMutation) ResetUserID() {
 	m.user = nil
-	delete(m.clearedFields, links.FieldUserID)
 }
 
 // SetURL sets the "url" field.
@@ -426,13 +414,13 @@ func (m *LinksMutation) ClearUser() {
 
 // UserCleared reports if the "user" edge to the Users entity was cleared.
 func (m *LinksMutation) UserCleared() bool {
-	return m.UserIDCleared() || m.cleareduser
+	return m.cleareduser
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *LinksMutation) UserIDs() (ids []string) {
+func (m *LinksMutation) UserIDs() (ids []uuid.UUID) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -556,7 +544,7 @@ func (m *LinksMutation) OldField(ctx context.Context, name string) (ent.Value, e
 func (m *LinksMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case links.FieldUserID:
-		v, ok := value.(string)
+		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -633,11 +621,7 @@ func (m *LinksMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *LinksMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(links.FieldUserID) {
-		fields = append(fields, links.FieldUserID)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -650,11 +634,6 @@ func (m *LinksMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *LinksMutation) ClearField(name string) error {
-	switch name {
-	case links.FieldUserID:
-		m.ClearUserID()
-		return nil
-	}
 	return fmt.Errorf("unknown Links nullable field %s", name)
 }
 
@@ -766,7 +745,7 @@ type UsersMutation struct {
 	config
 	op                 Op
 	typ                string
-	id                 *string
+	id                 *uuid.UUID
 	external_id        *string
 	username           *string
 	global_name        *string
@@ -782,8 +761,8 @@ type UsersMutation struct {
 	created_at         *time.Time
 	updated_at         *time.Time
 	clearedFields      map[string]struct{}
-	users_links        map[string]struct{}
-	removedusers_links map[string]struct{}
+	users_links        map[uuid.UUID]struct{}
+	removedusers_links map[uuid.UUID]struct{}
 	clearedusers_links bool
 	done               bool
 	oldValue           func(context.Context) (*Users, error)
@@ -810,7 +789,7 @@ func newUsersMutation(c config, op Op, opts ...usersOption) *UsersMutation {
 }
 
 // withUsersID sets the ID field of the mutation.
-func withUsersID(id string) usersOption {
+func withUsersID(id uuid.UUID) usersOption {
 	return func(m *UsersMutation) {
 		var (
 			err   error
@@ -862,13 +841,13 @@ func (m UsersMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Users entities.
-func (m *UsersMutation) SetID(id string) {
+func (m *UsersMutation) SetID(id uuid.UUID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UsersMutation) ID() (id string, exists bool) {
+func (m *UsersMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -879,12 +858,12 @@ func (m *UsersMutation) ID() (id string, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UsersMutation) IDs(ctx context.Context) ([]string, error) {
+func (m *UsersMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []string{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1399,9 +1378,9 @@ func (m *UsersMutation) ResetUpdatedAt() {
 }
 
 // AddUsersLinkIDs adds the "users_links" edge to the Links entity by ids.
-func (m *UsersMutation) AddUsersLinkIDs(ids ...string) {
+func (m *UsersMutation) AddUsersLinkIDs(ids ...uuid.UUID) {
 	if m.users_links == nil {
-		m.users_links = make(map[string]struct{})
+		m.users_links = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.users_links[ids[i]] = struct{}{}
@@ -1419,9 +1398,9 @@ func (m *UsersMutation) UsersLinksCleared() bool {
 }
 
 // RemoveUsersLinkIDs removes the "users_links" edge to the Links entity by IDs.
-func (m *UsersMutation) RemoveUsersLinkIDs(ids ...string) {
+func (m *UsersMutation) RemoveUsersLinkIDs(ids ...uuid.UUID) {
 	if m.removedusers_links == nil {
-		m.removedusers_links = make(map[string]struct{})
+		m.removedusers_links = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.users_links, ids[i])
@@ -1430,7 +1409,7 @@ func (m *UsersMutation) RemoveUsersLinkIDs(ids ...string) {
 }
 
 // RemovedUsersLinks returns the removed IDs of the "users_links" edge to the Links entity.
-func (m *UsersMutation) RemovedUsersLinksIDs() (ids []string) {
+func (m *UsersMutation) RemovedUsersLinksIDs() (ids []uuid.UUID) {
 	for id := range m.removedusers_links {
 		ids = append(ids, id)
 	}
@@ -1438,7 +1417,7 @@ func (m *UsersMutation) RemovedUsersLinksIDs() (ids []string) {
 }
 
 // UsersLinksIDs returns the "users_links" edge IDs in the mutation.
-func (m *UsersMutation) UsersLinksIDs() (ids []string) {
+func (m *UsersMutation) UsersLinksIDs() (ids []uuid.UUID) {
 	for id := range m.users_links {
 		ids = append(ids, id)
 	}

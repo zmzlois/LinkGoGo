@@ -7,62 +7,53 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id string) predicate.Users {
+func ID(id uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id string) predicate.Users {
+func IDEQ(id uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id string) predicate.Users {
+func IDNEQ(id uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...string) predicate.Users {
+func IDIn(ids ...uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...string) predicate.Users {
+func IDNotIn(ids ...uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id string) predicate.Users {
+func IDGT(id uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id string) predicate.Users {
+func IDGTE(id uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id string) predicate.Users {
+func IDLT(id uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id string) predicate.Users {
+func IDLTE(id uuid.UUID) predicate.Users {
 	return predicate.Users(sql.FieldLTE(FieldID, id))
-}
-
-// IDEqualFold applies the EqualFold predicate on the ID field.
-func IDEqualFold(id string) predicate.Users {
-	return predicate.Users(sql.FieldEqualFold(FieldID, id))
-}
-
-// IDContainsFold applies the ContainsFold predicate on the ID field.
-func IDContainsFold(id string) predicate.Users {
-	return predicate.Users(sql.FieldContainsFold(FieldID, id))
 }
 
 // ExternalID applies equality check predicate on the "external_id" field. It's identical to ExternalIDEQ.

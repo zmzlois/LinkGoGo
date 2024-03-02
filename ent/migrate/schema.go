@@ -10,14 +10,14 @@ import (
 var (
 	// LinksColumns holds the columns for the "links" table.
 	LinksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString, Unique: true, Size: 255},
+		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "url", Type: field.TypeString, Size: 255},
 		{Name: "title", Type: field.TypeString, Unique: true, Size: 255},
 		{Name: "image", Type: field.TypeString, Size: 255},
 		{Name: "deleted", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},
-		{Name: "user_id", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "user_id", Type: field.TypeUUID},
 	}
 	// LinksTable holds the schema information for the "links" table.
 	LinksTable = &schema.Table{
@@ -29,13 +29,13 @@ var (
 				Symbol:     "links_users_users_links",
 				Columns:    []*schema.Column{LinksColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString, Unique: true, Size: 255},
+		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "external_id", Type: field.TypeString, Size: 255},
 		{Name: "username", Type: field.TypeString, Size: 255},
 		{Name: "global_name", Type: field.TypeString, Size: 255},

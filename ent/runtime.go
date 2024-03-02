@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/schema"
 	"github.com/zmzlois/LinkGoGo/ent/users"
@@ -16,10 +17,6 @@ import (
 func init() {
 	linksFields := schema.Links{}.Fields()
 	_ = linksFields
-	// linksDescUserID is the schema descriptor for user_id field.
-	linksDescUserID := linksFields[0].Descriptor()
-	// links.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
-	links.UserIDValidator = linksDescUserID.Validators[0].(func(string) error)
 	// linksDescURL is the schema descriptor for url field.
 	linksDescURL := linksFields[1].Descriptor()
 	// links.URLValidator is a validator for the "url" field. It is called by the builders before save.
@@ -48,8 +45,8 @@ func init() {
 	links.UpdateDefaultUpdatedAt = linksDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// linksDescID is the schema descriptor for id field.
 	linksDescID := linksFields[4].Descriptor()
-	// links.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	links.IDValidator = linksDescID.Validators[0].(func(string) error)
+	// links.DefaultID holds the default value on creation for the id field.
+	links.DefaultID = linksDescID.Default.(func() uuid.UUID)
 	usersFields := schema.Users{}.Fields()
 	_ = usersFields
 	// usersDescExternalID is the schema descriptor for external_id field.
@@ -112,6 +109,6 @@ func init() {
 	users.UpdateDefaultUpdatedAt = usersDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// usersDescID is the schema descriptor for id field.
 	usersDescID := usersFields[11].Descriptor()
-	// users.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	users.IDValidator = usersDescID.Validators[0].(func(string) error)
+	// users.DefaultID holds the default value on creation for the id field.
+	users.DefaultID = usersDescID.Default.(func() uuid.UUID)
 }

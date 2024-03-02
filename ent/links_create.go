@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/users"
 )
@@ -22,16 +23,8 @@ type LinksCreate struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (lc *LinksCreate) SetUserID(s string) *LinksCreate {
-	lc.mutation.SetUserID(s)
-	return lc
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (lc *LinksCreate) SetNillableUserID(s *string) *LinksCreate {
-	if s != nil {
-		lc.SetUserID(*s)
-	}
+func (lc *LinksCreate) SetUserID(u uuid.UUID) *LinksCreate {
+	lc.mutation.SetUserID(u)
 	return lc
 }
 
@@ -96,8 +89,16 @@ func (lc *LinksCreate) SetNillableUpdatedAt(t *time.Time) *LinksCreate {
 }
 
 // SetID sets the "id" field.
-func (lc *LinksCreate) SetID(s string) *LinksCreate {
-	lc.mutation.SetID(s)
+func (lc *LinksCreate) SetID(u uuid.UUID) *LinksCreate {
+	lc.mutation.SetID(u)
+	return lc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (lc *LinksCreate) SetNillableID(u *uuid.UUID) *LinksCreate {
+	if u != nil {
+		lc.SetID(*u)
+	}
 	return lc
 }
 
@@ -153,14 +154,16 @@ func (lc *LinksCreate) defaults() {
 		v := links.DefaultUpdatedAt()
 		lc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := lc.mutation.ID(); !ok {
+		v := links.DefaultID()
+		lc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (lc *LinksCreate) check() error {
-	if v, ok := lc.mutation.UserID(); ok {
-		if err := links.UserIDValidator(v); err != nil {
-			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Links.user_id": %w`, err)}
-		}
+	if _, ok := lc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Links.user_id"`)}
 	}
 	if _, ok := lc.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "Links.url"`)}
@@ -195,10 +198,8 @@ func (lc *LinksCreate) check() error {
 	if _, ok := lc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Links.updated_at"`)}
 	}
-	if v, ok := lc.mutation.ID(); ok {
-		if err := links.IDValidator(v); err != nil {
-			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Links.id": %w`, err)}
-		}
+	if _, ok := lc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Links.user"`)}
 	}
 	return nil
 }
@@ -215,10 +216,10 @@ func (lc *LinksCreate) sqlSave(ctx context.Context) (*Links, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected Links.ID type: %T", _spec.ID.Value)
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
 		}
 	}
 	lc.mutation.id = &_node.ID
@@ -229,11 +230,11 @@ func (lc *LinksCreate) sqlSave(ctx context.Context) (*Links, error) {
 func (lc *LinksCreate) createSpec() (*Links, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Links{config: lc.config}
-		_spec = sqlgraph.NewCreateSpec(links.Table, sqlgraph.NewFieldSpec(links.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(links.Table, sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID))
 	)
 	if id, ok := lc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := lc.mutation.URL(); ok {
 		_spec.SetField(links.FieldURL, field.TypeString, value)
@@ -267,7 +268,7 @@ func (lc *LinksCreate) createSpec() (*Links, *sqlgraph.CreateSpec) {
 			Columns: []string{links.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(users.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

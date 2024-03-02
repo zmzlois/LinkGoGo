@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/users"
 )
@@ -17,9 +18,9 @@ import (
 type Links struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// UserID holds the value of the "user_id" field.
-	UserID string `json:"user_id,omitempty"`
+	UserID uuid.UUID `json:"user_id,omitempty"`
 	// URL holds the value of the "url" field.
 	URL string `json:"url,omitempty"`
 	// Title holds the value of the "title" field.
@@ -65,10 +66,12 @@ func (*Links) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case links.FieldDeleted:
 			values[i] = new(sql.NullBool)
-		case links.FieldID, links.FieldUserID, links.FieldURL, links.FieldTitle, links.FieldImage:
+		case links.FieldURL, links.FieldTitle, links.FieldImage:
 			values[i] = new(sql.NullString)
 		case links.FieldCreatedAt, links.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
+		case links.FieldID, links.FieldUserID:
+			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -85,16 +88,16 @@ func (l *Links) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case links.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				l.ID = value.String
+			} else if value != nil {
+				l.ID = *value
 			}
 		case links.FieldUserID:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				l.UserID = value.String
+			} else if value != nil {
+				l.UserID = *value
 			}
 		case links.FieldURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -174,7 +177,7 @@ func (l *Links) String() string {
 	builder.WriteString("Links(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", l.ID))
 	builder.WriteString("user_id=")
-	builder.WriteString(l.UserID)
+	builder.WriteString(fmt.Sprintf("%v", l.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("url=")
 	builder.WriteString(l.URL)
