@@ -58,10 +58,11 @@ func SentryInit() {
 
 			return event
 		},
-		Debug:            true,
-		AttachStacktrace: true,
-		EnableTracing:    true,
-		TracesSampleRate: 1.0,
+		Debug:              true,
+		AttachStacktrace:   true,
+		EnableTracing:      true,
+		ProfilesSampleRate: 1.0,
+		TracesSampleRate:   1.0,
 	}); err != nil {
 		panic(fmt.Sprintf("[Sentry error]: %s", err))
 	}
