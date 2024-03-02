@@ -5,8 +5,8 @@ import (
 	"github.com/zmzlois/LinkGoGo/web/templates/partials"
 )
 
-var data map[string]string = map[string]string{
-	"avatar": "https://pbs.twimg.com/profile_images/1751005853900005376/nGX46ucY_400x400.png",
+var MockData map[string]string = map[string]string{
+	"avatar": "dist/pfp.jpg",
 	"name":   "LOIS",
 	"bio":    "Noob dev",
 }
@@ -34,7 +34,7 @@ templ HomePage() {
 				@partials.Header()
 			}
 			@shared.Container() {
-				@partials.ProfileHeader(data["avatar"], data["name"], data["bio"])
+				@partials.ProfileHeader(MockData["avatar"], MockData["name"], MockData["bio"])
 			}
 			@shared.Container() {
 				@partials.LinkSection(false)

@@ -15,8 +15,8 @@ import (
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
 )
 
-var data map[string]string = map[string]string{
-	"avatar": "https://pbs.twimg.com/profile_images/1751005853900005376/nGX46ucY_400x400.png",
+var MockData map[string]string = map[string]string{
+	"avatar": "dist/pfp.jpg",
 	"name":   "LOIS",
 	"bio":    "Noob dev",
 }
@@ -91,7 +91,7 @@ func HomePage() templ.Component {
 						templ_7745c5c3_Buffer = templ.GetBuffer()
 						defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 					}
-					templ_7745c5c3_Err = partials.ProfileHeader(data["avatar"], data["name"], data["bio"]).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = partials.ProfileHeader(MockData["avatar"], MockData["name"], MockData["bio"]).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
