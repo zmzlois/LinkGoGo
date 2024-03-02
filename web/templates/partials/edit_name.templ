@@ -1,0 +1,10 @@
+package partials 
+
+import "github.com/zmzlois/LinkGoGo/web/utils"
+
+templ EditName() {
+	<div x-data="{ open: false }" class="h-8 text-center w-full">
+		<h1 @click="open = ! open" x-show="!open" class="text-2xl tracking-tight font-bold text-zinc-950">{ utils.MockData["name"] }</h1>
+		<input x-show="open" @click.outside="open = false" type="text" class="border-b-2 text-center rounded-sm border-zinc-200 px-4 py-1 font-semibold text-zinc-900" value={ utils.MockData["name"] }/>
+	</div>
+}
