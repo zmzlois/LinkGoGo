@@ -16,10 +16,11 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	"github.com/realTristan/disgoauth"
 
-	dsc "github.com/realTristan/disgoauth"
+	//dsc "github.com/realTristan/disgoauth"
+
 	"github.com/zmzlois/LinkGoGo/auth"
+	dsc "github.com/zmzlois/LinkGoGo/auth"
 	"github.com/zmzlois/LinkGoGo/monitor"
 	m "github.com/zmzlois/LinkGoGo/monitor"
 	"github.com/zmzlois/LinkGoGo/web/pages"
@@ -85,18 +86,34 @@ func main() {
 	app.Get("/discord-redirect", func(w http.ResponseWriter, r *http.Request) {
 		// handlers.AuthenticationHandler(ds)(w, r)
 		// Define Variables
+
+		var dc dsc.Client
 		var (
 			// Get the code from the redirect parameters (&code=...)
 			codeFromURLParamaters = r.URL.Query()["code"][0]
 
 			// Get the access token using the above codeFromURLParamaters
-			accessToken, _ = ds.GetOnlyAccessToken(codeFromURLParamaters)
+			// accessTokenMap, _ = ds.GetAccessTokenMap(codeFromURLParamaters)
+
+			accessToken, err1 = ds.GetOnlyAccessToken(codeFromURLParamaters)
 
 			// Get the authorized user's data using the above accessToken
-			userData, _ = disgoauth.GetUserData(accessToken)
+			userData, _ = dc.GetUserData(accessToken)
 		)
+
+		if err1 != nil {
+			panic(fmt.Sprintf("Fialed to get access token: %s", err1))
+		}
+		// fmt.Printf("Access Token Map:%s\n ", accessTokenMap)
+
+		fmt.Printf("Access Token: %s\n", accessToken)
+
+		// fmt.Printf("Data: %s\n", data)
+		fmt.Printf("Code: %s\n", codeFromURLParamaters)
 		// Print the user data map
-		fmt.Println(w, userData)
+		fmt.Printf("User Data: %s\n", userData)
+
+		// fmt.Printf("Data: %s\n Access Token: %s\n Refresh Token: %s\n Expire In: %d\n", data, accessToken, refreshToken, expireIn)
 
 	})
 
