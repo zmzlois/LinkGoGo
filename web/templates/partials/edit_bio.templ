@@ -1,0 +1,10 @@
+package partials 
+
+import "github.com/zmzlois/LinkGoGo/web/utils"
+
+templ EditBio() {
+	<div x-data="{ open: false }" class="h-6 w-full text-center">
+		<h2 @click="open = ! open" x-show="!open" class="text-base text-zinc-700 font-medium">{ utils.MockData["bio"] }</h2>
+		<input x-show="open" @click.outside="open = false" type="text" class=" border-b-2 rounded-sm border-zinc-200 px-4 py-[1px] text-center text-zinc-900" value={ utils.MockData["bio"] }/>
+	</div>
+}
