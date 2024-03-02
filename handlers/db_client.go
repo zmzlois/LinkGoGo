@@ -3,10 +3,8 @@ package handlers
 import (
 	"context"
 	"log"
-	"os"
 
 	"entgo.io/ent/dialect"
-	"github.com/joho/godotenv"
 	"github.com/zmzlois/LinkGoGo/ent"
 )
 
@@ -19,24 +17,24 @@ type DatabaseCred struct {
 	SslMode  string
 }
 
-func DBCredentials() *DatabaseCred {
+// func DBCredentials() *DatabaseCred {
 
-	err := godotenv.Load()
+// 	err := godotenv.Load()
 
-	if err != nil {
-		panic("[Database] Error loading environment variables")
-	}
+// 	if err != nil {
+// 		panic("[Database] Error loading environment variables")
+// 	}
 
-	var cred *DatabaseCred = &DatabaseCred{
-		Host:     "localhost",
-		Port:     "5432",
-		User:     os.Getenv("DB_USER"),
-		Dbname:   os.Getenv("DB_NAME"),
-		Password: os.Getenv("DB_PASSWORD"),
-		SslMode:  "disable",
-	}
-	return cred
-}
+// 	var cred *DatabaseCred = &DatabaseCred{
+// 		Host:     "localhost",
+// 		Port:     "5432",
+// 		User:     os.Getenv("DB_USER"),
+// 		Dbname:   os.Getenv("DB_NAME"),
+// 		Password: os.Getenv("DB_PASSWORD"),
+// 		SslMode:  "disable",
+// 	}
+// 	return cred
+// }
 
 func DatabaseClient() {
 
@@ -47,6 +45,8 @@ func DatabaseClient() {
 	}
 	ctx := context.Background()
 	defer client.Close()
+
+	// database initial migration
 	if err := client.Schema.Create(ctx); err != nil {
 		log.Printf("failed creating schema resources: %v", err)
 	}
