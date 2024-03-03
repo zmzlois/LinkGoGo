@@ -10,7 +10,10 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/zmzlois/LinkGoGo/web/utils"
+import (
+	"github.com/zmzlois/LinkGoGo/web/templates/icons"
+	"github.com/zmzlois/LinkGoGo/web/utils"
+)
 
 func EditBio() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -25,20 +28,28 @@ func EditBio() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div x-data=\"{ open: false }\" class=\"h-6 w-full text-center\"><h2 @click=\"open = ! open\" x-show=\"!open\" class=\"text-base text-zinc-700 font-medium\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div x-data=\"{ open: false }\" class=\" h-6 w-full text-center\"><div class=\"group relative inset-0 \"><div class=\"absolute z-20 bottom-1 right-6 border-zinc-300 hidden group-hover:block\" x-show=\"!open\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = icons.PenIcon("text-zinc-100 w-4 h-4").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><h2 @click=\"open = ! open\" x-show=\"!open\" class=\" text-base text-zinc-700 font-medium\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(utils.MockData["bio"])
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/edit_bio.templ`, Line: 6, Col: 111}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/edit_bio.templ`, Line: 14, Col: 113}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><input x-show=\"open\" @click.outside=\"open = false\" type=\"text\" class=\" border-b-2 rounded-sm border-zinc-200 px-4 py-[1px] text-center text-zinc-900\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2></div><input x-show=\"open\" @click.outside=\"open = false\" type=\"text\" class=\" border-b-2 rounded-sm border-zinc-200 px-4 py-[1px] text-center text-zinc-900\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
