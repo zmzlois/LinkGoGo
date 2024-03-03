@@ -1,10 +1,19 @@
 package partials 
 
-import "github.com/zmzlois/LinkGoGo/web/utils"
+import (
+	"github.com/zmzlois/LinkGoGo/web/utils"
+	"github.com/zmzlois/LinkGoGo/web/templates/icons"
+)
 
 templ EditName() {
 	<div x-data="{ open: false }" class="h-8 text-center w-full">
-		<h1 @click="open = ! open" x-show="!open" class="text-2xl tracking-tight font-bold text-zinc-950">{ utils.MockData["name"] }</h1>
+		<div class="group relative inset-0 ">
+			<div class="absolute z-20 bottom-2  right-6 border-zinc-300 hidden group-hover:block" x-show="!open">
+				// <img src="dist/pen.svg" class="text-zinc-300 w-8 h-8"/>
+				@icons.PenIcon("text-zinc-100 w-4 h-4")
+			</div>
+			<h1 @click="open = ! open" x-show="!open" class="text-2xl tracking-tight font-bold text-zinc-950">{ utils.MockData["name"] }</h1>
+		</div>
 		<input x-show="open" @click.outside="open = false" type="text" class="border-b-2 text-center rounded-sm border-zinc-200 px-4 py-1 font-semibold text-zinc-900" value={ utils.MockData["name"] }/>
 	</div>
 }
