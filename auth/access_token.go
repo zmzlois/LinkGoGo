@@ -186,6 +186,8 @@ func (dc *Client) GetOnlyAccessToken(code string) (string, error) {
 	// The Bearer access token
 	var accessToken string = data["token_type"].(string) + " " + data["access_token"].(string)
 
+	fmt.Printf("[Access Token] Data: %s\n Access Token: %s\n", data, accessToken)
+
 	// Return the bearer token from said data
 	return accessToken, nil
 }
