@@ -2,9 +2,12 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"os"
 
 	"entgo.io/ent/dialect"
+	"github.com/joho/godotenv"
 	"github.com/zmzlois/LinkGoGo/ent"
 )
 
@@ -17,28 +20,30 @@ type DatabaseCred struct {
 	SslMode  string
 }
 
-// func DBCredentials() *DatabaseCred {
+func DBCredentials() *DatabaseCred {
 
-// 	err := godotenv.Load()
+	err := godotenv.Load()
 
-// 	if err != nil {
-// 		panic("[Database] Error loading environment variables")
-// 	}
+	if err != nil {
+		panic("[Database] Error loading environment variables")
+	}
 
-// 	var cred *DatabaseCred = &DatabaseCred{
-// 		Host:     "localhost",
-// 		Port:     "5432",
-// 		User:     os.Getenv("DB_USER"),
-// 		Dbname:   os.Getenv("DB_NAME"),
-// 		Password: os.Getenv("DB_PASSWORD"),
-// 		SslMode:  "disable",
-// 	}
-// 	return cred
-// }
+	var cred *DatabaseCred = &DatabaseCred{
+		Host:     "localhost",
+		Port:     "5432",
+		User:     os.Getenv("DB_USER"),
+		Dbname:   os.Getenv("DB_NAME"),
+		Password: os.Getenv("DB_PASSWORD"),
+		SslMode:  "disable",
+	}
+	return cred
+}
 
-func DatabaseClient() {
+func DatabaseClient() *ent.Client {
 
-	client, err := ent.Open(dialect.Postgres, "host=localhost port=5432 user=postgres dbname=world password=postgres123 sslmode=disable")
+	cred := DBCredentials()
+
+	client, err := ent.Open(dialect.Postgres, fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable", cred.Host, cred.Port, cred.User, cred.Dbname, cred.Password))
 
 	if err != nil {
 		log.Printf("failed opening connection to postgres: %v", err)
@@ -50,6 +55,7 @@ func DatabaseClient() {
 	if err := client.Schema.Create(ctx); err != nil {
 		log.Printf("failed creating schema resources: %v", err)
 	}
+	return client
 
 }
 
