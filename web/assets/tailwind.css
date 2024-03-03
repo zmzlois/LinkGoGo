@@ -1,6 +1,4 @@
-.index {
-  height: 100vh;
-}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -82,6 +80,9 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }  
+  input {
+        @apply px-4 py-2 w-full focus-visible:outline-[1px] focus-visible:outline-zinc-300;
   }
 }
 
@@ -94,4 +95,6 @@
     .primary-btn {
         @apply bg-primary text-primary-foreground;
     }
+
+  
 }
