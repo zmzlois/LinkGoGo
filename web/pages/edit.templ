@@ -15,6 +15,7 @@ templ EditPage() {
 					}
 				</div>
 			}
+			// fetch user profile data
 			@shared.Container() {
 				<div class="py-8 flex flex-col items-center gap-4">
 					@partials.EditProfilePicture()
@@ -25,12 +26,23 @@ templ EditPage() {
 				</div>
 			}
 			@shared.Container() {
-				<div class="py-4" class="flex flex-col gap-4">
-					<h1>Create link</h1>
-					<form action="/create" method="post" class="flex flex-col gap-2">
-						<input type="text" name="url" placeholder="URL" class="rounded-sm"/>
+				<div class="py-4 flex flex-col gap-4 text-center items-center content-center" x-data="{ open: false }">
+					// show "Create a link" if user has pre-existing data
+					<span @click="open = ! open" x-show="!open">
+						@partials.Button() {
+							<span class="px-20 py-3 ">
+								<p>Create your first link</p>
+							</span>
+						}
+					</span>
+					<form action="/create" method="post" class="flex flex-col space-y-4 w-1/2" x-show="open" @click.outside="open = false">
 						<input type="text" name="title" placeholder="Title" class="rounded-sm"/>
-						<input type="submit" value="Create"/>
+						<input type="text" name="url" placeholder="URL" class="rounded-sm"/>
+						@partials.Button() {
+							<span class="px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-indigo-500">
+								<p>Create</p>
+							</span>
+						}
 					</form>
 				</div>
 			}
