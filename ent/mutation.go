@@ -293,9 +293,22 @@ func (m *LinksMutation) OldImage(ctx context.Context) (v string, err error) {
 	return oldValue.Image, nil
 }
 
+// ClearImage clears the value of the "image" field.
+func (m *LinksMutation) ClearImage() {
+	m.image = nil
+	m.clearedFields[links.FieldImage] = struct{}{}
+}
+
+// ImageCleared returns if the "image" field was cleared in this mutation.
+func (m *LinksMutation) ImageCleared() bool {
+	_, ok := m.clearedFields[links.FieldImage]
+	return ok
+}
+
 // ResetImage resets all changes to the "image" field.
 func (m *LinksMutation) ResetImage() {
 	m.image = nil
+	delete(m.clearedFields, links.FieldImage)
 }
 
 // SetDeleted sets the "deleted" field.
@@ -621,7 +634,11 @@ func (m *LinksMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *LinksMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(links.FieldImage) {
+		fields = append(fields, links.FieldImage)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -634,6 +651,11 @@ func (m *LinksMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *LinksMutation) ClearField(name string) error {
+	switch name {
+	case links.FieldImage:
+		m.ClearImage()
+		return nil
+	}
 	return fmt.Errorf("unknown Links nullable field %s", name)
 }
 
@@ -757,6 +779,8 @@ type UsersMutation struct {
 	description        *string
 	access_token       *string
 	refresh_token      *string
+	expires_in         *float64
+	addexpires_in      *float64
 	deleted            *bool
 	created_at         *time.Time
 	updated_at         *time.Time
@@ -1048,9 +1072,22 @@ func (m *UsersMutation) OldFirstName(ctx context.Context) (v string, err error) 
 	return oldValue.FirstName, nil
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (m *UsersMutation) ClearFirstName() {
+	m.first_name = nil
+	m.clearedFields[users.FieldFirstName] = struct{}{}
+}
+
+// FirstNameCleared returns if the "first_name" field was cleared in this mutation.
+func (m *UsersMutation) FirstNameCleared() bool {
+	_, ok := m.clearedFields[users.FieldFirstName]
+	return ok
+}
+
 // ResetFirstName resets all changes to the "first_name" field.
 func (m *UsersMutation) ResetFirstName() {
 	m.first_name = nil
+	delete(m.clearedFields, users.FieldFirstName)
 }
 
 // SetLastName sets the "last_name" field.
@@ -1084,9 +1121,22 @@ func (m *UsersMutation) OldLastName(ctx context.Context) (v string, err error) {
 	return oldValue.LastName, nil
 }
 
+// ClearLastName clears the value of the "last_name" field.
+func (m *UsersMutation) ClearLastName() {
+	m.last_name = nil
+	m.clearedFields[users.FieldLastName] = struct{}{}
+}
+
+// LastNameCleared returns if the "last_name" field was cleared in this mutation.
+func (m *UsersMutation) LastNameCleared() bool {
+	_, ok := m.clearedFields[users.FieldLastName]
+	return ok
+}
+
 // ResetLastName resets all changes to the "last_name" field.
 func (m *UsersMutation) ResetLastName() {
 	m.last_name = nil
+	delete(m.clearedFields, users.FieldLastName)
 }
 
 // SetEmail sets the "email" field.
@@ -1120,9 +1170,22 @@ func (m *UsersMutation) OldEmail(ctx context.Context) (v string, err error) {
 	return oldValue.Email, nil
 }
 
+// ClearEmail clears the value of the "email" field.
+func (m *UsersMutation) ClearEmail() {
+	m.email = nil
+	m.clearedFields[users.FieldEmail] = struct{}{}
+}
+
+// EmailCleared returns if the "email" field was cleared in this mutation.
+func (m *UsersMutation) EmailCleared() bool {
+	_, ok := m.clearedFields[users.FieldEmail]
+	return ok
+}
+
 // ResetEmail resets all changes to the "email" field.
 func (m *UsersMutation) ResetEmail() {
 	m.email = nil
+	delete(m.clearedFields, users.FieldEmail)
 }
 
 // SetAvatar sets the "avatar" field.
@@ -1156,9 +1219,22 @@ func (m *UsersMutation) OldAvatar(ctx context.Context) (v string, err error) {
 	return oldValue.Avatar, nil
 }
 
+// ClearAvatar clears the value of the "avatar" field.
+func (m *UsersMutation) ClearAvatar() {
+	m.avatar = nil
+	m.clearedFields[users.FieldAvatar] = struct{}{}
+}
+
+// AvatarCleared returns if the "avatar" field was cleared in this mutation.
+func (m *UsersMutation) AvatarCleared() bool {
+	_, ok := m.clearedFields[users.FieldAvatar]
+	return ok
+}
+
 // ResetAvatar resets all changes to the "avatar" field.
 func (m *UsersMutation) ResetAvatar() {
 	m.avatar = nil
+	delete(m.clearedFields, users.FieldAvatar)
 }
 
 // SetDescription sets the "description" field.
@@ -1192,9 +1268,22 @@ func (m *UsersMutation) OldDescription(ctx context.Context) (v string, err error
 	return oldValue.Description, nil
 }
 
+// ClearDescription clears the value of the "description" field.
+func (m *UsersMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[users.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *UsersMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[users.FieldDescription]
+	return ok
+}
+
 // ResetDescription resets all changes to the "description" field.
 func (m *UsersMutation) ResetDescription() {
 	m.description = nil
+	delete(m.clearedFields, users.FieldDescription)
 }
 
 // SetAccessToken sets the "access_token" field.
@@ -1228,9 +1317,22 @@ func (m *UsersMutation) OldAccessToken(ctx context.Context) (v string, err error
 	return oldValue.AccessToken, nil
 }
 
+// ClearAccessToken clears the value of the "access_token" field.
+func (m *UsersMutation) ClearAccessToken() {
+	m.access_token = nil
+	m.clearedFields[users.FieldAccessToken] = struct{}{}
+}
+
+// AccessTokenCleared returns if the "access_token" field was cleared in this mutation.
+func (m *UsersMutation) AccessTokenCleared() bool {
+	_, ok := m.clearedFields[users.FieldAccessToken]
+	return ok
+}
+
 // ResetAccessToken resets all changes to the "access_token" field.
 func (m *UsersMutation) ResetAccessToken() {
 	m.access_token = nil
+	delete(m.clearedFields, users.FieldAccessToken)
 }
 
 // SetRefreshToken sets the "refresh_token" field.
@@ -1264,9 +1366,92 @@ func (m *UsersMutation) OldRefreshToken(ctx context.Context) (v string, err erro
 	return oldValue.RefreshToken, nil
 }
 
+// ClearRefreshToken clears the value of the "refresh_token" field.
+func (m *UsersMutation) ClearRefreshToken() {
+	m.refresh_token = nil
+	m.clearedFields[users.FieldRefreshToken] = struct{}{}
+}
+
+// RefreshTokenCleared returns if the "refresh_token" field was cleared in this mutation.
+func (m *UsersMutation) RefreshTokenCleared() bool {
+	_, ok := m.clearedFields[users.FieldRefreshToken]
+	return ok
+}
+
 // ResetRefreshToken resets all changes to the "refresh_token" field.
 func (m *UsersMutation) ResetRefreshToken() {
 	m.refresh_token = nil
+	delete(m.clearedFields, users.FieldRefreshToken)
+}
+
+// SetExpiresIn sets the "expires_in" field.
+func (m *UsersMutation) SetExpiresIn(f float64) {
+	m.expires_in = &f
+	m.addexpires_in = nil
+}
+
+// ExpiresIn returns the value of the "expires_in" field in the mutation.
+func (m *UsersMutation) ExpiresIn() (r float64, exists bool) {
+	v := m.expires_in
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiresIn returns the old "expires_in" field's value of the Users entity.
+// If the Users object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsersMutation) OldExpiresIn(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiresIn is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiresIn requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiresIn: %w", err)
+	}
+	return oldValue.ExpiresIn, nil
+}
+
+// AddExpiresIn adds f to the "expires_in" field.
+func (m *UsersMutation) AddExpiresIn(f float64) {
+	if m.addexpires_in != nil {
+		*m.addexpires_in += f
+	} else {
+		m.addexpires_in = &f
+	}
+}
+
+// AddedExpiresIn returns the value that was added to the "expires_in" field in this mutation.
+func (m *UsersMutation) AddedExpiresIn() (r float64, exists bool) {
+	v := m.addexpires_in
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearExpiresIn clears the value of the "expires_in" field.
+func (m *UsersMutation) ClearExpiresIn() {
+	m.expires_in = nil
+	m.addexpires_in = nil
+	m.clearedFields[users.FieldExpiresIn] = struct{}{}
+}
+
+// ExpiresInCleared returns if the "expires_in" field was cleared in this mutation.
+func (m *UsersMutation) ExpiresInCleared() bool {
+	_, ok := m.clearedFields[users.FieldExpiresIn]
+	return ok
+}
+
+// ResetExpiresIn resets all changes to the "expires_in" field.
+func (m *UsersMutation) ResetExpiresIn() {
+	m.expires_in = nil
+	m.addexpires_in = nil
+	delete(m.clearedFields, users.FieldExpiresIn)
 }
 
 // SetDeleted sets the "deleted" field.
@@ -1465,7 +1650,7 @@ func (m *UsersMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UsersMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.external_id != nil {
 		fields = append(fields, users.FieldExternalID)
 	}
@@ -1498,6 +1683,9 @@ func (m *UsersMutation) Fields() []string {
 	}
 	if m.refresh_token != nil {
 		fields = append(fields, users.FieldRefreshToken)
+	}
+	if m.expires_in != nil {
+		fields = append(fields, users.FieldExpiresIn)
 	}
 	if m.deleted != nil {
 		fields = append(fields, users.FieldDeleted)
@@ -1538,6 +1726,8 @@ func (m *UsersMutation) Field(name string) (ent.Value, bool) {
 		return m.AccessToken()
 	case users.FieldRefreshToken:
 		return m.RefreshToken()
+	case users.FieldExpiresIn:
+		return m.ExpiresIn()
 	case users.FieldDeleted:
 		return m.Deleted()
 	case users.FieldCreatedAt:
@@ -1575,6 +1765,8 @@ func (m *UsersMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldAccessToken(ctx)
 	case users.FieldRefreshToken:
 		return m.OldRefreshToken(ctx)
+	case users.FieldExpiresIn:
+		return m.OldExpiresIn(ctx)
 	case users.FieldDeleted:
 		return m.OldDeleted(ctx)
 	case users.FieldCreatedAt:
@@ -1667,6 +1859,13 @@ func (m *UsersMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRefreshToken(v)
 		return nil
+	case users.FieldExpiresIn:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiresIn(v)
+		return nil
 	case users.FieldDeleted:
 		v, ok := value.(bool)
 		if !ok {
@@ -1695,13 +1894,21 @@ func (m *UsersMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *UsersMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addexpires_in != nil {
+		fields = append(fields, users.FieldExpiresIn)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *UsersMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case users.FieldExpiresIn:
+		return m.AddedExpiresIn()
+	}
 	return nil, false
 }
 
@@ -1710,6 +1917,13 @@ func (m *UsersMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UsersMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case users.FieldExpiresIn:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpiresIn(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Users numeric field %s", name)
 }
@@ -1717,7 +1931,32 @@ func (m *UsersMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UsersMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(users.FieldFirstName) {
+		fields = append(fields, users.FieldFirstName)
+	}
+	if m.FieldCleared(users.FieldLastName) {
+		fields = append(fields, users.FieldLastName)
+	}
+	if m.FieldCleared(users.FieldEmail) {
+		fields = append(fields, users.FieldEmail)
+	}
+	if m.FieldCleared(users.FieldAvatar) {
+		fields = append(fields, users.FieldAvatar)
+	}
+	if m.FieldCleared(users.FieldDescription) {
+		fields = append(fields, users.FieldDescription)
+	}
+	if m.FieldCleared(users.FieldAccessToken) {
+		fields = append(fields, users.FieldAccessToken)
+	}
+	if m.FieldCleared(users.FieldRefreshToken) {
+		fields = append(fields, users.FieldRefreshToken)
+	}
+	if m.FieldCleared(users.FieldExpiresIn) {
+		fields = append(fields, users.FieldExpiresIn)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1730,6 +1969,32 @@ func (m *UsersMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UsersMutation) ClearField(name string) error {
+	switch name {
+	case users.FieldFirstName:
+		m.ClearFirstName()
+		return nil
+	case users.FieldLastName:
+		m.ClearLastName()
+		return nil
+	case users.FieldEmail:
+		m.ClearEmail()
+		return nil
+	case users.FieldAvatar:
+		m.ClearAvatar()
+		return nil
+	case users.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case users.FieldAccessToken:
+		m.ClearAccessToken()
+		return nil
+	case users.FieldRefreshToken:
+		m.ClearRefreshToken()
+		return nil
+	case users.FieldExpiresIn:
+		m.ClearExpiresIn()
+		return nil
+	}
 	return fmt.Errorf("unknown Users nullable field %s", name)
 }
 
@@ -1769,6 +2034,9 @@ func (m *UsersMutation) ResetField(name string) error {
 		return nil
 	case users.FieldRefreshToken:
 		m.ResetRefreshToken()
+		return nil
+	case users.FieldExpiresIn:
+		m.ResetExpiresIn()
 		return nil
 	case users.FieldDeleted:
 		m.ResetDeleted()

@@ -111,6 +111,11 @@ func RefreshToken(v string) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldRefreshToken, v))
 }
 
+// ExpiresIn applies equality check predicate on the "expires_in" field. It's identical to ExpiresInEQ.
+func ExpiresIn(v float64) predicate.Users {
+	return predicate.Users(sql.FieldEQ(FieldExpiresIn, v))
+}
+
 // Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
 func Deleted(v bool) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldDeleted, v))
@@ -441,6 +446,16 @@ func FirstNameHasSuffix(v string) predicate.Users {
 	return predicate.Users(sql.FieldHasSuffix(FieldFirstName, v))
 }
 
+// FirstNameIsNil applies the IsNil predicate on the "first_name" field.
+func FirstNameIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldFirstName))
+}
+
+// FirstNameNotNil applies the NotNil predicate on the "first_name" field.
+func FirstNameNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldFirstName))
+}
+
 // FirstNameEqualFold applies the EqualFold predicate on the "first_name" field.
 func FirstNameEqualFold(v string) predicate.Users {
 	return predicate.Users(sql.FieldEqualFold(FieldFirstName, v))
@@ -504,6 +519,16 @@ func LastNameHasPrefix(v string) predicate.Users {
 // LastNameHasSuffix applies the HasSuffix predicate on the "last_name" field.
 func LastNameHasSuffix(v string) predicate.Users {
 	return predicate.Users(sql.FieldHasSuffix(FieldLastName, v))
+}
+
+// LastNameIsNil applies the IsNil predicate on the "last_name" field.
+func LastNameIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldLastName))
+}
+
+// LastNameNotNil applies the NotNil predicate on the "last_name" field.
+func LastNameNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldLastName))
 }
 
 // LastNameEqualFold applies the EqualFold predicate on the "last_name" field.
@@ -571,6 +596,16 @@ func EmailHasSuffix(v string) predicate.Users {
 	return predicate.Users(sql.FieldHasSuffix(FieldEmail, v))
 }
 
+// EmailIsNil applies the IsNil predicate on the "email" field.
+func EmailIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldEmail))
+}
+
+// EmailNotNil applies the NotNil predicate on the "email" field.
+func EmailNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldEmail))
+}
+
 // EmailEqualFold applies the EqualFold predicate on the "email" field.
 func EmailEqualFold(v string) predicate.Users {
 	return predicate.Users(sql.FieldEqualFold(FieldEmail, v))
@@ -634,6 +669,16 @@ func AvatarHasPrefix(v string) predicate.Users {
 // AvatarHasSuffix applies the HasSuffix predicate on the "avatar" field.
 func AvatarHasSuffix(v string) predicate.Users {
 	return predicate.Users(sql.FieldHasSuffix(FieldAvatar, v))
+}
+
+// AvatarIsNil applies the IsNil predicate on the "avatar" field.
+func AvatarIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldAvatar))
+}
+
+// AvatarNotNil applies the NotNil predicate on the "avatar" field.
+func AvatarNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldAvatar))
 }
 
 // AvatarEqualFold applies the EqualFold predicate on the "avatar" field.
@@ -701,6 +746,16 @@ func DescriptionHasSuffix(v string) predicate.Users {
 	return predicate.Users(sql.FieldHasSuffix(FieldDescription, v))
 }
 
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldDescription))
+}
+
 // DescriptionEqualFold applies the EqualFold predicate on the "description" field.
 func DescriptionEqualFold(v string) predicate.Users {
 	return predicate.Users(sql.FieldEqualFold(FieldDescription, v))
@@ -764,6 +819,16 @@ func AccessTokenHasPrefix(v string) predicate.Users {
 // AccessTokenHasSuffix applies the HasSuffix predicate on the "access_token" field.
 func AccessTokenHasSuffix(v string) predicate.Users {
 	return predicate.Users(sql.FieldHasSuffix(FieldAccessToken, v))
+}
+
+// AccessTokenIsNil applies the IsNil predicate on the "access_token" field.
+func AccessTokenIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldAccessToken))
+}
+
+// AccessTokenNotNil applies the NotNil predicate on the "access_token" field.
+func AccessTokenNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldAccessToken))
 }
 
 // AccessTokenEqualFold applies the EqualFold predicate on the "access_token" field.
@@ -831,6 +896,16 @@ func RefreshTokenHasSuffix(v string) predicate.Users {
 	return predicate.Users(sql.FieldHasSuffix(FieldRefreshToken, v))
 }
 
+// RefreshTokenIsNil applies the IsNil predicate on the "refresh_token" field.
+func RefreshTokenIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldRefreshToken))
+}
+
+// RefreshTokenNotNil applies the NotNil predicate on the "refresh_token" field.
+func RefreshTokenNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldRefreshToken))
+}
+
 // RefreshTokenEqualFold applies the EqualFold predicate on the "refresh_token" field.
 func RefreshTokenEqualFold(v string) predicate.Users {
 	return predicate.Users(sql.FieldEqualFold(FieldRefreshToken, v))
@@ -839,6 +914,56 @@ func RefreshTokenEqualFold(v string) predicate.Users {
 // RefreshTokenContainsFold applies the ContainsFold predicate on the "refresh_token" field.
 func RefreshTokenContainsFold(v string) predicate.Users {
 	return predicate.Users(sql.FieldContainsFold(FieldRefreshToken, v))
+}
+
+// ExpiresInEQ applies the EQ predicate on the "expires_in" field.
+func ExpiresInEQ(v float64) predicate.Users {
+	return predicate.Users(sql.FieldEQ(FieldExpiresIn, v))
+}
+
+// ExpiresInNEQ applies the NEQ predicate on the "expires_in" field.
+func ExpiresInNEQ(v float64) predicate.Users {
+	return predicate.Users(sql.FieldNEQ(FieldExpiresIn, v))
+}
+
+// ExpiresInIn applies the In predicate on the "expires_in" field.
+func ExpiresInIn(vs ...float64) predicate.Users {
+	return predicate.Users(sql.FieldIn(FieldExpiresIn, vs...))
+}
+
+// ExpiresInNotIn applies the NotIn predicate on the "expires_in" field.
+func ExpiresInNotIn(vs ...float64) predicate.Users {
+	return predicate.Users(sql.FieldNotIn(FieldExpiresIn, vs...))
+}
+
+// ExpiresInGT applies the GT predicate on the "expires_in" field.
+func ExpiresInGT(v float64) predicate.Users {
+	return predicate.Users(sql.FieldGT(FieldExpiresIn, v))
+}
+
+// ExpiresInGTE applies the GTE predicate on the "expires_in" field.
+func ExpiresInGTE(v float64) predicate.Users {
+	return predicate.Users(sql.FieldGTE(FieldExpiresIn, v))
+}
+
+// ExpiresInLT applies the LT predicate on the "expires_in" field.
+func ExpiresInLT(v float64) predicate.Users {
+	return predicate.Users(sql.FieldLT(FieldExpiresIn, v))
+}
+
+// ExpiresInLTE applies the LTE predicate on the "expires_in" field.
+func ExpiresInLTE(v float64) predicate.Users {
+	return predicate.Users(sql.FieldLTE(FieldExpiresIn, v))
+}
+
+// ExpiresInIsNil applies the IsNil predicate on the "expires_in" field.
+func ExpiresInIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldExpiresIn))
+}
+
+// ExpiresInNotNil applies the NotNil predicate on the "expires_in" field.
+func ExpiresInNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldExpiresIn))
 }
 
 // DeletedEQ applies the EQ predicate on the "deleted" field.

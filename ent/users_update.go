@@ -100,6 +100,12 @@ func (uu *UsersUpdate) SetNillableFirstName(s *string) *UsersUpdate {
 	return uu
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (uu *UsersUpdate) ClearFirstName() *UsersUpdate {
+	uu.mutation.ClearFirstName()
+	return uu
+}
+
 // SetLastName sets the "last_name" field.
 func (uu *UsersUpdate) SetLastName(s string) *UsersUpdate {
 	uu.mutation.SetLastName(s)
@@ -111,6 +117,12 @@ func (uu *UsersUpdate) SetNillableLastName(s *string) *UsersUpdate {
 	if s != nil {
 		uu.SetLastName(*s)
 	}
+	return uu
+}
+
+// ClearLastName clears the value of the "last_name" field.
+func (uu *UsersUpdate) ClearLastName() *UsersUpdate {
+	uu.mutation.ClearLastName()
 	return uu
 }
 
@@ -128,6 +140,12 @@ func (uu *UsersUpdate) SetNillableEmail(s *string) *UsersUpdate {
 	return uu
 }
 
+// ClearEmail clears the value of the "email" field.
+func (uu *UsersUpdate) ClearEmail() *UsersUpdate {
+	uu.mutation.ClearEmail()
+	return uu
+}
+
 // SetAvatar sets the "avatar" field.
 func (uu *UsersUpdate) SetAvatar(s string) *UsersUpdate {
 	uu.mutation.SetAvatar(s)
@@ -139,6 +157,12 @@ func (uu *UsersUpdate) SetNillableAvatar(s *string) *UsersUpdate {
 	if s != nil {
 		uu.SetAvatar(*s)
 	}
+	return uu
+}
+
+// ClearAvatar clears the value of the "avatar" field.
+func (uu *UsersUpdate) ClearAvatar() *UsersUpdate {
+	uu.mutation.ClearAvatar()
 	return uu
 }
 
@@ -156,6 +180,12 @@ func (uu *UsersUpdate) SetNillableDescription(s *string) *UsersUpdate {
 	return uu
 }
 
+// ClearDescription clears the value of the "description" field.
+func (uu *UsersUpdate) ClearDescription() *UsersUpdate {
+	uu.mutation.ClearDescription()
+	return uu
+}
+
 // SetAccessToken sets the "access_token" field.
 func (uu *UsersUpdate) SetAccessToken(s string) *UsersUpdate {
 	uu.mutation.SetAccessToken(s)
@@ -170,6 +200,12 @@ func (uu *UsersUpdate) SetNillableAccessToken(s *string) *UsersUpdate {
 	return uu
 }
 
+// ClearAccessToken clears the value of the "access_token" field.
+func (uu *UsersUpdate) ClearAccessToken() *UsersUpdate {
+	uu.mutation.ClearAccessToken()
+	return uu
+}
+
 // SetRefreshToken sets the "refresh_token" field.
 func (uu *UsersUpdate) SetRefreshToken(s string) *UsersUpdate {
 	uu.mutation.SetRefreshToken(s)
@@ -181,6 +217,39 @@ func (uu *UsersUpdate) SetNillableRefreshToken(s *string) *UsersUpdate {
 	if s != nil {
 		uu.SetRefreshToken(*s)
 	}
+	return uu
+}
+
+// ClearRefreshToken clears the value of the "refresh_token" field.
+func (uu *UsersUpdate) ClearRefreshToken() *UsersUpdate {
+	uu.mutation.ClearRefreshToken()
+	return uu
+}
+
+// SetExpiresIn sets the "expires_in" field.
+func (uu *UsersUpdate) SetExpiresIn(f float64) *UsersUpdate {
+	uu.mutation.ResetExpiresIn()
+	uu.mutation.SetExpiresIn(f)
+	return uu
+}
+
+// SetNillableExpiresIn sets the "expires_in" field if the given value is not nil.
+func (uu *UsersUpdate) SetNillableExpiresIn(f *float64) *UsersUpdate {
+	if f != nil {
+		uu.SetExpiresIn(*f)
+	}
+	return uu
+}
+
+// AddExpiresIn adds f to the "expires_in" field.
+func (uu *UsersUpdate) AddExpiresIn(f float64) *UsersUpdate {
+	uu.mutation.AddExpiresIn(f)
+	return uu
+}
+
+// ClearExpiresIn clears the value of the "expires_in" field.
+func (uu *UsersUpdate) ClearExpiresIn() *UsersUpdate {
+	uu.mutation.ClearExpiresIn()
 	return uu
 }
 
@@ -297,11 +366,6 @@ func (uu *UsersUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (uu *UsersUpdate) check() error {
-	if v, ok := uu.mutation.ExternalID(); ok {
-		if err := users.ExternalIDValidator(v); err != nil {
-			return &ValidationError{Name: "external_id", err: fmt.Errorf(`ent: validator failed for field "Users.external_id": %w`, err)}
-		}
-	}
 	if v, ok := uu.mutation.Username(); ok {
 		if err := users.UsernameValidator(v); err != nil {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "Users.username": %w`, err)}
@@ -382,23 +446,53 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.FirstName(); ok {
 		_spec.SetField(users.FieldFirstName, field.TypeString, value)
 	}
+	if uu.mutation.FirstNameCleared() {
+		_spec.ClearField(users.FieldFirstName, field.TypeString)
+	}
 	if value, ok := uu.mutation.LastName(); ok {
 		_spec.SetField(users.FieldLastName, field.TypeString, value)
+	}
+	if uu.mutation.LastNameCleared() {
+		_spec.ClearField(users.FieldLastName, field.TypeString)
 	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(users.FieldEmail, field.TypeString, value)
 	}
+	if uu.mutation.EmailCleared() {
+		_spec.ClearField(users.FieldEmail, field.TypeString)
+	}
 	if value, ok := uu.mutation.Avatar(); ok {
 		_spec.SetField(users.FieldAvatar, field.TypeString, value)
+	}
+	if uu.mutation.AvatarCleared() {
+		_spec.ClearField(users.FieldAvatar, field.TypeString)
 	}
 	if value, ok := uu.mutation.Description(); ok {
 		_spec.SetField(users.FieldDescription, field.TypeString, value)
 	}
+	if uu.mutation.DescriptionCleared() {
+		_spec.ClearField(users.FieldDescription, field.TypeString)
+	}
 	if value, ok := uu.mutation.AccessToken(); ok {
 		_spec.SetField(users.FieldAccessToken, field.TypeString, value)
 	}
+	if uu.mutation.AccessTokenCleared() {
+		_spec.ClearField(users.FieldAccessToken, field.TypeString)
+	}
 	if value, ok := uu.mutation.RefreshToken(); ok {
 		_spec.SetField(users.FieldRefreshToken, field.TypeString, value)
+	}
+	if uu.mutation.RefreshTokenCleared() {
+		_spec.ClearField(users.FieldRefreshToken, field.TypeString)
+	}
+	if value, ok := uu.mutation.ExpiresIn(); ok {
+		_spec.SetField(users.FieldExpiresIn, field.TypeFloat64, value)
+	}
+	if value, ok := uu.mutation.AddedExpiresIn(); ok {
+		_spec.AddField(users.FieldExpiresIn, field.TypeFloat64, value)
+	}
+	if uu.mutation.ExpiresInCleared() {
+		_spec.ClearField(users.FieldExpiresIn, field.TypeFloat64)
 	}
 	if value, ok := uu.mutation.Deleted(); ok {
 		_spec.SetField(users.FieldDeleted, field.TypeBool, value)
@@ -544,6 +638,12 @@ func (uuo *UsersUpdateOne) SetNillableFirstName(s *string) *UsersUpdateOne {
 	return uuo
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (uuo *UsersUpdateOne) ClearFirstName() *UsersUpdateOne {
+	uuo.mutation.ClearFirstName()
+	return uuo
+}
+
 // SetLastName sets the "last_name" field.
 func (uuo *UsersUpdateOne) SetLastName(s string) *UsersUpdateOne {
 	uuo.mutation.SetLastName(s)
@@ -555,6 +655,12 @@ func (uuo *UsersUpdateOne) SetNillableLastName(s *string) *UsersUpdateOne {
 	if s != nil {
 		uuo.SetLastName(*s)
 	}
+	return uuo
+}
+
+// ClearLastName clears the value of the "last_name" field.
+func (uuo *UsersUpdateOne) ClearLastName() *UsersUpdateOne {
+	uuo.mutation.ClearLastName()
 	return uuo
 }
 
@@ -572,6 +678,12 @@ func (uuo *UsersUpdateOne) SetNillableEmail(s *string) *UsersUpdateOne {
 	return uuo
 }
 
+// ClearEmail clears the value of the "email" field.
+func (uuo *UsersUpdateOne) ClearEmail() *UsersUpdateOne {
+	uuo.mutation.ClearEmail()
+	return uuo
+}
+
 // SetAvatar sets the "avatar" field.
 func (uuo *UsersUpdateOne) SetAvatar(s string) *UsersUpdateOne {
 	uuo.mutation.SetAvatar(s)
@@ -583,6 +695,12 @@ func (uuo *UsersUpdateOne) SetNillableAvatar(s *string) *UsersUpdateOne {
 	if s != nil {
 		uuo.SetAvatar(*s)
 	}
+	return uuo
+}
+
+// ClearAvatar clears the value of the "avatar" field.
+func (uuo *UsersUpdateOne) ClearAvatar() *UsersUpdateOne {
+	uuo.mutation.ClearAvatar()
 	return uuo
 }
 
@@ -600,6 +718,12 @@ func (uuo *UsersUpdateOne) SetNillableDescription(s *string) *UsersUpdateOne {
 	return uuo
 }
 
+// ClearDescription clears the value of the "description" field.
+func (uuo *UsersUpdateOne) ClearDescription() *UsersUpdateOne {
+	uuo.mutation.ClearDescription()
+	return uuo
+}
+
 // SetAccessToken sets the "access_token" field.
 func (uuo *UsersUpdateOne) SetAccessToken(s string) *UsersUpdateOne {
 	uuo.mutation.SetAccessToken(s)
@@ -614,6 +738,12 @@ func (uuo *UsersUpdateOne) SetNillableAccessToken(s *string) *UsersUpdateOne {
 	return uuo
 }
 
+// ClearAccessToken clears the value of the "access_token" field.
+func (uuo *UsersUpdateOne) ClearAccessToken() *UsersUpdateOne {
+	uuo.mutation.ClearAccessToken()
+	return uuo
+}
+
 // SetRefreshToken sets the "refresh_token" field.
 func (uuo *UsersUpdateOne) SetRefreshToken(s string) *UsersUpdateOne {
 	uuo.mutation.SetRefreshToken(s)
@@ -625,6 +755,39 @@ func (uuo *UsersUpdateOne) SetNillableRefreshToken(s *string) *UsersUpdateOne {
 	if s != nil {
 		uuo.SetRefreshToken(*s)
 	}
+	return uuo
+}
+
+// ClearRefreshToken clears the value of the "refresh_token" field.
+func (uuo *UsersUpdateOne) ClearRefreshToken() *UsersUpdateOne {
+	uuo.mutation.ClearRefreshToken()
+	return uuo
+}
+
+// SetExpiresIn sets the "expires_in" field.
+func (uuo *UsersUpdateOne) SetExpiresIn(f float64) *UsersUpdateOne {
+	uuo.mutation.ResetExpiresIn()
+	uuo.mutation.SetExpiresIn(f)
+	return uuo
+}
+
+// SetNillableExpiresIn sets the "expires_in" field if the given value is not nil.
+func (uuo *UsersUpdateOne) SetNillableExpiresIn(f *float64) *UsersUpdateOne {
+	if f != nil {
+		uuo.SetExpiresIn(*f)
+	}
+	return uuo
+}
+
+// AddExpiresIn adds f to the "expires_in" field.
+func (uuo *UsersUpdateOne) AddExpiresIn(f float64) *UsersUpdateOne {
+	uuo.mutation.AddExpiresIn(f)
+	return uuo
+}
+
+// ClearExpiresIn clears the value of the "expires_in" field.
+func (uuo *UsersUpdateOne) ClearExpiresIn() *UsersUpdateOne {
+	uuo.mutation.ClearExpiresIn()
 	return uuo
 }
 
@@ -754,11 +917,6 @@ func (uuo *UsersUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (uuo *UsersUpdateOne) check() error {
-	if v, ok := uuo.mutation.ExternalID(); ok {
-		if err := users.ExternalIDValidator(v); err != nil {
-			return &ValidationError{Name: "external_id", err: fmt.Errorf(`ent: validator failed for field "Users.external_id": %w`, err)}
-		}
-	}
 	if v, ok := uuo.mutation.Username(); ok {
 		if err := users.UsernameValidator(v); err != nil {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "Users.username": %w`, err)}
@@ -856,23 +1014,53 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 	if value, ok := uuo.mutation.FirstName(); ok {
 		_spec.SetField(users.FieldFirstName, field.TypeString, value)
 	}
+	if uuo.mutation.FirstNameCleared() {
+		_spec.ClearField(users.FieldFirstName, field.TypeString)
+	}
 	if value, ok := uuo.mutation.LastName(); ok {
 		_spec.SetField(users.FieldLastName, field.TypeString, value)
+	}
+	if uuo.mutation.LastNameCleared() {
+		_spec.ClearField(users.FieldLastName, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(users.FieldEmail, field.TypeString, value)
 	}
+	if uuo.mutation.EmailCleared() {
+		_spec.ClearField(users.FieldEmail, field.TypeString)
+	}
 	if value, ok := uuo.mutation.Avatar(); ok {
 		_spec.SetField(users.FieldAvatar, field.TypeString, value)
+	}
+	if uuo.mutation.AvatarCleared() {
+		_spec.ClearField(users.FieldAvatar, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Description(); ok {
 		_spec.SetField(users.FieldDescription, field.TypeString, value)
 	}
+	if uuo.mutation.DescriptionCleared() {
+		_spec.ClearField(users.FieldDescription, field.TypeString)
+	}
 	if value, ok := uuo.mutation.AccessToken(); ok {
 		_spec.SetField(users.FieldAccessToken, field.TypeString, value)
 	}
+	if uuo.mutation.AccessTokenCleared() {
+		_spec.ClearField(users.FieldAccessToken, field.TypeString)
+	}
 	if value, ok := uuo.mutation.RefreshToken(); ok {
 		_spec.SetField(users.FieldRefreshToken, field.TypeString, value)
+	}
+	if uuo.mutation.RefreshTokenCleared() {
+		_spec.ClearField(users.FieldRefreshToken, field.TypeString)
+	}
+	if value, ok := uuo.mutation.ExpiresIn(); ok {
+		_spec.SetField(users.FieldExpiresIn, field.TypeFloat64, value)
+	}
+	if value, ok := uuo.mutation.AddedExpiresIn(); ok {
+		_spec.AddField(users.FieldExpiresIn, field.TypeFloat64, value)
+	}
+	if uuo.mutation.ExpiresInCleared() {
+		_spec.ClearField(users.FieldExpiresIn, field.TypeFloat64)
 	}
 	if value, ok := uuo.mutation.Deleted(); ok {
 		_spec.SetField(users.FieldDeleted, field.TypeBool, value)

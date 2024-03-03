@@ -40,6 +40,8 @@ type Users struct {
 	AccessToken string `json:"access_token,omitempty"`
 	// RefreshToken holds the value of the "refresh_token" field.
 	RefreshToken string `json:"refresh_token,omitempty"`
+	// ExpiresIn holds the value of the "expires_in" field.
+	ExpiresIn float64 `json:"expires_in,omitempty"`
 	// Deleted holds the value of the "deleted" field.
 	Deleted bool `json:"deleted,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -77,6 +79,8 @@ func (*Users) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case users.FieldDeleted:
 			values[i] = new(sql.NullBool)
+		case users.FieldExpiresIn:
+			values[i] = new(sql.NullFloat64)
 		case users.FieldExternalID, users.FieldUsername, users.FieldGlobalName, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken:
 			values[i] = new(sql.NullString)
 		case users.FieldCreatedAt, users.FieldUpdatedAt:
@@ -170,6 +174,12 @@ func (u *Users) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.RefreshToken = value.String
 			}
+		case users.FieldExpiresIn:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field expires_in", values[i])
+			} else if value.Valid {
+				u.ExpiresIn = value.Float64
+			}
 		case users.FieldDeleted:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted", values[i])
@@ -261,6 +271,9 @@ func (u *Users) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("refresh_token=")
 	builder.WriteString(u.RefreshToken)
+	builder.WriteString(", ")
+	builder.WriteString("expires_in=")
+	builder.WriteString(fmt.Sprintf("%v", u.ExpiresIn))
 	builder.WriteString(", ")
 	builder.WriteString("deleted=")
 	builder.WriteString(fmt.Sprintf("%v", u.Deleted))

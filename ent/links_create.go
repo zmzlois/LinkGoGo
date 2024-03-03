@@ -46,6 +46,14 @@ func (lc *LinksCreate) SetImage(s string) *LinksCreate {
 	return lc
 }
 
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (lc *LinksCreate) SetNillableImage(s *string) *LinksCreate {
+	if s != nil {
+		lc.SetImage(*s)
+	}
+	return lc
+}
+
 // SetDeleted sets the "deleted" field.
 func (lc *LinksCreate) SetDeleted(b bool) *LinksCreate {
 	lc.mutation.SetDeleted(b)
@@ -180,9 +188,6 @@ func (lc *LinksCreate) check() error {
 		if err := links.TitleValidator(v); err != nil {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Links.title": %w`, err)}
 		}
-	}
-	if _, ok := lc.mutation.Image(); !ok {
-		return &ValidationError{Name: "image", err: errors.New(`ent: missing required field "Links.image"`)}
 	}
 	if v, ok := lc.mutation.Image(); ok {
 		if err := links.ImageValidator(v); err != nil {

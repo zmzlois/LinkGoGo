@@ -86,6 +86,12 @@ func (lu *LinksUpdate) SetNillableImage(s *string) *LinksUpdate {
 	return lu
 }
 
+// ClearImage clears the value of the "image" field.
+func (lu *LinksUpdate) ClearImage() *LinksUpdate {
+	lu.mutation.ClearImage()
+	return lu
+}
+
 // SetDeleted sets the "deleted" field.
 func (lu *LinksUpdate) SetDeleted(b bool) *LinksUpdate {
 	lu.mutation.SetDeleted(b)
@@ -216,6 +222,9 @@ func (lu *LinksUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := lu.mutation.Image(); ok {
 		_spec.SetField(links.FieldImage, field.TypeString, value)
 	}
+	if lu.mutation.ImageCleared() {
+		_spec.ClearField(links.FieldImage, field.TypeString)
+	}
 	if value, ok := lu.mutation.Deleted(); ok {
 		_spec.SetField(links.FieldDeleted, field.TypeBool, value)
 	}
@@ -327,6 +336,12 @@ func (luo *LinksUpdateOne) SetNillableImage(s *string) *LinksUpdateOne {
 	if s != nil {
 		luo.SetImage(*s)
 	}
+	return luo
+}
+
+// ClearImage clears the value of the "image" field.
+func (luo *LinksUpdateOne) ClearImage() *LinksUpdateOne {
+	luo.mutation.ClearImage()
 	return luo
 }
 
@@ -489,6 +504,9 @@ func (luo *LinksUpdateOne) sqlSave(ctx context.Context) (_node *Links, err error
 	}
 	if value, ok := luo.mutation.Image(); ok {
 		_spec.SetField(links.FieldImage, field.TypeString, value)
+	}
+	if luo.mutation.ImageCleared() {
+		_spec.ClearField(links.FieldImage, field.TypeString)
 	}
 	if value, ok := luo.mutation.Deleted(); ok {
 		_spec.SetField(links.FieldDeleted, field.TypeBool, value)

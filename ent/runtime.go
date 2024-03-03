@@ -49,10 +49,6 @@ func init() {
 	links.DefaultID = linksDescID.Default.(func() uuid.UUID)
 	usersFields := schema.Users{}.Fields()
 	_ = usersFields
-	// usersDescExternalID is the schema descriptor for external_id field.
-	usersDescExternalID := usersFields[0].Descriptor()
-	// users.ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
-	users.ExternalIDValidator = usersDescExternalID.Validators[0].(func(string) error)
 	// usersDescUsername is the schema descriptor for username field.
 	usersDescUsername := usersFields[1].Descriptor()
 	// users.UsernameValidator is a validator for the "username" field. It is called by the builders before save.
@@ -94,21 +90,21 @@ func init() {
 	// users.RefreshTokenValidator is a validator for the "refresh_token" field. It is called by the builders before save.
 	users.RefreshTokenValidator = usersDescRefreshToken.Validators[0].(func(string) error)
 	// usersDescDeleted is the schema descriptor for deleted field.
-	usersDescDeleted := usersFields[12].Descriptor()
+	usersDescDeleted := usersFields[13].Descriptor()
 	// users.DefaultDeleted holds the default value on creation for the deleted field.
 	users.DefaultDeleted = usersDescDeleted.Default.(bool)
 	// usersDescCreatedAt is the schema descriptor for created_at field.
-	usersDescCreatedAt := usersFields[13].Descriptor()
+	usersDescCreatedAt := usersFields[14].Descriptor()
 	// users.DefaultCreatedAt holds the default value on creation for the created_at field.
 	users.DefaultCreatedAt = usersDescCreatedAt.Default.(func() time.Time)
 	// usersDescUpdatedAt is the schema descriptor for updated_at field.
-	usersDescUpdatedAt := usersFields[14].Descriptor()
+	usersDescUpdatedAt := usersFields[15].Descriptor()
 	// users.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	users.DefaultUpdatedAt = usersDescUpdatedAt.Default.(func() time.Time)
 	// users.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	users.UpdateDefaultUpdatedAt = usersDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// usersDescID is the schema descriptor for id field.
-	usersDescID := usersFields[11].Descriptor()
+	usersDescID := usersFields[12].Descriptor()
 	// users.DefaultID holds the default value on creation for the id field.
 	users.DefaultID = usersDescID.Default.(func() uuid.UUID)
 }

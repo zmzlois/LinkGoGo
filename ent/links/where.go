@@ -296,6 +296,16 @@ func ImageHasSuffix(v string) predicate.Links {
 	return predicate.Links(sql.FieldHasSuffix(FieldImage, v))
 }
 
+// ImageIsNil applies the IsNil predicate on the "image" field.
+func ImageIsNil() predicate.Links {
+	return predicate.Links(sql.FieldIsNull(FieldImage))
+}
+
+// ImageNotNil applies the NotNil predicate on the "image" field.
+func ImageNotNil() predicate.Links {
+	return predicate.Links(sql.FieldNotNull(FieldImage))
+}
+
 // ImageEqualFold applies the EqualFold predicate on the "image" field.
 func ImageEqualFold(v string) predicate.Links {
 	return predicate.Links(sql.FieldEqualFold(FieldImage, v))

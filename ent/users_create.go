@@ -52,9 +52,25 @@ func (uc *UsersCreate) SetFirstName(s string) *UsersCreate {
 	return uc
 }
 
+// SetNillableFirstName sets the "first_name" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableFirstName(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetFirstName(*s)
+	}
+	return uc
+}
+
 // SetLastName sets the "last_name" field.
 func (uc *UsersCreate) SetLastName(s string) *UsersCreate {
 	uc.mutation.SetLastName(s)
+	return uc
+}
+
+// SetNillableLastName sets the "last_name" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableLastName(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetLastName(*s)
+	}
 	return uc
 }
 
@@ -64,9 +80,25 @@ func (uc *UsersCreate) SetEmail(s string) *UsersCreate {
 	return uc
 }
 
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableEmail(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetEmail(*s)
+	}
+	return uc
+}
+
 // SetAvatar sets the "avatar" field.
 func (uc *UsersCreate) SetAvatar(s string) *UsersCreate {
 	uc.mutation.SetAvatar(s)
+	return uc
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableAvatar(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetAvatar(*s)
+	}
 	return uc
 }
 
@@ -76,15 +108,53 @@ func (uc *UsersCreate) SetDescription(s string) *UsersCreate {
 	return uc
 }
 
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableDescription(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetDescription(*s)
+	}
+	return uc
+}
+
 // SetAccessToken sets the "access_token" field.
 func (uc *UsersCreate) SetAccessToken(s string) *UsersCreate {
 	uc.mutation.SetAccessToken(s)
 	return uc
 }
 
+// SetNillableAccessToken sets the "access_token" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableAccessToken(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetAccessToken(*s)
+	}
+	return uc
+}
+
 // SetRefreshToken sets the "refresh_token" field.
 func (uc *UsersCreate) SetRefreshToken(s string) *UsersCreate {
 	uc.mutation.SetRefreshToken(s)
+	return uc
+}
+
+// SetNillableRefreshToken sets the "refresh_token" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableRefreshToken(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetRefreshToken(*s)
+	}
+	return uc
+}
+
+// SetExpiresIn sets the "expires_in" field.
+func (uc *UsersCreate) SetExpiresIn(f float64) *UsersCreate {
+	uc.mutation.SetExpiresIn(f)
+	return uc
+}
+
+// SetNillableExpiresIn sets the "expires_in" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableExpiresIn(f *float64) *UsersCreate {
+	if f != nil {
+		uc.SetExpiresIn(*f)
+	}
 	return uc
 }
 
@@ -217,11 +287,6 @@ func (uc *UsersCreate) check() error {
 	if _, ok := uc.mutation.ExternalID(); !ok {
 		return &ValidationError{Name: "external_id", err: errors.New(`ent: missing required field "Users.external_id"`)}
 	}
-	if v, ok := uc.mutation.ExternalID(); ok {
-		if err := users.ExternalIDValidator(v); err != nil {
-			return &ValidationError{Name: "external_id", err: fmt.Errorf(`ent: validator failed for field "Users.external_id": %w`, err)}
-		}
-	}
 	if _, ok := uc.mutation.Username(); !ok {
 		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "Users.username"`)}
 	}
@@ -246,56 +311,35 @@ func (uc *UsersCreate) check() error {
 			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Users.slug": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.FirstName(); !ok {
-		return &ValidationError{Name: "first_name", err: errors.New(`ent: missing required field "Users.first_name"`)}
-	}
 	if v, ok := uc.mutation.FirstName(); ok {
 		if err := users.FirstNameValidator(v); err != nil {
 			return &ValidationError{Name: "first_name", err: fmt.Errorf(`ent: validator failed for field "Users.first_name": %w`, err)}
 		}
-	}
-	if _, ok := uc.mutation.LastName(); !ok {
-		return &ValidationError{Name: "last_name", err: errors.New(`ent: missing required field "Users.last_name"`)}
 	}
 	if v, ok := uc.mutation.LastName(); ok {
 		if err := users.LastNameValidator(v); err != nil {
 			return &ValidationError{Name: "last_name", err: fmt.Errorf(`ent: validator failed for field "Users.last_name": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.Email(); !ok {
-		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "Users.email"`)}
-	}
 	if v, ok := uc.mutation.Email(); ok {
 		if err := users.EmailValidator(v); err != nil {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "Users.email": %w`, err)}
 		}
-	}
-	if _, ok := uc.mutation.Avatar(); !ok {
-		return &ValidationError{Name: "avatar", err: errors.New(`ent: missing required field "Users.avatar"`)}
 	}
 	if v, ok := uc.mutation.Avatar(); ok {
 		if err := users.AvatarValidator(v); err != nil {
 			return &ValidationError{Name: "avatar", err: fmt.Errorf(`ent: validator failed for field "Users.avatar": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.Description(); !ok {
-		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "Users.description"`)}
-	}
 	if v, ok := uc.mutation.Description(); ok {
 		if err := users.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Users.description": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.AccessToken(); !ok {
-		return &ValidationError{Name: "access_token", err: errors.New(`ent: missing required field "Users.access_token"`)}
-	}
 	if v, ok := uc.mutation.AccessToken(); ok {
 		if err := users.AccessTokenValidator(v); err != nil {
 			return &ValidationError{Name: "access_token", err: fmt.Errorf(`ent: validator failed for field "Users.access_token": %w`, err)}
 		}
-	}
-	if _, ok := uc.mutation.RefreshToken(); !ok {
-		return &ValidationError{Name: "refresh_token", err: errors.New(`ent: missing required field "Users.refresh_token"`)}
 	}
 	if v, ok := uc.mutation.RefreshToken(); ok {
 		if err := users.RefreshTokenValidator(v); err != nil {
@@ -389,6 +433,10 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.RefreshToken(); ok {
 		_spec.SetField(users.FieldRefreshToken, field.TypeString, value)
 		_node.RefreshToken = value
+	}
+	if value, ok := uc.mutation.ExpiresIn(); ok {
+		_spec.SetField(users.FieldExpiresIn, field.TypeFloat64, value)
+		_node.ExpiresIn = value
 	}
 	if value, ok := uc.mutation.Deleted(); ok {
 		_spec.SetField(users.FieldDeleted, field.TypeBool, value)

@@ -37,6 +37,8 @@ const (
 	FieldAccessToken = "access_token"
 	// FieldRefreshToken holds the string denoting the refresh_token field in the database.
 	FieldRefreshToken = "refresh_token"
+	// FieldExpiresIn holds the string denoting the expires_in field in the database.
+	FieldExpiresIn = "expires_in"
 	// FieldDeleted holds the string denoting the deleted field in the database.
 	FieldDeleted = "deleted"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -70,6 +72,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldAccessToken,
 	FieldRefreshToken,
+	FieldExpiresIn,
 	FieldDeleted,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -86,8 +89,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
-	ExternalIDValidator func(string) error
 	// UsernameValidator is a validator for the "username" field. It is called by the builders before save.
 	UsernameValidator func(string) error
 	// GlobalNameValidator is a validator for the "global_name" field. It is called by the builders before save.
@@ -181,6 +182,11 @@ func ByAccessToken(opts ...sql.OrderTermOption) OrderOption {
 // ByRefreshToken orders the results by the refresh_token field.
 func ByRefreshToken(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRefreshToken, opts...).ToFunc()
+}
+
+// ByExpiresIn orders the results by the expires_in field.
+func ByExpiresIn(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiresIn, opts...).ToFunc()
 }
 
 // ByDeleted orders the results by the deleted field.

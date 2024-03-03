@@ -18,7 +18,7 @@ func (Links) Fields() []ent.Field {
 		field.UUID("user_id", uuid.UUID{}),
 		field.String("url").MaxLen(255),
 		field.String("title").MaxLen(255).Unique(),
-		field.String("image").MaxLen(255),
+		field.String("image").MaxLen(255).Optional(),
 	}
 
 	return append(links, BaseTable()...)
