@@ -11,7 +11,7 @@ import (
 // The GetUserData() function is used to send an api
 // request to the discord/users/@me endpoint with
 // the provided accessToken.
-func GetUserData(token string) (map[string]interface{}, error) {
+func (c *Client) GetUserData(token string) (map[string]interface{}, error) {
 	// Establish a new request object
 	req, err := http.NewRequest("GET", "https://discord.com/api/users/@me", nil)
 
