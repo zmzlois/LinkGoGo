@@ -3,11 +3,11 @@ package utils
 import "golang.org/x/crypto/bcrypt"
 
 func HashValue(v string) string {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(v), bcrypt.DefaultCost)
+	hashedString, err := bcrypt.GenerateFromPassword([]byte(v), bcrypt.DefaultCost)
 	if err != nil {
 		panic(err)
 	}
-	return string(hashedPassword)
+	return string(hashedString)
 }
 
 func CompareToHash(v, hash string) bool {
