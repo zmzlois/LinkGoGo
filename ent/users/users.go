@@ -41,6 +41,8 @@ const (
 	FieldScope = "scope"
 	// FieldExpiresIn holds the string denoting the expires_in field in the database.
 	FieldExpiresIn = "expires_in"
+	// FieldSessionState holds the string denoting the session_state field in the database.
+	FieldSessionState = "session_state"
 	// FieldDeleted holds the string denoting the deleted field in the database.
 	FieldDeleted = "deleted"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -49,6 +51,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgeUsersLinks holds the string denoting the users_links edge name in mutations.
 	EdgeUsersLinks = "users_links"
+	// EdgeUsersSessions holds the string denoting the users_sessions edge name in mutations.
+	EdgeUsersSessions = "users_sessions"
 	// Table holds the table name of the users in the database.
 	Table = "users"
 	// UsersLinksTable is the table that holds the users_links relation/edge.
@@ -58,6 +62,13 @@ const (
 	UsersLinksInverseTable = "links"
 	// UsersLinksColumn is the table column denoting the users_links relation/edge.
 	UsersLinksColumn = "user_id"
+	// UsersSessionsTable is the table that holds the users_sessions relation/edge.
+	UsersSessionsTable = "sessions"
+	// UsersSessionsInverseTable is the table name for the Session entity.
+	// It exists in this package in order to avoid circular dependency with the "session" package.
+	UsersSessionsInverseTable = "sessions"
+	// UsersSessionsColumn is the table column denoting the users_sessions relation/edge.
+	UsersSessionsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for users fields.
@@ -76,6 +87,7 @@ var Columns = []string{
 	FieldRefreshToken,
 	FieldScope,
 	FieldExpiresIn,
+	FieldSessionState,
 	FieldDeleted,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -199,6 +211,11 @@ func ByExpiresIn(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiresIn, opts...).ToFunc()
 }
 
+// BySessionState orders the results by the session_state field.
+func BySessionState(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSessionState, opts...).ToFunc()
+}
+
 // ByDeleted orders the results by the deleted field.
 func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
@@ -227,10 +244,31 @@ func ByUsersLinks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUsersLinksStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUsersSessionsCount orders the results by users_sessions count.
+func ByUsersSessionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUsersSessionsStep(), opts...)
+	}
+}
+
+// ByUsersSessions orders the results by users_sessions terms.
+func ByUsersSessions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUsersSessionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUsersLinksStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UsersLinksInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, UsersLinksTable, UsersLinksColumn),
+	)
+}
+func newUsersSessionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UsersSessionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UsersSessionsTable, UsersSessionsColumn),
 	)
 }

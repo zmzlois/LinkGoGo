@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/schema"
+	"github.com/zmzlois/LinkGoGo/ent/session"
 	"github.com/zmzlois/LinkGoGo/ent/users"
 )
 
@@ -47,6 +48,26 @@ func init() {
 	linksDescID := linksFields[4].Descriptor()
 	// links.DefaultID holds the default value on creation for the id field.
 	links.DefaultID = linksDescID.Default.(func() uuid.UUID)
+	sessionFields := schema.Session{}.Fields()
+	_ = sessionFields
+	// sessionDescDeleted is the schema descriptor for deleted field.
+	sessionDescDeleted := sessionFields[4].Descriptor()
+	// session.DefaultDeleted holds the default value on creation for the deleted field.
+	session.DefaultDeleted = sessionDescDeleted.Default.(bool)
+	// sessionDescCreatedAt is the schema descriptor for created_at field.
+	sessionDescCreatedAt := sessionFields[5].Descriptor()
+	// session.DefaultCreatedAt holds the default value on creation for the created_at field.
+	session.DefaultCreatedAt = sessionDescCreatedAt.Default.(func() time.Time)
+	// sessionDescUpdatedAt is the schema descriptor for updated_at field.
+	sessionDescUpdatedAt := sessionFields[6].Descriptor()
+	// session.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	session.DefaultUpdatedAt = sessionDescUpdatedAt.Default.(func() time.Time)
+	// session.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	session.UpdateDefaultUpdatedAt = sessionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// sessionDescID is the schema descriptor for id field.
+	sessionDescID := sessionFields[3].Descriptor()
+	// session.DefaultID holds the default value on creation for the id field.
+	session.DefaultID = sessionDescID.Default.(func() uuid.UUID)
 	usersFields := schema.Users{}.Fields()
 	_ = usersFields
 	// usersDescUsername is the schema descriptor for username field.
@@ -94,21 +115,21 @@ func init() {
 	// users.ScopeValidator is a validator for the "scope" field. It is called by the builders before save.
 	users.ScopeValidator = usersDescScope.Validators[0].(func(string) error)
 	// usersDescDeleted is the schema descriptor for deleted field.
-	usersDescDeleted := usersFields[14].Descriptor()
+	usersDescDeleted := usersFields[15].Descriptor()
 	// users.DefaultDeleted holds the default value on creation for the deleted field.
 	users.DefaultDeleted = usersDescDeleted.Default.(bool)
 	// usersDescCreatedAt is the schema descriptor for created_at field.
-	usersDescCreatedAt := usersFields[15].Descriptor()
+	usersDescCreatedAt := usersFields[16].Descriptor()
 	// users.DefaultCreatedAt holds the default value on creation for the created_at field.
 	users.DefaultCreatedAt = usersDescCreatedAt.Default.(func() time.Time)
 	// usersDescUpdatedAt is the schema descriptor for updated_at field.
-	usersDescUpdatedAt := usersFields[16].Descriptor()
+	usersDescUpdatedAt := usersFields[17].Descriptor()
 	// users.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	users.DefaultUpdatedAt = usersDescUpdatedAt.Default.(func() time.Time)
 	// users.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	users.UpdateDefaultUpdatedAt = usersDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// usersDescID is the schema descriptor for id field.
-	usersDescID := usersFields[13].Descriptor()
+	usersDescID := usersFields[14].Descriptor()
 	// users.DefaultID holds the default value on creation for the id field.
 	users.DefaultID = usersDescID.Default.(func() uuid.UUID)
 }

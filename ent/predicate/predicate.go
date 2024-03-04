@@ -9,5 +9,8 @@ import (
 // Links is the predicate function for links builders.
 type Links func(*sql.Selector)
 
+// Session is the predicate function for session builders.
+type Session func(*sql.Selector)
+
 // Users is the predicate function for users builders.
 type Users func(*sql.Selector)

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
+	"github.com/zmzlois/LinkGoGo/ent/session"
 	"github.com/zmzlois/LinkGoGo/ent/users"
 )
 
@@ -172,6 +173,20 @@ func (uc *UsersCreate) SetNillableExpiresIn(f *float64) *UsersCreate {
 	return uc
 }
 
+// SetSessionState sets the "session_state" field.
+func (uc *UsersCreate) SetSessionState(s string) *UsersCreate {
+	uc.mutation.SetSessionState(s)
+	return uc
+}
+
+// SetNillableSessionState sets the "session_state" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableSessionState(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetSessionState(*s)
+	}
+	return uc
+}
+
 // SetDeleted sets the "deleted" field.
 func (uc *UsersCreate) SetDeleted(b bool) *UsersCreate {
 	uc.mutation.SetDeleted(b)
@@ -241,6 +256,21 @@ func (uc *UsersCreate) AddUsersLinks(l ...*Links) *UsersCreate {
 		ids[i] = l[i].ID
 	}
 	return uc.AddUsersLinkIDs(ids...)
+}
+
+// AddUsersSessionIDs adds the "users_sessions" edge to the Session entity by IDs.
+func (uc *UsersCreate) AddUsersSessionIDs(ids ...uuid.UUID) *UsersCreate {
+	uc.mutation.AddUsersSessionIDs(ids...)
+	return uc
+}
+
+// AddUsersSessions adds the "users_sessions" edges to the Session entity.
+func (uc *UsersCreate) AddUsersSessions(s ...*Session) *UsersCreate {
+	ids := make([]uuid.UUID, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uc.AddUsersSessionIDs(ids...)
 }
 
 // Mutation returns the UsersMutation object of the builder.
@@ -461,6 +491,10 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 		_spec.SetField(users.FieldExpiresIn, field.TypeFloat64, value)
 		_node.ExpiresIn = value
 	}
+	if value, ok := uc.mutation.SessionState(); ok {
+		_spec.SetField(users.FieldSessionState, field.TypeString, value)
+		_node.SessionState = value
+	}
 	if value, ok := uc.mutation.Deleted(); ok {
 		_spec.SetField(users.FieldDeleted, field.TypeBool, value)
 		_node.Deleted = value
@@ -482,6 +516,22 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(links.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UsersSessionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   users.UsersSessionsTable,
+			Columns: []string{users.UsersSessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

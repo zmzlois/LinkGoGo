@@ -27,6 +27,7 @@ func (Users) Fields() []ent.Field {
 		field.String("refresh_token").MaxLen(255).Optional(),
 		field.String("scope").MaxLen(255).Optional(),
 		field.Float("expires_in").Optional(),
+		field.String("session_state").Optional(),
 	}
 	return append(users, BaseTable()...)
 }
@@ -35,5 +36,6 @@ func (Users) Fields() []ent.Field {
 func (Users) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("users_links", Links.Type),
+		edge.To("users_sessions", Session.Type),
 	}
 }

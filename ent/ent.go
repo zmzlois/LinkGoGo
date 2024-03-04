@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/zmzlois/LinkGoGo/ent/links"
+	"github.com/zmzlois/LinkGoGo/ent/session"
 	"github.com/zmzlois/LinkGoGo/ent/users"
 )
 
@@ -74,8 +75,9 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			links.Table: links.ValidColumn,
-			users.Table: users.ValidColumn,
+			links.Table:   links.ValidColumn,
+			session.Table: session.ValidColumn,
+			users.Table:   users.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

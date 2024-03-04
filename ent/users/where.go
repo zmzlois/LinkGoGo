@@ -121,6 +121,11 @@ func ExpiresIn(v float64) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldExpiresIn, v))
 }
 
+// SessionState applies equality check predicate on the "session_state" field. It's identical to SessionStateEQ.
+func SessionState(v string) predicate.Users {
+	return predicate.Users(sql.FieldEQ(FieldSessionState, v))
+}
+
 // Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
 func Deleted(v bool) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldDeleted, v))
@@ -1046,6 +1051,81 @@ func ExpiresInNotNil() predicate.Users {
 	return predicate.Users(sql.FieldNotNull(FieldExpiresIn))
 }
 
+// SessionStateEQ applies the EQ predicate on the "session_state" field.
+func SessionStateEQ(v string) predicate.Users {
+	return predicate.Users(sql.FieldEQ(FieldSessionState, v))
+}
+
+// SessionStateNEQ applies the NEQ predicate on the "session_state" field.
+func SessionStateNEQ(v string) predicate.Users {
+	return predicate.Users(sql.FieldNEQ(FieldSessionState, v))
+}
+
+// SessionStateIn applies the In predicate on the "session_state" field.
+func SessionStateIn(vs ...string) predicate.Users {
+	return predicate.Users(sql.FieldIn(FieldSessionState, vs...))
+}
+
+// SessionStateNotIn applies the NotIn predicate on the "session_state" field.
+func SessionStateNotIn(vs ...string) predicate.Users {
+	return predicate.Users(sql.FieldNotIn(FieldSessionState, vs...))
+}
+
+// SessionStateGT applies the GT predicate on the "session_state" field.
+func SessionStateGT(v string) predicate.Users {
+	return predicate.Users(sql.FieldGT(FieldSessionState, v))
+}
+
+// SessionStateGTE applies the GTE predicate on the "session_state" field.
+func SessionStateGTE(v string) predicate.Users {
+	return predicate.Users(sql.FieldGTE(FieldSessionState, v))
+}
+
+// SessionStateLT applies the LT predicate on the "session_state" field.
+func SessionStateLT(v string) predicate.Users {
+	return predicate.Users(sql.FieldLT(FieldSessionState, v))
+}
+
+// SessionStateLTE applies the LTE predicate on the "session_state" field.
+func SessionStateLTE(v string) predicate.Users {
+	return predicate.Users(sql.FieldLTE(FieldSessionState, v))
+}
+
+// SessionStateContains applies the Contains predicate on the "session_state" field.
+func SessionStateContains(v string) predicate.Users {
+	return predicate.Users(sql.FieldContains(FieldSessionState, v))
+}
+
+// SessionStateHasPrefix applies the HasPrefix predicate on the "session_state" field.
+func SessionStateHasPrefix(v string) predicate.Users {
+	return predicate.Users(sql.FieldHasPrefix(FieldSessionState, v))
+}
+
+// SessionStateHasSuffix applies the HasSuffix predicate on the "session_state" field.
+func SessionStateHasSuffix(v string) predicate.Users {
+	return predicate.Users(sql.FieldHasSuffix(FieldSessionState, v))
+}
+
+// SessionStateIsNil applies the IsNil predicate on the "session_state" field.
+func SessionStateIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldSessionState))
+}
+
+// SessionStateNotNil applies the NotNil predicate on the "session_state" field.
+func SessionStateNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldSessionState))
+}
+
+// SessionStateEqualFold applies the EqualFold predicate on the "session_state" field.
+func SessionStateEqualFold(v string) predicate.Users {
+	return predicate.Users(sql.FieldEqualFold(FieldSessionState, v))
+}
+
+// SessionStateContainsFold applies the ContainsFold predicate on the "session_state" field.
+func SessionStateContainsFold(v string) predicate.Users {
+	return predicate.Users(sql.FieldContainsFold(FieldSessionState, v))
+}
+
 // DeletedEQ applies the EQ predicate on the "deleted" field.
 func DeletedEQ(v bool) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldDeleted, v))
@@ -1151,6 +1231,29 @@ func HasUsersLinks() predicate.Users {
 func HasUsersLinksWith(preds ...predicate.Links) predicate.Users {
 	return predicate.Users(func(s *sql.Selector) {
 		step := newUsersLinksStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUsersSessions applies the HasEdge predicate on the "users_sessions" edge.
+func HasUsersSessions() predicate.Users {
+	return predicate.Users(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UsersSessionsTable, UsersSessionsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUsersSessionsWith applies the HasEdge predicate on the "users_sessions" edge with a given conditions (other predicates).
+func HasUsersSessionsWith(preds ...predicate.Session) predicate.Users {
+	return predicate.Users(func(s *sql.Selector) {
+		step := newUsersSessionsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

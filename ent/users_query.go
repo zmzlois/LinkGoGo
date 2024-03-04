@@ -14,17 +14,19 @@ import (
 	"github.com/google/uuid"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
+	"github.com/zmzlois/LinkGoGo/ent/session"
 	"github.com/zmzlois/LinkGoGo/ent/users"
 )
 
 // UsersQuery is the builder for querying Users entities.
 type UsersQuery struct {
 	config
-	ctx            *QueryContext
-	order          []users.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.Users
-	withUsersLinks *LinksQuery
+	ctx               *QueryContext
+	order             []users.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.Users
+	withUsersLinks    *LinksQuery
+	withUsersSessions *SessionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,6 +78,28 @@ func (uq *UsersQuery) QueryUsersLinks() *LinksQuery {
 			sqlgraph.From(users.Table, users.FieldID, selector),
 			sqlgraph.To(links.Table, links.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, users.UsersLinksTable, users.UsersLinksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUsersSessions chains the current query on the "users_sessions" edge.
+func (uq *UsersQuery) QueryUsersSessions() *SessionQuery {
+	query := (&SessionClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(users.Table, users.FieldID, selector),
+			sqlgraph.To(session.Table, session.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, users.UsersSessionsTable, users.UsersSessionsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -270,12 +294,13 @@ func (uq *UsersQuery) Clone() *UsersQuery {
 		return nil
 	}
 	return &UsersQuery{
-		config:         uq.config,
-		ctx:            uq.ctx.Clone(),
-		order:          append([]users.OrderOption{}, uq.order...),
-		inters:         append([]Interceptor{}, uq.inters...),
-		predicates:     append([]predicate.Users{}, uq.predicates...),
-		withUsersLinks: uq.withUsersLinks.Clone(),
+		config:            uq.config,
+		ctx:               uq.ctx.Clone(),
+		order:             append([]users.OrderOption{}, uq.order...),
+		inters:            append([]Interceptor{}, uq.inters...),
+		predicates:        append([]predicate.Users{}, uq.predicates...),
+		withUsersLinks:    uq.withUsersLinks.Clone(),
+		withUsersSessions: uq.withUsersSessions.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -290,6 +315,17 @@ func (uq *UsersQuery) WithUsersLinks(opts ...func(*LinksQuery)) *UsersQuery {
 		opt(query)
 	}
 	uq.withUsersLinks = query
+	return uq
+}
+
+// WithUsersSessions tells the query-builder to eager-load the nodes that are connected to
+// the "users_sessions" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UsersQuery) WithUsersSessions(opts ...func(*SessionQuery)) *UsersQuery {
+	query := (&SessionClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUsersSessions = query
 	return uq
 }
 
@@ -371,8 +407,9 @@ func (uq *UsersQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Users,
 	var (
 		nodes       = []*Users{}
 		_spec       = uq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			uq.withUsersLinks != nil,
+			uq.withUsersSessions != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -400,6 +437,13 @@ func (uq *UsersQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Users,
 			return nil, err
 		}
 	}
+	if query := uq.withUsersSessions; query != nil {
+		if err := uq.loadUsersSessions(ctx, query, nodes,
+			func(n *Users) { n.Edges.UsersSessions = []*Session{} },
+			func(n *Users, e *Session) { n.Edges.UsersSessions = append(n.Edges.UsersSessions, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
@@ -418,6 +462,36 @@ func (uq *UsersQuery) loadUsersLinks(ctx context.Context, query *LinksQuery, nod
 	}
 	query.Where(predicate.Links(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(users.UsersLinksColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UsersQuery) loadUsersSessions(ctx context.Context, query *SessionQuery, nodes []*Users, init func(*Users), assign func(*Users, *Session)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Users)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(session.FieldUserID)
+	}
+	query.Where(predicate.Session(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(users.UsersSessionsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

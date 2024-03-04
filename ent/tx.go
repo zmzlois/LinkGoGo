@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Links is the client for interacting with the Links builders.
 	Links *LinksClient
+	// Session is the client for interacting with the Session builders.
+	Session *SessionClient
 	// Users is the client for interacting with the Users builders.
 	Users *UsersClient
 
@@ -148,6 +150,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Links = NewLinksClient(tx.config)
+	tx.Session = NewSessionClient(tx.config)
 	tx.Users = NewUsersClient(tx.config)
 }
 

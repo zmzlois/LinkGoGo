@@ -44,6 +44,8 @@ type Users struct {
 	Scope string `json:"scope,omitempty"`
 	// ExpiresIn holds the value of the "expires_in" field.
 	ExpiresIn float64 `json:"expires_in,omitempty"`
+	// SessionState holds the value of the "session_state" field.
+	SessionState string `json:"session_state,omitempty"`
 	// Deleted holds the value of the "deleted" field.
 	Deleted bool `json:"deleted,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -60,9 +62,11 @@ type Users struct {
 type UsersEdges struct {
 	// UsersLinks holds the value of the users_links edge.
 	UsersLinks []*Links `json:"users_links,omitempty"`
+	// UsersSessions holds the value of the users_sessions edge.
+	UsersSessions []*Session `json:"users_sessions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UsersLinksOrErr returns the UsersLinks value or an error if the edge
@@ -74,6 +78,15 @@ func (e UsersEdges) UsersLinksOrErr() ([]*Links, error) {
 	return nil, &NotLoadedError{edge: "users_links"}
 }
 
+// UsersSessionsOrErr returns the UsersSessions value or an error if the edge
+// was not loaded in eager-loading.
+func (e UsersEdges) UsersSessionsOrErr() ([]*Session, error) {
+	if e.loadedTypes[1] {
+		return e.UsersSessions, nil
+	}
+	return nil, &NotLoadedError{edge: "users_sessions"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Users) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -83,7 +96,7 @@ func (*Users) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case users.FieldExpiresIn:
 			values[i] = new(sql.NullFloat64)
-		case users.FieldExternalID, users.FieldUsername, users.FieldGlobalName, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken, users.FieldScope:
+		case users.FieldExternalID, users.FieldUsername, users.FieldGlobalName, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken, users.FieldScope, users.FieldSessionState:
 			values[i] = new(sql.NullString)
 		case users.FieldCreatedAt, users.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -188,6 +201,12 @@ func (u *Users) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.ExpiresIn = value.Float64
 			}
+		case users.FieldSessionState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field session_state", values[i])
+			} else if value.Valid {
+				u.SessionState = value.String
+			}
 		case users.FieldDeleted:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted", values[i])
@@ -222,6 +241,11 @@ func (u *Users) Value(name string) (ent.Value, error) {
 // QueryUsersLinks queries the "users_links" edge of the Users entity.
 func (u *Users) QueryUsersLinks() *LinksQuery {
 	return NewUsersClient(u.config).QueryUsersLinks(u)
+}
+
+// QueryUsersSessions queries the "users_sessions" edge of the Users entity.
+func (u *Users) QueryUsersSessions() *SessionQuery {
+	return NewUsersClient(u.config).QueryUsersSessions(u)
 }
 
 // Update returns a builder for updating this Users.
@@ -285,6 +309,9 @@ func (u *Users) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("expires_in=")
 	builder.WriteString(fmt.Sprintf("%v", u.ExpiresIn))
+	builder.WriteString(", ")
+	builder.WriteString("session_state=")
+	builder.WriteString(u.SessionState)
 	builder.WriteString(", ")
 	builder.WriteString("deleted=")
 	builder.WriteString(fmt.Sprintf("%v", u.Deleted))
