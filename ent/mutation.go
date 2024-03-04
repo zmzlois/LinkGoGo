@@ -779,6 +779,7 @@ type UsersMutation struct {
 	description        *string
 	access_token       *string
 	refresh_token      *string
+	scope              *string
 	expires_in         *float64
 	addexpires_in      *float64
 	deleted            *bool
@@ -1384,6 +1385,55 @@ func (m *UsersMutation) ResetRefreshToken() {
 	delete(m.clearedFields, users.FieldRefreshToken)
 }
 
+// SetScope sets the "scope" field.
+func (m *UsersMutation) SetScope(s string) {
+	m.scope = &s
+}
+
+// Scope returns the value of the "scope" field in the mutation.
+func (m *UsersMutation) Scope() (r string, exists bool) {
+	v := m.scope
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldScope returns the old "scope" field's value of the Users entity.
+// If the Users object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsersMutation) OldScope(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldScope is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldScope requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldScope: %w", err)
+	}
+	return oldValue.Scope, nil
+}
+
+// ClearScope clears the value of the "scope" field.
+func (m *UsersMutation) ClearScope() {
+	m.scope = nil
+	m.clearedFields[users.FieldScope] = struct{}{}
+}
+
+// ScopeCleared returns if the "scope" field was cleared in this mutation.
+func (m *UsersMutation) ScopeCleared() bool {
+	_, ok := m.clearedFields[users.FieldScope]
+	return ok
+}
+
+// ResetScope resets all changes to the "scope" field.
+func (m *UsersMutation) ResetScope() {
+	m.scope = nil
+	delete(m.clearedFields, users.FieldScope)
+}
+
 // SetExpiresIn sets the "expires_in" field.
 func (m *UsersMutation) SetExpiresIn(f float64) {
 	m.expires_in = &f
@@ -1650,7 +1700,7 @@ func (m *UsersMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UsersMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.external_id != nil {
 		fields = append(fields, users.FieldExternalID)
 	}
@@ -1683,6 +1733,9 @@ func (m *UsersMutation) Fields() []string {
 	}
 	if m.refresh_token != nil {
 		fields = append(fields, users.FieldRefreshToken)
+	}
+	if m.scope != nil {
+		fields = append(fields, users.FieldScope)
 	}
 	if m.expires_in != nil {
 		fields = append(fields, users.FieldExpiresIn)
@@ -1726,6 +1779,8 @@ func (m *UsersMutation) Field(name string) (ent.Value, bool) {
 		return m.AccessToken()
 	case users.FieldRefreshToken:
 		return m.RefreshToken()
+	case users.FieldScope:
+		return m.Scope()
 	case users.FieldExpiresIn:
 		return m.ExpiresIn()
 	case users.FieldDeleted:
@@ -1765,6 +1820,8 @@ func (m *UsersMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldAccessToken(ctx)
 	case users.FieldRefreshToken:
 		return m.OldRefreshToken(ctx)
+	case users.FieldScope:
+		return m.OldScope(ctx)
 	case users.FieldExpiresIn:
 		return m.OldExpiresIn(ctx)
 	case users.FieldDeleted:
@@ -1858,6 +1915,13 @@ func (m *UsersMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRefreshToken(v)
+		return nil
+	case users.FieldScope:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetScope(v)
 		return nil
 	case users.FieldExpiresIn:
 		v, ok := value.(float64)
@@ -1953,6 +2017,9 @@ func (m *UsersMutation) ClearedFields() []string {
 	if m.FieldCleared(users.FieldRefreshToken) {
 		fields = append(fields, users.FieldRefreshToken)
 	}
+	if m.FieldCleared(users.FieldScope) {
+		fields = append(fields, users.FieldScope)
+	}
 	if m.FieldCleared(users.FieldExpiresIn) {
 		fields = append(fields, users.FieldExpiresIn)
 	}
@@ -1990,6 +2057,9 @@ func (m *UsersMutation) ClearField(name string) error {
 		return nil
 	case users.FieldRefreshToken:
 		m.ClearRefreshToken()
+		return nil
+	case users.FieldScope:
+		m.ClearScope()
 		return nil
 	case users.FieldExpiresIn:
 		m.ClearExpiresIn()
@@ -2034,6 +2104,9 @@ func (m *UsersMutation) ResetField(name string) error {
 		return nil
 	case users.FieldRefreshToken:
 		m.ResetRefreshToken()
+		return nil
+	case users.FieldScope:
+		m.ResetScope()
 		return nil
 	case users.FieldExpiresIn:
 		m.ResetExpiresIn()

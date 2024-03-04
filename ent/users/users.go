@@ -37,6 +37,8 @@ const (
 	FieldAccessToken = "access_token"
 	// FieldRefreshToken holds the string denoting the refresh_token field in the database.
 	FieldRefreshToken = "refresh_token"
+	// FieldScope holds the string denoting the scope field in the database.
+	FieldScope = "scope"
 	// FieldExpiresIn holds the string denoting the expires_in field in the database.
 	FieldExpiresIn = "expires_in"
 	// FieldDeleted holds the string denoting the deleted field in the database.
@@ -72,6 +74,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldAccessToken,
 	FieldRefreshToken,
+	FieldScope,
 	FieldExpiresIn,
 	FieldDeleted,
 	FieldCreatedAt,
@@ -109,6 +112,8 @@ var (
 	AccessTokenValidator func(string) error
 	// RefreshTokenValidator is a validator for the "refresh_token" field. It is called by the builders before save.
 	RefreshTokenValidator func(string) error
+	// ScopeValidator is a validator for the "scope" field. It is called by the builders before save.
+	ScopeValidator func(string) error
 	// DefaultDeleted holds the default value on creation for the "deleted" field.
 	DefaultDeleted bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -182,6 +187,11 @@ func ByAccessToken(opts ...sql.OrderTermOption) OrderOption {
 // ByRefreshToken orders the results by the refresh_token field.
 func ByRefreshToken(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRefreshToken, opts...).ToFunc()
+}
+
+// ByScope orders the results by the scope field.
+func ByScope(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldScope, opts...).ToFunc()
 }
 
 // ByExpiresIn orders the results by the expires_in field.

@@ -111,6 +111,11 @@ func RefreshToken(v string) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldRefreshToken, v))
 }
 
+// Scope applies equality check predicate on the "scope" field. It's identical to ScopeEQ.
+func Scope(v string) predicate.Users {
+	return predicate.Users(sql.FieldEQ(FieldScope, v))
+}
+
 // ExpiresIn applies equality check predicate on the "expires_in" field. It's identical to ExpiresInEQ.
 func ExpiresIn(v float64) predicate.Users {
 	return predicate.Users(sql.FieldEQ(FieldExpiresIn, v))
@@ -914,6 +919,81 @@ func RefreshTokenEqualFold(v string) predicate.Users {
 // RefreshTokenContainsFold applies the ContainsFold predicate on the "refresh_token" field.
 func RefreshTokenContainsFold(v string) predicate.Users {
 	return predicate.Users(sql.FieldContainsFold(FieldRefreshToken, v))
+}
+
+// ScopeEQ applies the EQ predicate on the "scope" field.
+func ScopeEQ(v string) predicate.Users {
+	return predicate.Users(sql.FieldEQ(FieldScope, v))
+}
+
+// ScopeNEQ applies the NEQ predicate on the "scope" field.
+func ScopeNEQ(v string) predicate.Users {
+	return predicate.Users(sql.FieldNEQ(FieldScope, v))
+}
+
+// ScopeIn applies the In predicate on the "scope" field.
+func ScopeIn(vs ...string) predicate.Users {
+	return predicate.Users(sql.FieldIn(FieldScope, vs...))
+}
+
+// ScopeNotIn applies the NotIn predicate on the "scope" field.
+func ScopeNotIn(vs ...string) predicate.Users {
+	return predicate.Users(sql.FieldNotIn(FieldScope, vs...))
+}
+
+// ScopeGT applies the GT predicate on the "scope" field.
+func ScopeGT(v string) predicate.Users {
+	return predicate.Users(sql.FieldGT(FieldScope, v))
+}
+
+// ScopeGTE applies the GTE predicate on the "scope" field.
+func ScopeGTE(v string) predicate.Users {
+	return predicate.Users(sql.FieldGTE(FieldScope, v))
+}
+
+// ScopeLT applies the LT predicate on the "scope" field.
+func ScopeLT(v string) predicate.Users {
+	return predicate.Users(sql.FieldLT(FieldScope, v))
+}
+
+// ScopeLTE applies the LTE predicate on the "scope" field.
+func ScopeLTE(v string) predicate.Users {
+	return predicate.Users(sql.FieldLTE(FieldScope, v))
+}
+
+// ScopeContains applies the Contains predicate on the "scope" field.
+func ScopeContains(v string) predicate.Users {
+	return predicate.Users(sql.FieldContains(FieldScope, v))
+}
+
+// ScopeHasPrefix applies the HasPrefix predicate on the "scope" field.
+func ScopeHasPrefix(v string) predicate.Users {
+	return predicate.Users(sql.FieldHasPrefix(FieldScope, v))
+}
+
+// ScopeHasSuffix applies the HasSuffix predicate on the "scope" field.
+func ScopeHasSuffix(v string) predicate.Users {
+	return predicate.Users(sql.FieldHasSuffix(FieldScope, v))
+}
+
+// ScopeIsNil applies the IsNil predicate on the "scope" field.
+func ScopeIsNil() predicate.Users {
+	return predicate.Users(sql.FieldIsNull(FieldScope))
+}
+
+// ScopeNotNil applies the NotNil predicate on the "scope" field.
+func ScopeNotNil() predicate.Users {
+	return predicate.Users(sql.FieldNotNull(FieldScope))
+}
+
+// ScopeEqualFold applies the EqualFold predicate on the "scope" field.
+func ScopeEqualFold(v string) predicate.Users {
+	return predicate.Users(sql.FieldEqualFold(FieldScope, v))
+}
+
+// ScopeContainsFold applies the ContainsFold predicate on the "scope" field.
+func ScopeContainsFold(v string) predicate.Users {
+	return predicate.Users(sql.FieldContainsFold(FieldScope, v))
 }
 
 // ExpiresInEQ applies the EQ predicate on the "expires_in" field.

@@ -47,6 +47,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "access_token", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "refresh_token", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "scope", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "expires_in", Type: field.TypeFloat64, Nullable: true},
 		{Name: "deleted", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},

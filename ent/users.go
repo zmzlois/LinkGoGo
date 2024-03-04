@@ -40,6 +40,8 @@ type Users struct {
 	AccessToken string `json:"access_token,omitempty"`
 	// RefreshToken holds the value of the "refresh_token" field.
 	RefreshToken string `json:"refresh_token,omitempty"`
+	// Scope holds the value of the "scope" field.
+	Scope string `json:"scope,omitempty"`
 	// ExpiresIn holds the value of the "expires_in" field.
 	ExpiresIn float64 `json:"expires_in,omitempty"`
 	// Deleted holds the value of the "deleted" field.
@@ -81,7 +83,7 @@ func (*Users) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case users.FieldExpiresIn:
 			values[i] = new(sql.NullFloat64)
-		case users.FieldExternalID, users.FieldUsername, users.FieldGlobalName, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken:
+		case users.FieldExternalID, users.FieldUsername, users.FieldGlobalName, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken, users.FieldScope:
 			values[i] = new(sql.NullString)
 		case users.FieldCreatedAt, users.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -173,6 +175,12 @@ func (u *Users) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field refresh_token", values[i])
 			} else if value.Valid {
 				u.RefreshToken = value.String
+			}
+		case users.FieldScope:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field scope", values[i])
+			} else if value.Valid {
+				u.Scope = value.String
 			}
 		case users.FieldExpiresIn:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
@@ -271,6 +279,9 @@ func (u *Users) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("refresh_token=")
 	builder.WriteString(u.RefreshToken)
+	builder.WriteString(", ")
+	builder.WriteString("scope=")
+	builder.WriteString(u.Scope)
 	builder.WriteString(", ")
 	builder.WriteString("expires_in=")
 	builder.WriteString(fmt.Sprintf("%v", u.ExpiresIn))

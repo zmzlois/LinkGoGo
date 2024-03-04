@@ -226,6 +226,26 @@ func (uu *UsersUpdate) ClearRefreshToken() *UsersUpdate {
 	return uu
 }
 
+// SetScope sets the "scope" field.
+func (uu *UsersUpdate) SetScope(s string) *UsersUpdate {
+	uu.mutation.SetScope(s)
+	return uu
+}
+
+// SetNillableScope sets the "scope" field if the given value is not nil.
+func (uu *UsersUpdate) SetNillableScope(s *string) *UsersUpdate {
+	if s != nil {
+		uu.SetScope(*s)
+	}
+	return uu
+}
+
+// ClearScope clears the value of the "scope" field.
+func (uu *UsersUpdate) ClearScope() *UsersUpdate {
+	uu.mutation.ClearScope()
+	return uu
+}
+
 // SetExpiresIn sets the "expires_in" field.
 func (uu *UsersUpdate) SetExpiresIn(f float64) *UsersUpdate {
 	uu.mutation.ResetExpiresIn()
@@ -416,6 +436,11 @@ func (uu *UsersUpdate) check() error {
 			return &ValidationError{Name: "refresh_token", err: fmt.Errorf(`ent: validator failed for field "Users.refresh_token": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.Scope(); ok {
+		if err := users.ScopeValidator(v); err != nil {
+			return &ValidationError{Name: "scope", err: fmt.Errorf(`ent: validator failed for field "Users.scope": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -484,6 +509,12 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.RefreshTokenCleared() {
 		_spec.ClearField(users.FieldRefreshToken, field.TypeString)
+	}
+	if value, ok := uu.mutation.Scope(); ok {
+		_spec.SetField(users.FieldScope, field.TypeString, value)
+	}
+	if uu.mutation.ScopeCleared() {
+		_spec.ClearField(users.FieldScope, field.TypeString)
 	}
 	if value, ok := uu.mutation.ExpiresIn(); ok {
 		_spec.SetField(users.FieldExpiresIn, field.TypeFloat64, value)
@@ -764,6 +795,26 @@ func (uuo *UsersUpdateOne) ClearRefreshToken() *UsersUpdateOne {
 	return uuo
 }
 
+// SetScope sets the "scope" field.
+func (uuo *UsersUpdateOne) SetScope(s string) *UsersUpdateOne {
+	uuo.mutation.SetScope(s)
+	return uuo
+}
+
+// SetNillableScope sets the "scope" field if the given value is not nil.
+func (uuo *UsersUpdateOne) SetNillableScope(s *string) *UsersUpdateOne {
+	if s != nil {
+		uuo.SetScope(*s)
+	}
+	return uuo
+}
+
+// ClearScope clears the value of the "scope" field.
+func (uuo *UsersUpdateOne) ClearScope() *UsersUpdateOne {
+	uuo.mutation.ClearScope()
+	return uuo
+}
+
 // SetExpiresIn sets the "expires_in" field.
 func (uuo *UsersUpdateOne) SetExpiresIn(f float64) *UsersUpdateOne {
 	uuo.mutation.ResetExpiresIn()
@@ -967,6 +1018,11 @@ func (uuo *UsersUpdateOne) check() error {
 			return &ValidationError{Name: "refresh_token", err: fmt.Errorf(`ent: validator failed for field "Users.refresh_token": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.Scope(); ok {
+		if err := users.ScopeValidator(v); err != nil {
+			return &ValidationError{Name: "scope", err: fmt.Errorf(`ent: validator failed for field "Users.scope": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -1052,6 +1108,12 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 	}
 	if uuo.mutation.RefreshTokenCleared() {
 		_spec.ClearField(users.FieldRefreshToken, field.TypeString)
+	}
+	if value, ok := uuo.mutation.Scope(); ok {
+		_spec.SetField(users.FieldScope, field.TypeString, value)
+	}
+	if uuo.mutation.ScopeCleared() {
+		_spec.ClearField(users.FieldScope, field.TypeString)
 	}
 	if value, ok := uuo.mutation.ExpiresIn(); ok {
 		_spec.SetField(users.FieldExpiresIn, field.TypeFloat64, value)

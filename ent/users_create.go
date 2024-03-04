@@ -144,6 +144,20 @@ func (uc *UsersCreate) SetNillableRefreshToken(s *string) *UsersCreate {
 	return uc
 }
 
+// SetScope sets the "scope" field.
+func (uc *UsersCreate) SetScope(s string) *UsersCreate {
+	uc.mutation.SetScope(s)
+	return uc
+}
+
+// SetNillableScope sets the "scope" field if the given value is not nil.
+func (uc *UsersCreate) SetNillableScope(s *string) *UsersCreate {
+	if s != nil {
+		uc.SetScope(*s)
+	}
+	return uc
+}
+
 // SetExpiresIn sets the "expires_in" field.
 func (uc *UsersCreate) SetExpiresIn(f float64) *UsersCreate {
 	uc.mutation.SetExpiresIn(f)
@@ -346,6 +360,11 @@ func (uc *UsersCreate) check() error {
 			return &ValidationError{Name: "refresh_token", err: fmt.Errorf(`ent: validator failed for field "Users.refresh_token": %w`, err)}
 		}
 	}
+	if v, ok := uc.mutation.Scope(); ok {
+		if err := users.ScopeValidator(v); err != nil {
+			return &ValidationError{Name: "scope", err: fmt.Errorf(`ent: validator failed for field "Users.scope": %w`, err)}
+		}
+	}
 	if _, ok := uc.mutation.Deleted(); !ok {
 		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "Users.deleted"`)}
 	}
@@ -433,6 +452,10 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.RefreshToken(); ok {
 		_spec.SetField(users.FieldRefreshToken, field.TypeString, value)
 		_node.RefreshToken = value
+	}
+	if value, ok := uc.mutation.Scope(); ok {
+		_spec.SetField(users.FieldScope, field.TypeString, value)
+		_node.Scope = value
 	}
 	if value, ok := uc.mutation.ExpiresIn(); ok {
 		_spec.SetField(users.FieldExpiresIn, field.TypeFloat64, value)

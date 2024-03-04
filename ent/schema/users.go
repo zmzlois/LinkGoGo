@@ -25,6 +25,7 @@ func (Users) Fields() []ent.Field {
 		field.String("description").MaxLen(255).Optional(),
 		field.String("access_token").MaxLen(255).Optional(),
 		field.String("refresh_token").MaxLen(255).Optional(),
+		field.String("scope").MaxLen(255).Optional(),
 		field.Float("expires_in").Optional(),
 	}
 	return append(users, BaseTable()...)
