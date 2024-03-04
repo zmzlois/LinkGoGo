@@ -21,9 +21,9 @@ import (
 
 	"github.com/zmzlois/LinkGoGo/auth"
 	dsc "github.com/zmzlois/LinkGoGo/auth"
-	"github.com/zmzlois/LinkGoGo/handlers"
 	"github.com/zmzlois/LinkGoGo/monitor"
 	m "github.com/zmzlois/LinkGoGo/monitor"
+	hdl "github.com/zmzlois/LinkGoGo/pkg/handler"
 	"github.com/zmzlois/LinkGoGo/web/pages"
 )
 
@@ -75,6 +75,15 @@ func main() {
 		Scopes:       []string{auth.ScopeIdentify},
 	})
 
+	// var db *hdl.Database = hdl.DBInit(&hdl.Database{
+	// 	Host:     hdl.DBCredentials().Host,
+	// 	Port:     hdl.DBCredentials().Port,
+	// 	User:     hdl.DBCredentials().User,
+	// 	Dbname:   hdl.DBCredentials().Dbname,
+	// 	Password: hdl.DBCredentials().Password,
+	// 	SslMode:  hdl.DBCredentials().SslMode,
+	// })
+
 	//var state string
 
 	// Once user hit discord login button
@@ -85,7 +94,7 @@ func main() {
 	// On discord's authentication page they will be redirected to this page after authentication
 
 	app.Get("/discord-redirect", func(w http.ResponseWriter, r *http.Request) {
-		handlers.AuthenticationHandler(ds)(w, r)
+		hdl.AuthenticationHandler(ds)(w, r)
 		// fmt.Printf("Data: %s\n Access Token: %s\n Refresh Token: %s\n Expire In: %d\n", data, accessToken, refreshToken, expireIn)
 
 	})
