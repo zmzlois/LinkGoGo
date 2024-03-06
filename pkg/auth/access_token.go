@@ -201,6 +201,10 @@ func (dc *Client) GetOnlyAccessToken(code string) (string, error) {
 // The GetAccessTokenMap() function is used to return all
 // the map data revolving around the access token
 func (dc *Client) GetAccessTokenMap(code string) (map[string]interface{}, error) {
+
+	if code == "" {
+		panic("[GetAccessTokenMap Error]: code is empty")
+	}
 	// Define Variables
 	var (
 		// The Access Token Request Body
