@@ -15,8 +15,8 @@ import (
 // GetAccessToken() function
 func (dc *Client) accessTokenBody(code string) *bytes.Buffer {
 	return bytes.NewBuffer([]byte(fmt.Sprintf(
-		"client_id=%s&client_secret=%s&grant_type=authorization_code&redirect_uri=%s&code=%s&scope=identify",
-		dc.ClientID, dc.ClientSecret, dc.RedirectURI, code,
+		"client_id=%s&client_secret=%s&grant_type=authorization_code&redirect_uri=%s&code=%s&scope=%s",
+		dc.ClientID, dc.ClientSecret, dc.RedirectURI, code, ScopeIdentify,
 	)))
 }
 
@@ -71,6 +71,7 @@ func (dc *Client) accessTokenRequestObject(body *bytes.Buffer, creds bool) (*htt
 	)
 	// Handle the error
 	if err != nil {
+		fmt.Println("[AccessToken Request Object Error]: creating request ", err)
 		return req, err
 	}
 
@@ -106,6 +107,7 @@ func (dc *Client) accessTokenRequest(req *http.Request) (map[string]interface{},
 
 		// Handle the read body error
 		if _err != nil {
+			fmt.Println("[AccessToken Request Error]: reading body ", _err)
 			return map[string]interface{}{}, _err
 		}
 		// Handle http response error

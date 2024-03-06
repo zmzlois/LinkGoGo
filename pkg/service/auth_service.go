@@ -13,20 +13,20 @@ import (
 )
 
 type AuthService struct {
-	db            *ent.Client
-	discordClient *auth.DiscordService
-	State         string
+	db    *ent.Client
+	dsc   *auth.Client
+	State string
 }
 
-func NewAuthService(db *ent.Client, discordClient *auth.DiscordService, state string) *AuthService {
+func NewAuthService(db *ent.Client, discordClient *auth.Client, state string) *AuthService {
 	return &AuthService{
-		db:            db,
-		discordClient: discordClient,
-		State:         state,
+		db:    db,
+		dsc:   discordClient,
+		State: state,
 	}
 }
 
-func (s AuthService) Login(state string) (*ent.Users, error) {
+func (s *AuthService) Login(state string) (*ent.Users, error) {
 	user, err := s.db.Users.Query().
 		Where(users.SessionState(state)).
 		Only(context.Background())
@@ -41,20 +41,24 @@ func (s AuthService) Login(state string) (*ent.Users, error) {
 	return user, nil
 }
 
-func (s AuthService) Redirect(code string, state string, w http.ResponseWriter) (*model.LoginUserInput, *model.TokenInput, bool, error) {
+func (s *AuthService) Redirect(code string, state string, w http.ResponseWriter) (*model.LoginUserInput, *model.TokenInput, string, bool, error) {
 
 	var userData = &model.LoginUserInput{}
-	var tokenPayload *model.TokenInput
+	var tokenPayload = &model.TokenInput{}
 
-	data, err1 := s.discordClient.DiscordService.GetAccessTokenMap(code)
+	var dc auth.Client
+
+	fmt.Println("Code: ", code)
+
+	data, err1 := s.dsc.GetAccessTokenMap(code)
 
 	if err1 != nil {
-		panic(fmt.Sprintf("[AuthService] Failed to get access token. Error: %s\n", err1))
+		panic(fmt.Sprintf("[AuthService] Failed to get access token map. Error: %s\n", err1))
 	}
 
 	accessToken := data["token_type"].(string) + " " + data["access_token"].(string)
 
-	userDataMap, _ := s.discordClient.DiscordService.GetUserData(accessToken)
+	userDataMap, _ := dc.GetUserData(accessToken)
 	userData = &model.LoginUserInput{
 		Username:   userDataMap["username"].(string),
 		Avatar:     fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", userDataMap["id"].(string), userDataMap["avatar"].(string)),
@@ -70,26 +74,28 @@ func (s AuthService) Redirect(code string, state string, w http.ResponseWriter) 
 		TokenType:    data["token_type"].(string),
 	}
 
-	// if user exists, issue them a new session token
-	_, err := s.Login(state)
-
-	cookie := http.Cookie{
-		Name:  fmt.Sprintf("_LinkGoGo-session-token-%s", s.discordClient.DiscordService.Scopes),
-		Value: s.State,
-	}
+	tokenString, err := s.dsc.CreateToken(userData, tokenPayload, state)
 
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return nil, nil, "", false, err
+	}
+	// if user exists, issue them a new session token
+	// TODO: ambiguous about what this does
+	_, err = s.Login(state)
 
+	if err != nil {
 		w.Write([]byte("User doesn't exist, creating user..."))
 
-		// user doesn't exists, no user found, move to the next middleware to create the user
-		return userData, tokenPayload, false, nil
+		// user doesn't exists, no user found, move to create the user
+		return userData, tokenPayload, tokenString, false, nil
 	}
+	// getting JWT token
 
-	// user exists, check the state if it is valid, then
-	http.SetCookie(w, &cookie)
+	// set cookie
+	s.dsc.SetCookie(tokenString, w)
 
-	return userData, tokenPayload, true, nil
+	return userData, tokenPayload, tokenString, true, nil
 }
 
 func (s AuthService) CreateSession() {
