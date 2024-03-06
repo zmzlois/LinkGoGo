@@ -55,10 +55,6 @@ type Client struct {
 	Implicit bool   // Whether using implicit grant for access token
 }
 
-type DiscordService struct {
-	DiscordService *Client
-}
-
 func (dc *Client) checkStructErrors() {
 	// Make sure the user has provided
 	// a valid client id
@@ -77,7 +73,7 @@ func (dc *Client) checkStructErrors() {
 	}
 	// Make sure the user has provided
 	// a sufficient number of scopes
-	if len(dc.Scopes) < 1 {
+	if len(dc.Scopes) == 0 {
 		panic("DisGOAuth Error: not enough scopes in Client (Scopes: []string)")
 	}
 }
@@ -144,8 +140,12 @@ func Init(dc *Client) *Client {
 	return dc
 }
 
-func DiscordInit() *DiscordService {
-	return &DiscordService{
-		DiscordService: Init(AuthCred()),
+func DiscordInit() *Client {
+	var cred = AuthCred()
+	return &Client{
+		ClientID:     cred.ClientID,
+		ClientSecret: cred.ClientSecret,
+		RedirectURI:  cred.RedirectURI,
+		Scopes:       []string{ScopeIdentify},
 	}
 }
