@@ -31,7 +31,7 @@ func (h *AuthHandler) OAuthRedirectHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	if !result {
-		user, session, err := userService.CreateUser(userData, tokenPayload, tokenString)
+		user, session, err := userService.CreateUser(*userData, *tokenPayload, tokenString)
 
 		if err != nil {
 			panic(fmt.Sprintf("[OAuth Redirect]: %s", err))
