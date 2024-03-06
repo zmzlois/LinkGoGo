@@ -1,7 +1,10 @@
 package auth
 
 // Import net/http package
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 // The RedirectHandler() function is used to redirect the user
 // to the provided Client OAuth URL. If there is a
@@ -19,6 +22,8 @@ func (dc *Client) RedirectHandler(w http.ResponseWriter, r *http.Request, state 
 	if len(state) > 0 {
 		_url = dc.OAuthURL + "&state=" + state
 	}
+
+	log.Println(_url)
 	// Redirect the user to the OAuth URL
 	http.Redirect(w, r, _url, http.StatusTemporaryRedirect)
 }

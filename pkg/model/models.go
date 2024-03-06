@@ -1,6 +1,11 @@
 package model
 
-import "github.com/zmzlois/LinkGoGo/ent"
+import (
+	"fmt"
+	"log"
+
+	"github.com/zmzlois/LinkGoGo/ent"
+)
 
 type LoginUserInput struct {
 	Id               string  `json:"id"`
@@ -19,6 +24,21 @@ type LoginUserInput struct {
 	Username         string  `json:"username"`
 }
 
+func ParsingUserInput(input map[string]interface{}) (*LoginUserInput, error) {
+	log.Printf("ParsingUserInput: %v\n", input)
+	var user = &LoginUserInput{
+		Id:         input["id"].(string),
+		Avatar:     fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", input["id"].(string), input["avatar"].(string)),
+		GlobalName: input["global_name"].(string),
+		Locale:     input["locale"].(string),
+		Username:   input["username"].(string),
+	}
+
+	log.Println("Processed User: ", user)
+	return user, nil
+
+}
+
 type CreateUserInput struct {
 	CreateUserInput *ent.Users
 }
@@ -29,6 +49,21 @@ type TokenInput struct {
 	ExpiresIn    float64 `json:"expires_in"`
 	Scope        string  `json:"scope"`
 	TokenType    string  `json:"token_type"`
+}
+
+func ParsingTokenInput(input map[string]interface{}) (*TokenInput, error) {
+
+	log.Printf("ParsingTokenInput: %v", input)
+	var token = &TokenInput{
+		AccessToken:  input["access_token"].(string),
+		RefreshToken: input["refresh_token"].(string),
+		ExpiresIn:    input["expires_in"].(float64),
+		Scope:        input["scope"].(string),
+		TokenType:    input["token_type"].(string),
+	}
+
+	log.Println("Processed Token: ", token)
+	return token, nil
 }
 
 type NewLinkInput struct {

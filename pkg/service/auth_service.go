@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -13,12 +14,12 @@ import (
 )
 
 type AuthService struct {
-	db    ent.Client
-	dsc   auth.Client
+	db    *ent.Client
+	dsc   *auth.Client
 	State string
 }
 
-func NewAuthService(db ent.Client, discordClient auth.Client, state string) *AuthService {
+func NewAuthService(db *ent.Client, discordClient *auth.Client, state string) *AuthService {
 	return &AuthService{
 		db:    db,
 		dsc:   discordClient,
@@ -26,22 +27,32 @@ func NewAuthService(db ent.Client, discordClient auth.Client, state string) *Aut
 	}
 }
 
-func (s *AuthService) Login(state string) (*ent.Users, error) {
+func (s *AuthService) Login(userId string) (*ent.Users, error) {
 	user, err := s.db.Users.Query().
-		Where(users.SessionState(state)).
+		Where(users.ExternalID(userId)).
 		Only(context.Background())
 	if err != nil {
-		return nil, err
+		log.Println("[Login]: ", err)
+		return nil, fmt.Errorf("login.user not found, create user.%w", err)
 	}
 	// update last login time
-	s.db.Users.UpdateOneID(user.ID).
+	_, err = s.db.Users.UpdateOneID(user.ID).
 		SetUpdatedAt(time.Now()).
 		Save(context.Background())
+
+	if err != nil {
+		log.Println("[Login]: ", err)
+		return nil, fmt.Errorf("login.failed to update user. %w", err)
+	}
 
 	return user, nil
 }
 
-func (s *AuthService) Redirect(code string, state string, w http.ResponseWriter) (*model.LoginUserInput, *model.TokenInput, string, bool, error) {
+func (s *AuthService) Redirect(w http.ResponseWriter, r *http.Request) {
+	s.dsc.RedirectHandler(w, r, s.State)
+}
+
+func (s *AuthService) Callback(code string, state string, w http.ResponseWriter) (*model.LoginUserInput, *model.TokenInput, string, bool, error) {
 
 	var userData = &model.LoginUserInput{}
 	var tokenPayload = &model.TokenInput{}

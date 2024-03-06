@@ -7,17 +7,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 // The accessTokenBody() function is used to return
 // the request body bytes being used in the
 // GetAccessToken() function
-func (dc *Client) accessTokenBody(code string) *bytes.Buffer {
-	return bytes.NewBuffer([]byte(fmt.Sprintf(
-		"client_id=%s&client_secret=%s&grant_type=authorization_code&redirect_uri=%s&code=%s&scope=%s",
-		dc.ClientID, dc.ClientSecret, dc.RedirectURI, code, ScopeIdentify,
-	)))
+func (dc *Client) accessTokenBody(code string) string {
+	values := url.Values{}
+	values.Set("client_id", dc.ClientID)
+	values.Set("client_secret", dc.ClientSecret)
+	values.Set("redirect_uri", dc.RedirectURI)
+	values.Set("grant_type", "authorization_code")
+	values.Set("code", code)
+	return values.Encode()
 }
 
 // The refreshAccessTokenBody() function is used to return
@@ -64,22 +70,21 @@ func credentialsAccessTokenBody(scopes []string) *bytes.Buffer {
 // The accessTokenRequestObject() function is used to establish
 // a new request object that will be used for sending
 // the api request to the discord oauth token endpoint.
-func (dc *Client) accessTokenRequestObject(body *bytes.Buffer, creds bool) (*http.Request, error) {
+func (dc *Client) accessTokenRequestObject(body io.Reader, creds bool) (*http.Request, error) {
 	// Establish a new request object
 	var req, err = http.NewRequest("POST",
-		"https://discordapp.com/api/oauth2/token", body,
+		"https://discord.com/api/oauth2/token", body,
 	)
 	// Handle the error
 	if err != nil {
-		panic(fmt.Sprintf("[AccessToken Request Object Error]: creating request. Error: %s", err))
+		// panic(fmt.Sprintf("[AccessToken Request Object Error]: creating request. Error: %s", err))
+		return nil, fmt.Errorf("[discordClient.accessTokenRequestObject.NewRequest]: creating request. Error: %s", err)
 
 	}
 
-	// Set the request object's headers
-	req.Header = http.Header{
-		"Content-Type": []string{"application/x-www-form-urlencoded"},
-		"Accept":       []string{"application/json"},
-	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
 	// If using the credentials access token endpoint
 	if creds {
 		// Base64 encode the client id and secret
@@ -107,7 +112,8 @@ func (dc *Client) accessTokenRequest(req *http.Request) (map[string]interface{},
 
 		// Handle the read body error
 		if _err != nil {
-			panic(fmt.Sprintf("[AccessToken Request Error]: reading body. Error: %s", _err))
+			// panic(fmt.Sprintf("[AccessToken Request Error]: reading body. Error: %s", _err))
+			return map[string]interface{}{}, fmt.Errorf("[AccessToken Request Error.io.ReadAll]:%s", _err)
 		}
 		// Handle http response error
 		return map[string]interface{}{},
@@ -135,22 +141,25 @@ func (dc *Client) accessTokenRequest(req *http.Request) (map[string]interface{},
 // and any errors that occured.
 func (dc *Client) GetAccessToken(code string) (map[string]interface{}, string, string, int, error) {
 	// Define Variables
-	var (
-		// The Access Token Request Body
-		tokenBody *bytes.Buffer = dc.accessTokenBody(code)
-		// The Access Token Request Object
-		tokenReq, err = dc.accessTokenRequestObject(tokenBody, false)
-	)
+
+	// The Access Token Request Body
+	tokenBody := dc.accessTokenBody(code)
+
+	log.Println(tokenBody)
+
+	// The Access Token Request Object
+	tokenReq, err := dc.accessTokenRequestObject(strings.NewReader(tokenBody), false)
+
 	// Handle the token request object error
 	if err != nil {
-		return nil, "", "", -1, err
+		return nil, "", "", -1, fmt.Errorf("[GetAccessToken.accessTokenRequestObject]: %s", err)
 	}
 	// Get the token data map
 	var data, _err = dc.accessTokenRequest(tokenReq)
 
 	// Handle the token request error
 	if _err != nil {
-		return nil, "", "", -1, _err
+		return nil, "", "", -1, fmt.Errorf("[GetAccessToken Error.accessTokenRequest]: %s", _err)
 	}
 	// The Bearer access token
 	var accessToken string = data["token_type"].(string) + " " + data["access_token"].(string)
@@ -169,13 +178,15 @@ func (dc *Client) GetOnlyAccessToken(code string) (string, error) {
 	// Define Variables
 	var (
 		// The Access Token Request Body
-		tokenBody *bytes.Buffer = dc.accessTokenBody(code)
+		tokenBody = dc.accessTokenBody(code)
 		// The Access Token Request Object
-		tokenReq, err = dc.accessTokenRequestObject(tokenBody, false)
+		tokenReq, err = dc.accessTokenRequestObject(strings.NewReader(tokenBody), false)
 	)
 	// Handle the token request object error
 	if err != nil {
-		panic(fmt.Sprintf("[GetOnlyAccessToken Error]: %s", err))
+		// panic(fmt.Sprintf("[GetOnlyAccessToken Error]: %s", err))
+
+		return "", fmt.Errorf("[discordClient.GetOnlyAccessToken Error]: %s", err)
 
 	}
 	// Get the token data map
@@ -183,7 +194,7 @@ func (dc *Client) GetOnlyAccessToken(code string) (string, error) {
 
 	// Handle the token request error
 	if _err != nil {
-		return "", _err
+		return "", fmt.Errorf("[discordClient.GetOnlyAccessToken.accessTokenRequest Error]: %s", _err)
 	}
 	// The Bearer access token
 	var accessToken string = data["token_type"].(string) + " " + data["access_token"].(string)
@@ -203,19 +214,22 @@ func (dc *Client) GetOnlyAccessToken(code string) (string, error) {
 func (dc *Client) GetAccessTokenMap(code string) (map[string]interface{}, error) {
 
 	if code == "" {
-		panic("[GetAccessTokenMap Error]: code is empty")
+		fmt.Println("[GetAccessTokenMap Error]: code is empty")
 	}
 	// Define Variables
-	var (
-		// The Access Token Request Body
-		tokenBody *bytes.Buffer = dc.accessTokenBody(code)
-		// The Access Token Request Object
-		tokenReq, err = dc.accessTokenRequestObject(tokenBody, false)
-	)
+
+	// The Access Token Request Body
+	tokenBody := dc.accessTokenBody(code)
+
+	log.Println("Token body:", tokenBody)
+
+	// The Access Token Request Object
+	tokenReq, err := dc.accessTokenRequestObject(strings.NewReader(tokenBody), false)
+
 	// Handle the token request object error
 	if err != nil {
-		panic(fmt.Sprintf("[GetAccessTokenMap Error]: %s", err))
-		// return map[string]interface{}{}, err
+		// panic(fmt.Sprintf("[GetAccessTokenMap Error]: %s", err))
+		return map[string]interface{}{}, fmt.Errorf("[GetAccessTokenMap Error]: %s", err)
 	}
 	return dc.accessTokenRequest(tokenReq)
 }

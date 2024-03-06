@@ -25,7 +25,7 @@ func SetupRouter(app chi.Router) {
 		panic("Error generating state")
 	}
 
-	discordOAuth := service.NewAuthService(*db, *ds, state)
+	discordOAuth := service.NewAuthService(db, ds, state)
 	discordOAuthService := handler.NewAuthHandler(*discordOAuth)
 
 	// discordOAuthRedirectService := service.NewAuthService(db, ds, state)
@@ -34,7 +34,7 @@ func SetupRouter(app chi.Router) {
 	loginHandler := monitor.SentryHandler.HandleFunc(handler.Login)
 
 	discordOAuthHandler := monitor.SentryHandler.HandleFunc(handler.OAuthHandler)
-	discordOAuthRedirectHandler := monitor.SentryHandler.HandleFunc(discordOAuthService.OAuthRedirectHandler)
+	discordOAuthCallbackHandler := monitor.SentryHandler.HandleFunc(discordOAuthService.OAuthCallbackHandler)
 	// discordOAuthHandler := monitor.SentryHandler.HandleFunc(handler.NewDiscordOAuthHandler(*discordOAuthService))
 	// discordOAuthRedirectHandler := monitor.SentryHandler.HandleFunc(handler.NewDiscordOAuthRedirect(*discordOAuthRedirectService))
 
@@ -46,7 +46,7 @@ func SetupRouter(app chi.Router) {
 		pages.LogInPage().Render(r.Context(), w)
 	}))
 	// Auth route
-	app.Post("/discord-oauth", handler.OAuthHandler)
+	app.Post("/discord-oauth", discordOAuthHandler)
 
 	app.Get("/", indexHandler)
 	app.Get("/login", loginHandler)
@@ -60,7 +60,7 @@ func SetupRouter(app chi.Router) {
 	// hdl.AuthenticationHandler(ds)(w, r)
 	// })
 
-	app.Get("/discord-redirect", discordOAuthRedirectHandler)
+	app.Get("/discord-callback", discordOAuthCallbackHandler)
 
 	app.Group(func(r chi.Router) {
 		// r.Use(handlers.ProtectedRoutes(r))
@@ -78,6 +78,8 @@ func SetupRouter(app chi.Router) {
 			http.Redirect(w, r, "/", http.StatusFound)
 		})
 	})
+
+	app.Get("/logout", handler.LogoutHandler)
 
 	app.Get("/failed", func(w http.ResponseWriter, r *http.Request) {
 		// pages.FailedPage().Render(r.Context(), w)

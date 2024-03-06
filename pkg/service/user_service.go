@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/zmzlois/LinkGoGo/ent"
+	"github.com/zmzlois/LinkGoGo/pkg/database"
 	"github.com/zmzlois/LinkGoGo/pkg/model"
 )
 
@@ -18,8 +20,11 @@ func NewUserService(client *ent.Client) *UserService {
 	}
 }
 
-func (s UserService) CreateUser(payload model.LoginUserInput, tokenPayload model.TokenInput, tokenString string) (*ent.Users, *ent.Session, error) {
-	user, err := s.db.Users.Create().
+func (s UserService) CreateUser(payload *model.LoginUserInput, tokenPayload *model.TokenInput, tokenString string) (*ent.Users, *ent.Session, error) {
+
+	var db = database.Connection()
+
+	user, err := db.Users.Create().
 		SetExternalID(payload.Id).
 		SetUsername(payload.Username).
 		SetAvatar(payload.Avatar).
@@ -31,6 +36,8 @@ func (s UserService) CreateUser(payload model.LoginUserInput, tokenPayload model
 		SetDeleted(false).
 		Save(context.Background())
 	if err != nil {
+
+		log.Println("[CreateUser]: ", err)
 		return nil, nil, err
 	}
 	t := time.Unix(int64(tokenPayload.ExpiresIn), 0)
@@ -42,6 +49,7 @@ func (s UserService) CreateUser(payload model.LoginUserInput, tokenPayload model
 		Save(context.Background())
 
 	if err != nil {
+		log.Println("[CreateSession]: ", err)
 		return nil, nil, err
 	}
 
