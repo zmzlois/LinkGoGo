@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/zmzlois/LinkGoGo/ent"
 )
@@ -25,7 +24,7 @@ type LoginUserInput struct {
 }
 
 func ParsingUserInput(input map[string]interface{}) (*LoginUserInput, error) {
-	log.Printf("ParsingUserInput: %v\n", input)
+
 	var user = &LoginUserInput{
 		Id:         input["id"].(string),
 		Avatar:     fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", input["id"].(string), input["avatar"].(string)),
@@ -34,7 +33,6 @@ func ParsingUserInput(input map[string]interface{}) (*LoginUserInput, error) {
 		Username:   input["username"].(string),
 	}
 
-	log.Println("Processed User: ", user)
 	return user, nil
 
 }
@@ -53,7 +51,6 @@ type TokenInput struct {
 
 func ParsingTokenInput(input map[string]interface{}) (*TokenInput, error) {
 
-	log.Printf("ParsingTokenInput: %v", input)
 	var token = &TokenInput{
 		AccessToken:  input["access_token"].(string),
 		RefreshToken: input["refresh_token"].(string),
@@ -62,7 +59,6 @@ func ParsingTokenInput(input map[string]interface{}) (*TokenInput, error) {
 		TokenType:    input["token_type"].(string),
 	}
 
-	log.Println("Processed Token: ", token)
 	return token, nil
 }
 

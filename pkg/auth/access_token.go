@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -145,8 +144,6 @@ func (dc *Client) GetAccessToken(code string) (map[string]interface{}, string, s
 	// The Access Token Request Body
 	tokenBody := dc.accessTokenBody(code)
 
-	log.Println(tokenBody)
-
 	// The Access Token Request Object
 	tokenReq, err := dc.accessTokenRequestObject(strings.NewReader(tokenBody), false)
 
@@ -220,8 +217,6 @@ func (dc *Client) GetAccessTokenMap(code string) (map[string]interface{}, error)
 
 	// The Access Token Request Body
 	tokenBody := dc.accessTokenBody(code)
-
-	log.Println("Token body:", tokenBody)
 
 	// The Access Token Request Object
 	tokenReq, err := dc.accessTokenRequestObject(strings.NewReader(tokenBody), false)

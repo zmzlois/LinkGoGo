@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -12,7 +11,6 @@ import (
 // static files from a http.FileSystem.
 func FileServer(r chi.Router, path string, root http.FileSystem) {
 
-	fmt.Printf("Path: %s | Root: %s\n", path, root)
 	if strings.ContainsAny(path, "{}*") {
 		panic("FileServer does not permit any URL parameters.")
 	}

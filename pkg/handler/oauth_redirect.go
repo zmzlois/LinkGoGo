@@ -28,7 +28,7 @@ func (h *AuthHandler) OAuthCallbackHandler(w http.ResponseWriter, r *http.Reques
 	// var userService service.UserService
 
 	var dsc = auth.DiscordInit()
-
+	var userService = &service.UserService{}
 	// Get the code from the redirect parameters (&code=...)
 	var codeFromURLParamaters = r.URL.Query()["code"][0]
 
@@ -55,12 +55,6 @@ func (h *AuthHandler) OAuthCallbackHandler(w http.ResponseWriter, r *http.Reques
 
 	// check if this user exists?
 
-	userExist, err := h.AuthService.Login(userData.Id)
-
-	if err != nil {
-		log.Printf("[OAuth Redirect.Login]: %s", err)
-	}
-
 	tokenPayload, err := model.ParsingTokenInput(data)
 
 	if err != nil {
@@ -71,18 +65,28 @@ func (h *AuthHandler) OAuthCallbackHandler(w http.ResponseWriter, r *http.Reques
 	tokenString, err := dsc.CreateToken(userData, tokenPayload, h.AuthService.State)
 
 	// if user exists, redirect to edit page, update their session
-	if userExist != nil {
-		http.Redirect(w, r, "/edit", http.StatusFound)
-	}
 
 	if err != nil {
 		log.Printf("[OAuth Redirect.Redirect]: %s", err)
 	}
 
-	// set token in cookie
-	dsc.SetCookie(tokenString, w)
+	userExist, err := h.AuthService.Login(userData.Id, tokenString)
 
-	var userService = &service.UserService{}
+	if err != nil {
+		log.Printf("[OAuth Redirect.Login]: %s", err)
+	}
+
+	if userExist != nil {
+		log.Printf("[OAuth Redirect.Redirect]: User %s exists", userExist.Username)
+
+		dsc.SetCookie(tokenString, w)
+
+		http.Redirect(w, r, "/edit", http.StatusFound)
+
+		return
+	}
+
+	// if we can't find this user we creat a new user
 
 	User, Session, err := userService.CreateUser(userData, tokenPayload, tokenString)
 
@@ -97,6 +101,9 @@ func (h *AuthHandler) OAuthCallbackHandler(w http.ResponseWriter, r *http.Reques
 	if User != nil && Session != nil {
 		log.Printf("[OAuth Redirect.Redirect]: User %s and Session created", User.Username)
 	}
+
+	// set token in cookie
+	dsc.SetCookie(tokenString, w)
 
 	http.Redirect(w, r, "/edit", http.StatusFound)
 

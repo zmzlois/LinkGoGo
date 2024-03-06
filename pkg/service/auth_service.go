@@ -27,7 +27,7 @@ func NewAuthService(db *ent.Client, discordClient *auth.Client, state string) *A
 	}
 }
 
-func (s *AuthService) Login(userId string) (*ent.Users, error) {
+func (s *AuthService) Login(userId string, tokenString string) (*ent.Users, error) {
 	user, err := s.db.Users.Query().
 		Where(users.ExternalID(userId)).
 		Only(context.Background())
@@ -35,6 +35,7 @@ func (s *AuthService) Login(userId string) (*ent.Users, error) {
 		log.Println("[Login]: ", err)
 		return nil, fmt.Errorf("login.user not found, create user.%w", err)
 	}
+
 	// update last login time
 	_, err = s.db.Users.UpdateOneID(user.ID).
 		SetUpdatedAt(time.Now()).
@@ -43,6 +44,14 @@ func (s *AuthService) Login(userId string) (*ent.Users, error) {
 	if err != nil {
 		log.Println("[Login]: ", err)
 		return nil, fmt.Errorf("login.failed to update user. %w", err)
+	}
+
+	if user != nil {
+		s.db.Session.Create().
+			SetSessionToken(tokenString).
+			SetExpiresAt(time.Now().Add(168 * time.Hour)).
+			SetUser(user).
+			Save(context.Background())
 	}
 
 	return user, nil
@@ -93,7 +102,7 @@ func (s *AuthService) Callback(code string, state string, w http.ResponseWriter)
 	}
 	// if user exists, issue them a new session token
 	// TODO: ambiguous about what this does
-	_, err = s.Login(state)
+	_, err = s.Login(userData.Id, tokenString)
 
 	if err != nil {
 		w.Write([]byte("User doesn't exist, creating user..."))
