@@ -21,7 +21,7 @@ func (dc *Client) CreateToken(userData *model.LoginUserInput, tokenInput *model.
 		"exp":      tokenInput.ExpiresIn,
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwtMapClaim)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtMapClaim)
 
 	tokenString, err = token.SignedString(utils.Config("JWT_SECRET_KEY"))
 
