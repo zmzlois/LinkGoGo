@@ -13,12 +13,12 @@ import (
 )
 
 type AuthService struct {
-	db    *ent.Client
-	dsc   *auth.Client
+	db    ent.Client
+	dsc   auth.Client
 	State string
 }
 
-func NewAuthService(db *ent.Client, discordClient *auth.Client, state string) *AuthService {
+func NewAuthService(db ent.Client, discordClient auth.Client, state string) *AuthService {
 	return &AuthService{
 		db:    db,
 		dsc:   discordClient,
@@ -96,9 +96,4 @@ func (s *AuthService) Redirect(code string, state string, w http.ResponseWriter)
 	s.dsc.SetCookie(tokenString, w)
 
 	return userData, tokenPayload, tokenString, true, nil
-}
-
-func (s AuthService) CreateSession() {
-	// create a session
-
 }

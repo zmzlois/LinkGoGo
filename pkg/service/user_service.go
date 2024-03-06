@@ -18,7 +18,7 @@ func NewUserService(client *ent.Client) *UserService {
 	}
 }
 
-func (s UserService) CreateUser(payload *model.LoginUserInput, tokenPayload *model.TokenInput, tokenString string) (*ent.Users, *ent.Session, error) {
+func (s UserService) CreateUser(payload model.LoginUserInput, tokenPayload model.TokenInput, tokenString string) (*ent.Users, *ent.Session, error) {
 	user, err := s.db.Users.Create().
 		SetExternalID(payload.Id).
 		SetUsername(payload.Username).

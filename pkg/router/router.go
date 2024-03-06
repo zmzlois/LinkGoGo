@@ -25,7 +25,7 @@ func SetupRouter(app chi.Router) {
 		panic("Error generating state")
 	}
 
-	discordOAuth := service.NewAuthService(db, ds, state)
+	discordOAuth := service.NewAuthService(*db, *ds, state)
 	discordOAuthService := handler.NewAuthHandler(*discordOAuth)
 
 	// discordOAuthRedirectService := service.NewAuthService(db, ds, state)
