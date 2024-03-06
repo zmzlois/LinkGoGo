@@ -14,7 +14,7 @@ var CookieName = fmt.Sprintf("_LinkGoGo-session-token-%s", ScopeIdentify)
 
 func (dc *Client) CreateToken(userData *model.LoginUserInput, tokenInput *model.TokenInput, state string) (tokenString string, err error) {
 
-	jwtMapClaim := &jwt.MapClaims{
+	jwtMapClaim := jwt.MapClaims{
 		"user_id":  userData.Id,
 		"username": userData.Username,
 		"state":    state,
@@ -23,9 +23,10 @@ func (dc *Client) CreateToken(userData *model.LoginUserInput, tokenInput *model.
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtMapClaim)
 
-	tokenString, err = token.SignedString(utils.Config("JWT_SECRET_KEY"))
+	tokenString, err = token.SignedString([]byte(utils.Config("JWT_SECRET_KEY")))
 
 	if err != nil {
+		fmt.Printf("[Create JWT Token]: %s", err)
 		return "", err
 	}
 
