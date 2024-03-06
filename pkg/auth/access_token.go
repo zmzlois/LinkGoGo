@@ -71,8 +71,8 @@ func (dc *Client) accessTokenRequestObject(body *bytes.Buffer, creds bool) (*htt
 	)
 	// Handle the error
 	if err != nil {
-		fmt.Println("[AccessToken Request Object Error]: creating request ", err)
-		return req, err
+		panic(fmt.Sprintf("[AccessToken Request Object Error]: creating request. Error: %s", err))
+
 	}
 
 	// Set the request object's headers
@@ -107,8 +107,7 @@ func (dc *Client) accessTokenRequest(req *http.Request) (map[string]interface{},
 
 		// Handle the read body error
 		if _err != nil {
-			fmt.Println("[AccessToken Request Error]: reading body ", _err)
-			return map[string]interface{}{}, _err
+			panic(fmt.Sprintf("[AccessToken Request Error]: reading body. Error: %s", _err))
 		}
 		// Handle http response error
 		return map[string]interface{}{},
@@ -176,7 +175,8 @@ func (dc *Client) GetOnlyAccessToken(code string) (string, error) {
 	)
 	// Handle the token request object error
 	if err != nil {
-		return "", err
+		panic(fmt.Sprintf("[GetOnlyAccessToken Error]: %s", err))
+
 	}
 	// Get the token data map
 	var data, _err = dc.accessTokenRequest(tokenReq)
@@ -210,7 +210,8 @@ func (dc *Client) GetAccessTokenMap(code string) (map[string]interface{}, error)
 	)
 	// Handle the token request object error
 	if err != nil {
-		return map[string]interface{}{}, err
+		panic(fmt.Sprintf("[GetAccessTokenMap Error]: %s", err))
+		// return map[string]interface{}{}, err
 	}
 	return dc.accessTokenRequest(tokenReq)
 }
