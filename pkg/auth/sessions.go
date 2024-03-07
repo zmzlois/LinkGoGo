@@ -1,8 +1,8 @@
 package auth
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -11,23 +11,33 @@ import (
 	"github.com/zmzlois/LinkGoGo/pkg/utils"
 )
 
+type cookieKey int
+
 var CookieName = fmt.Sprintf("_LinkGoGo-session-token-%s", ScopeIdentify)
 
+const (
+	ContextKey cookieKey = iota
+)
+
 type Claims struct {
-	UserID   int     `json:"user_id"`
-	Username string  `json:"username"`
-	State    string  `json:"state"`
-	Exp      float64 `json:"exp"`
+	UserID       int     `json:"user_id"`
+	Username     string  `json:"username"`
+	State        string  `json:"state"`
+	RefreshToken string  `json:"refresh_token"`
+	AccessToken  string  `json:"access_token"`
+	Exp          float64 `json:"exp"`
 	jwt.RegisteredClaims
 }
 
 func (dc *Client) CreateToken(userData *model.LoginUserInput, tokenInput *model.TokenInput, state string) (tokenString string, err error) {
 
 	jwtMapClaim := jwt.MapClaims{
-		"user_id":  userData.Id,
-		"username": userData.Username,
-		"state":    state,
-		"exp":      time.Now().Add(168 * time.Hour).Unix(),
+		"user_id":       userData.Id,
+		"username":      userData.Username,
+		"state":         state,
+		"refresh_token": tokenInput.RefreshToken,
+		"access_token":  tokenInput.AccessToken,
+		"exp":           time.Now().Add(168 * time.Hour).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtMapClaim)
@@ -57,7 +67,7 @@ func (dc *Client) SetCookie(tokenString string, w http.ResponseWriter) {
 	http.SetCookie(w, &cookie)
 }
 
-func ValidateToken(tokenString string) (bool, error) {
+func ValidateToken(ctx context.Context, tokenString string) (bool, error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -70,22 +80,21 @@ func ValidateToken(tokenString string) (bool, error) {
 	if err != nil || !token.Valid {
 		return false, err
 	}
-	return true, nil
+	return false, nil
 }
 
 func GetToken(r *http.Request) (string, error) {
 	tokenFromCookie, err := r.Cookie(CookieName)
 
 	if err != nil {
+
 		return "", fmt.Errorf("discordClient.GetToken: %w", err)
 	}
 
-	log.Printf("GetToken: %s\n", tokenFromCookie)
-	log.Printf("GetToken.Value: %s\n", tokenFromCookie.Value)
 	return tokenFromCookie.Value, nil
 }
 
-func (dc *Client) RetrieveTokenValue(field string, r *http.Request) (string, error) {
+func RetrieveTokenValue(field string, r *http.Request) (string, error) {
 	tokenFromCookie, err := r.Cookie(CookieName)
 
 	tokenString := tokenFromCookie.Value
@@ -126,4 +135,8 @@ func (dc *Client) RetrieveTokenValue(field string, r *http.Request) (string, err
 
 	return result, nil
 
+}
+
+func WithSession(ctx context.Context, CookieValue string) context.Context {
+	return context.WithValue(ctx, ContextKey, CookieValue)
 }
