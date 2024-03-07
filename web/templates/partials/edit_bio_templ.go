@@ -12,10 +12,9 @@ import "bytes"
 
 import (
 	"github.com/zmzlois/LinkGoGo/web/templates/icons"
-	"github.com/zmzlois/LinkGoGo/web/utils"
 )
 
-func EditBio() templ.Component {
+func EditBio(bio string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -41,9 +40,9 @@ func EditBio() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(utils.MockData["bio"])
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(bio)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/edit_bio.templ`, Line: 14, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/edit_bio.templ`, Line: 13, Col: 95}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -53,7 +52,7 @@ func EditBio() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(utils.MockData["bio"]))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(bio))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

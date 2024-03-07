@@ -3,9 +3,12 @@ package pages
 import (
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
 	"github.com/zmzlois/LinkGoGo/web/templates/partials"
+	"github.com/zmzlois/LinkGoGo/pkg/model"
 )
 
-templ EditPage() {
+type Link model.NewLinkInput
+
+templ EditPage(avatar string, name string, bio string, links []Link) {
 	@shared.Page("Create link") {
 		@shared.Background() {
 			@shared.Container() {
@@ -18,10 +21,10 @@ templ EditPage() {
 			// fetch user profile data
 			@shared.Container() {
 				<div class="py-8 flex flex-col items-center gap-4">
-					@partials.EditProfilePicture()
+					@partials.EditProfilePicture(avatar)
 					<div class="gap-2 flex flex-col items-center w-1/4">
-						@partials.EditName()
-						@partials.EditBio()
+						@partials.EditName(name)
+						@partials.EditBio(bio)
 					</div>
 				</div>
 			}

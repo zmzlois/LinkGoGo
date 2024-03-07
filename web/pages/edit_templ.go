@@ -11,11 +11,14 @@ import "io"
 import "bytes"
 
 import (
+	"github.com/zmzlois/LinkGoGo/pkg/model"
 	"github.com/zmzlois/LinkGoGo/web/templates/partials"
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
 )
 
-func EditPage() templ.Component {
+type Link model.NewLinkInput
+
+func EditPage(avatar string, name string, bio string, links []Link) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -96,7 +99,7 @@ func EditPage() templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = partials.EditProfilePicture().Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = partials.EditProfilePicture(avatar).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -104,11 +107,11 @@ func EditPage() templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = partials.EditName().Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = partials.EditName(name).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = partials.EditBio().Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = partials.EditBio(bio).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

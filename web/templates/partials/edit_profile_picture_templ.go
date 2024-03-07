@@ -12,7 +12,7 @@ import "bytes"
 
 import "github.com/zmzlois/LinkGoGo/web/templates/icons"
 
-func EditProfilePicture() templ.Component {
+func EditProfilePicture(avatar string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -33,7 +33,15 @@ func EditProfilePicture() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"relative z-10 border-2 border-transparent group-hover:border-2 group-hover:border-zinc-200/60 w-24 h-24 transition rounded-full\"><img src=\"dist/pfp.jpg\" class=\"rounded-full\" alt=\"avatar\"></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"relative z-10 border-2 border-transparent group-hover:border-2 group-hover:border-zinc-200/60 w-24 h-24 transition rounded-full\"><img src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(avatar))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"rounded-full\" alt=\"avatar\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

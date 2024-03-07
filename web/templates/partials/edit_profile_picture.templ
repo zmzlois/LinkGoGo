@@ -2,12 +2,12 @@ package partials
 
 import "github.com/zmzlois/LinkGoGo/web/templates/icons"
 
-templ EditProfilePicture() {
+templ EditProfilePicture(avatar string) {
 	<div class="group relative h-24 w-24 inset-0 hover:cursor-pointer">
 		<div class="absolute z-20 bottom-0 right-0 border-zinc-300 hidden group-hover:block">
 			// <img src="dist/pen.svg" class="text-zinc-300 w-8 h-8"/>
 			@icons.PenIcon("text-zinc-100 w-6 h-6")
 		</div>
-		<div class="relative z-10 border-2 border-transparent group-hover:border-2 group-hover:border-zinc-200/60 w-24 h-24 transition rounded-full"><img src="dist/pfp.jpg" class="rounded-full" alt="avatar"/></div>
+		<div class="relative z-10 border-2 border-transparent group-hover:border-2 group-hover:border-zinc-200/60 w-24 h-24 transition rounded-full"><img src={ avatar } class="rounded-full" alt="avatar"/></div>
 	</div>
 }
