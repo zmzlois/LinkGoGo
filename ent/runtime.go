@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/zmzlois/LinkGoGo/ent/account"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/schema"
 	"github.com/zmzlois/LinkGoGo/ent/session"
@@ -16,6 +17,42 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	accountFields := schema.Account{}.Fields()
+	_ = accountFields
+	// accountDescFirstName is the schema descriptor for first_name field.
+	accountDescFirstName := accountFields[2].Descriptor()
+	// account.FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
+	account.FirstNameValidator = accountDescFirstName.Validators[0].(func(string) error)
+	// accountDescLastName is the schema descriptor for last_name field.
+	accountDescLastName := accountFields[3].Descriptor()
+	// account.LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
+	account.LastNameValidator = accountDescLastName.Validators[0].(func(string) error)
+	// accountDescEmail is the schema descriptor for email field.
+	accountDescEmail := accountFields[4].Descriptor()
+	// account.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	account.EmailValidator = accountDescEmail.Validators[0].(func(string) error)
+	// accountDescAvatar is the schema descriptor for avatar field.
+	accountDescAvatar := accountFields[5].Descriptor()
+	// account.AvatarValidator is a validator for the "avatar" field. It is called by the builders before save.
+	account.AvatarValidator = accountDescAvatar.Validators[0].(func(string) error)
+	// accountDescDeleted is the schema descriptor for deleted field.
+	accountDescDeleted := accountFields[7].Descriptor()
+	// account.DefaultDeleted holds the default value on creation for the deleted field.
+	account.DefaultDeleted = accountDescDeleted.Default.(bool)
+	// accountDescCreatedAt is the schema descriptor for created_at field.
+	accountDescCreatedAt := accountFields[8].Descriptor()
+	// account.DefaultCreatedAt holds the default value on creation for the created_at field.
+	account.DefaultCreatedAt = accountDescCreatedAt.Default.(func() time.Time)
+	// accountDescUpdatedAt is the schema descriptor for updated_at field.
+	accountDescUpdatedAt := accountFields[9].Descriptor()
+	// account.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	account.DefaultUpdatedAt = accountDescUpdatedAt.Default.(func() time.Time)
+	// account.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	account.UpdateDefaultUpdatedAt = accountDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// accountDescID is the schema descriptor for id field.
+	accountDescID := accountFields[6].Descriptor()
+	// account.DefaultID holds the default value on creation for the id field.
+	account.DefaultID = accountDescID.Default.(func() uuid.UUID)
 	linksFields := schema.Links{}.Fields()
 	_ = linksFields
 	// linksDescURL is the schema descriptor for url field.
@@ -27,25 +64,29 @@ func init() {
 	// links.TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	links.TitleValidator = linksDescTitle.Validators[0].(func(string) error)
 	// linksDescImage is the schema descriptor for image field.
-	linksDescImage := linksFields[3].Descriptor()
+	linksDescImage := linksFields[4].Descriptor()
 	// links.ImageValidator is a validator for the "image" field. It is called by the builders before save.
 	links.ImageValidator = linksDescImage.Validators[0].(func(string) error)
+	// linksDescOrder is the schema descriptor for order field.
+	linksDescOrder := linksFields[5].Descriptor()
+	// links.DefaultOrder holds the default value on creation for the order field.
+	links.DefaultOrder = linksDescOrder.Default.(int)
 	// linksDescDeleted is the schema descriptor for deleted field.
-	linksDescDeleted := linksFields[5].Descriptor()
+	linksDescDeleted := linksFields[7].Descriptor()
 	// links.DefaultDeleted holds the default value on creation for the deleted field.
 	links.DefaultDeleted = linksDescDeleted.Default.(bool)
 	// linksDescCreatedAt is the schema descriptor for created_at field.
-	linksDescCreatedAt := linksFields[6].Descriptor()
+	linksDescCreatedAt := linksFields[8].Descriptor()
 	// links.DefaultCreatedAt holds the default value on creation for the created_at field.
 	links.DefaultCreatedAt = linksDescCreatedAt.Default.(func() time.Time)
 	// linksDescUpdatedAt is the schema descriptor for updated_at field.
-	linksDescUpdatedAt := linksFields[7].Descriptor()
+	linksDescUpdatedAt := linksFields[9].Descriptor()
 	// links.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	links.DefaultUpdatedAt = linksDescUpdatedAt.Default.(func() time.Time)
 	// links.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	links.UpdateDefaultUpdatedAt = linksDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// linksDescID is the schema descriptor for id field.
-	linksDescID := linksFields[4].Descriptor()
+	linksDescID := linksFields[6].Descriptor()
 	// links.DefaultID holds the default value on creation for the id field.
 	links.DefaultID = linksDescID.Default.(func() uuid.UUID)
 	sessionFields := schema.Session{}.Fields()
@@ -82,54 +123,42 @@ func init() {
 	usersDescSlug := usersFields[3].Descriptor()
 	// users.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
 	users.SlugValidator = usersDescSlug.Validators[0].(func(string) error)
-	// usersDescFirstName is the schema descriptor for first_name field.
-	usersDescFirstName := usersFields[4].Descriptor()
-	// users.FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
-	users.FirstNameValidator = usersDescFirstName.Validators[0].(func(string) error)
-	// usersDescLastName is the schema descriptor for last_name field.
-	usersDescLastName := usersFields[5].Descriptor()
-	// users.LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
-	users.LastNameValidator = usersDescLastName.Validators[0].(func(string) error)
-	// usersDescEmail is the schema descriptor for email field.
-	usersDescEmail := usersFields[6].Descriptor()
-	// users.EmailValidator is a validator for the "email" field. It is called by the builders before save.
-	users.EmailValidator = usersDescEmail.Validators[0].(func(string) error)
 	// usersDescAvatar is the schema descriptor for avatar field.
-	usersDescAvatar := usersFields[7].Descriptor()
+	usersDescAvatar := usersFields[4].Descriptor()
 	// users.AvatarValidator is a validator for the "avatar" field. It is called by the builders before save.
 	users.AvatarValidator = usersDescAvatar.Validators[0].(func(string) error)
 	// usersDescDescription is the schema descriptor for description field.
-	usersDescDescription := usersFields[8].Descriptor()
+	usersDescDescription := usersFields[5].Descriptor()
 	// users.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	users.DescriptionValidator = usersDescDescription.Validators[0].(func(string) error)
 	// usersDescAccessToken is the schema descriptor for access_token field.
-	usersDescAccessToken := usersFields[9].Descriptor()
+	usersDescAccessToken := usersFields[6].Descriptor()
 	// users.AccessTokenValidator is a validator for the "access_token" field. It is called by the builders before save.
 	users.AccessTokenValidator = usersDescAccessToken.Validators[0].(func(string) error)
 	// usersDescRefreshToken is the schema descriptor for refresh_token field.
-	usersDescRefreshToken := usersFields[10].Descriptor()
+	usersDescRefreshToken := usersFields[7].Descriptor()
 	// users.RefreshTokenValidator is a validator for the "refresh_token" field. It is called by the builders before save.
 	users.RefreshTokenValidator = usersDescRefreshToken.Validators[0].(func(string) error)
 	// usersDescScope is the schema descriptor for scope field.
-	usersDescScope := usersFields[11].Descriptor()
+	usersDescScope := usersFields[8].Descriptor()
 	// users.ScopeValidator is a validator for the "scope" field. It is called by the builders before save.
 	users.ScopeValidator = usersDescScope.Validators[0].(func(string) error)
 	// usersDescDeleted is the schema descriptor for deleted field.
-	usersDescDeleted := usersFields[15].Descriptor()
+	usersDescDeleted := usersFields[12].Descriptor()
 	// users.DefaultDeleted holds the default value on creation for the deleted field.
 	users.DefaultDeleted = usersDescDeleted.Default.(bool)
 	// usersDescCreatedAt is the schema descriptor for created_at field.
-	usersDescCreatedAt := usersFields[16].Descriptor()
+	usersDescCreatedAt := usersFields[13].Descriptor()
 	// users.DefaultCreatedAt holds the default value on creation for the created_at field.
 	users.DefaultCreatedAt = usersDescCreatedAt.Default.(func() time.Time)
 	// usersDescUpdatedAt is the schema descriptor for updated_at field.
-	usersDescUpdatedAt := usersFields[17].Descriptor()
+	usersDescUpdatedAt := usersFields[14].Descriptor()
 	// users.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	users.DefaultUpdatedAt = usersDescUpdatedAt.Default.(func() time.Time)
 	// users.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	users.UpdateDefaultUpdatedAt = usersDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// usersDescID is the schema descriptor for id field.
-	usersDescID := usersFields[14].Descriptor()
+	usersDescID := usersFields[11].Descriptor()
 	// users.DefaultID holds the default value on creation for the id field.
 	users.DefaultID = usersDescID.Default.(func() uuid.UUID)
 }

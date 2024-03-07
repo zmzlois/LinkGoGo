@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/zmzlois/LinkGoGo/ent/account"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
 	"github.com/zmzlois/LinkGoGo/ent/session"
@@ -27,6 +28,7 @@ type UsersQuery struct {
 	predicates        []predicate.Users
 	withUsersLinks    *LinksQuery
 	withUsersSessions *SessionQuery
+	withUsersAccounts *AccountQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -100,6 +102,28 @@ func (uq *UsersQuery) QueryUsersSessions() *SessionQuery {
 			sqlgraph.From(users.Table, users.FieldID, selector),
 			sqlgraph.To(session.Table, session.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, users.UsersSessionsTable, users.UsersSessionsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUsersAccounts chains the current query on the "users_accounts" edge.
+func (uq *UsersQuery) QueryUsersAccounts() *AccountQuery {
+	query := (&AccountClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(users.Table, users.FieldID, selector),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, users.UsersAccountsTable, users.UsersAccountsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -301,6 +325,7 @@ func (uq *UsersQuery) Clone() *UsersQuery {
 		predicates:        append([]predicate.Users{}, uq.predicates...),
 		withUsersLinks:    uq.withUsersLinks.Clone(),
 		withUsersSessions: uq.withUsersSessions.Clone(),
+		withUsersAccounts: uq.withUsersAccounts.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -326,6 +351,17 @@ func (uq *UsersQuery) WithUsersSessions(opts ...func(*SessionQuery)) *UsersQuery
 		opt(query)
 	}
 	uq.withUsersSessions = query
+	return uq
+}
+
+// WithUsersAccounts tells the query-builder to eager-load the nodes that are connected to
+// the "users_accounts" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UsersQuery) WithUsersAccounts(opts ...func(*AccountQuery)) *UsersQuery {
+	query := (&AccountClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUsersAccounts = query
 	return uq
 }
 
@@ -407,9 +443,10 @@ func (uq *UsersQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Users,
 	var (
 		nodes       = []*Users{}
 		_spec       = uq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			uq.withUsersLinks != nil,
 			uq.withUsersSessions != nil,
+			uq.withUsersAccounts != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -441,6 +478,13 @@ func (uq *UsersQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Users,
 		if err := uq.loadUsersSessions(ctx, query, nodes,
 			func(n *Users) { n.Edges.UsersSessions = []*Session{} },
 			func(n *Users, e *Session) { n.Edges.UsersSessions = append(n.Edges.UsersSessions, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withUsersAccounts; query != nil {
+		if err := uq.loadUsersAccounts(ctx, query, nodes,
+			func(n *Users) { n.Edges.UsersAccounts = []*Account{} },
+			func(n *Users, e *Account) { n.Edges.UsersAccounts = append(n.Edges.UsersAccounts, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -502,6 +546,36 @@ func (uq *UsersQuery) loadUsersSessions(ctx context.Context, query *SessionQuery
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UsersQuery) loadUsersAccounts(ctx context.Context, query *AccountQuery, nodes []*Users, init func(*Users), assign func(*Users, *Account)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Users)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(account.FieldExternalID)
+	}
+	query.Where(predicate.Account(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(users.UsersAccountsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ExternalID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "external_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

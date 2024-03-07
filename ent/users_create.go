@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/zmzlois/LinkGoGo/ent/account"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/session"
 	"github.com/zmzlois/LinkGoGo/ent/users"
@@ -44,48 +45,6 @@ func (uc *UsersCreate) SetGlobalName(s string) *UsersCreate {
 // SetSlug sets the "slug" field.
 func (uc *UsersCreate) SetSlug(s string) *UsersCreate {
 	uc.mutation.SetSlug(s)
-	return uc
-}
-
-// SetFirstName sets the "first_name" field.
-func (uc *UsersCreate) SetFirstName(s string) *UsersCreate {
-	uc.mutation.SetFirstName(s)
-	return uc
-}
-
-// SetNillableFirstName sets the "first_name" field if the given value is not nil.
-func (uc *UsersCreate) SetNillableFirstName(s *string) *UsersCreate {
-	if s != nil {
-		uc.SetFirstName(*s)
-	}
-	return uc
-}
-
-// SetLastName sets the "last_name" field.
-func (uc *UsersCreate) SetLastName(s string) *UsersCreate {
-	uc.mutation.SetLastName(s)
-	return uc
-}
-
-// SetNillableLastName sets the "last_name" field if the given value is not nil.
-func (uc *UsersCreate) SetNillableLastName(s *string) *UsersCreate {
-	if s != nil {
-		uc.SetLastName(*s)
-	}
-	return uc
-}
-
-// SetEmail sets the "email" field.
-func (uc *UsersCreate) SetEmail(s string) *UsersCreate {
-	uc.mutation.SetEmail(s)
-	return uc
-}
-
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (uc *UsersCreate) SetNillableEmail(s *string) *UsersCreate {
-	if s != nil {
-		uc.SetEmail(*s)
-	}
 	return uc
 }
 
@@ -273,6 +232,21 @@ func (uc *UsersCreate) AddUsersSessions(s ...*Session) *UsersCreate {
 	return uc.AddUsersSessionIDs(ids...)
 }
 
+// AddUsersAccountIDs adds the "users_accounts" edge to the Account entity by IDs.
+func (uc *UsersCreate) AddUsersAccountIDs(ids ...uuid.UUID) *UsersCreate {
+	uc.mutation.AddUsersAccountIDs(ids...)
+	return uc
+}
+
+// AddUsersAccounts adds the "users_accounts" edges to the Account entity.
+func (uc *UsersCreate) AddUsersAccounts(a ...*Account) *UsersCreate {
+	ids := make([]uuid.UUID, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddUsersAccountIDs(ids...)
+}
+
 // Mutation returns the UsersMutation object of the builder.
 func (uc *UsersCreate) Mutation() *UsersMutation {
 	return uc.mutation
@@ -353,21 +327,6 @@ func (uc *UsersCreate) check() error {
 	if v, ok := uc.mutation.Slug(); ok {
 		if err := users.SlugValidator(v); err != nil {
 			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Users.slug": %w`, err)}
-		}
-	}
-	if v, ok := uc.mutation.FirstName(); ok {
-		if err := users.FirstNameValidator(v); err != nil {
-			return &ValidationError{Name: "first_name", err: fmt.Errorf(`ent: validator failed for field "Users.first_name": %w`, err)}
-		}
-	}
-	if v, ok := uc.mutation.LastName(); ok {
-		if err := users.LastNameValidator(v); err != nil {
-			return &ValidationError{Name: "last_name", err: fmt.Errorf(`ent: validator failed for field "Users.last_name": %w`, err)}
-		}
-	}
-	if v, ok := uc.mutation.Email(); ok {
-		if err := users.EmailValidator(v); err != nil {
-			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "Users.email": %w`, err)}
 		}
 	}
 	if v, ok := uc.mutation.Avatar(); ok {
@@ -455,18 +414,6 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 		_spec.SetField(users.FieldSlug, field.TypeString, value)
 		_node.Slug = value
 	}
-	if value, ok := uc.mutation.FirstName(); ok {
-		_spec.SetField(users.FieldFirstName, field.TypeString, value)
-		_node.FirstName = value
-	}
-	if value, ok := uc.mutation.LastName(); ok {
-		_spec.SetField(users.FieldLastName, field.TypeString, value)
-		_node.LastName = value
-	}
-	if value, ok := uc.mutation.Email(); ok {
-		_spec.SetField(users.FieldEmail, field.TypeString, value)
-		_node.Email = value
-	}
 	if value, ok := uc.mutation.Avatar(); ok {
 		_spec.SetField(users.FieldAvatar, field.TypeString, value)
 		_node.Avatar = value
@@ -532,6 +479,22 @@ func (uc *UsersCreate) createSpec() (*Users, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UsersAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   users.UsersAccountsTable,
+			Columns: []string{users.UsersAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

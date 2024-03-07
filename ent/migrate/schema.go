@@ -8,12 +8,41 @@ import (
 )
 
 var (
+	// AccountsColumns holds the columns for the "accounts" table.
+	AccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "username", Type: field.TypeString, Unique: true},
+		{Name: "first_name", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "last_name", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "email", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "deleted", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},
+		{Name: "external_id", Type: field.TypeUUID},
+	}
+	// AccountsTable holds the schema information for the "accounts" table.
+	AccountsTable = &schema.Table{
+		Name:       "accounts",
+		Columns:    AccountsColumns,
+		PrimaryKey: []*schema.Column{AccountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "accounts_users_users_accounts",
+				Columns:    []*schema.Column{AccountsColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// LinksColumns holds the columns for the "links" table.
 	LinksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "url", Type: field.TypeString, Size: 255},
 		{Name: "title", Type: field.TypeString, Unique: true, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "image", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "order", Type: field.TypeInt, Default: 0},
 		{Name: "deleted", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp"}},
@@ -27,7 +56,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "links_users_users_links",
-				Columns:    []*schema.Column{LinksColumns[7]},
+				Columns:    []*schema.Column{LinksColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -64,9 +93,6 @@ var (
 		{Name: "username", Type: field.TypeString, Size: 255},
 		{Name: "global_name", Type: field.TypeString, Size: 255},
 		{Name: "slug", Type: field.TypeString, Size: 255},
-		{Name: "first_name", Type: field.TypeString, Nullable: true, Size: 255},
-		{Name: "last_name", Type: field.TypeString, Nullable: true, Size: 255},
-		{Name: "email", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "access_token", Type: field.TypeString, Nullable: true, Size: 255},
@@ -86,6 +112,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AccountsTable,
 		LinksTable,
 		SessionsTable,
 		UsersTable,
@@ -93,6 +120,7 @@ var (
 )
 
 func init() {
+	AccountsTable.ForeignKeys[0].RefTable = UsersTable
 	LinksTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 }

@@ -21,8 +21,12 @@ const (
 	FieldURL = "url"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
 	// FieldImage holds the string denoting the image field in the database.
 	FieldImage = "image"
+	// FieldOrder holds the string denoting the order field in the database.
+	FieldOrder = "order"
 	// FieldDeleted holds the string denoting the deleted field in the database.
 	FieldDeleted = "deleted"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -48,7 +52,9 @@ var Columns = []string{
 	FieldUserID,
 	FieldURL,
 	FieldTitle,
+	FieldDescription,
 	FieldImage,
+	FieldOrder,
 	FieldDeleted,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -71,6 +77,8 @@ var (
 	TitleValidator func(string) error
 	// ImageValidator is a validator for the "image" field. It is called by the builders before save.
 	ImageValidator func(string) error
+	// DefaultOrder holds the default value on creation for the "order" field.
+	DefaultOrder int
 	// DefaultDeleted holds the default value on creation for the "deleted" field.
 	DefaultDeleted bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -106,9 +114,19 @@ func ByTitle(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTitle, opts...).ToFunc()
 }
 
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
 // ByImage orders the results by the image field.
 func ByImage(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldImage, opts...).ToFunc()
+}
+
+// ByOrder orders the results by the order field.
+func ByOrder(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrder, opts...).ToFunc()
 }
 
 // ByDeleted orders the results by the deleted field.

@@ -23,12 +23,6 @@ const (
 	FieldGlobalName = "global_name"
 	// FieldSlug holds the string denoting the slug field in the database.
 	FieldSlug = "slug"
-	// FieldFirstName holds the string denoting the first_name field in the database.
-	FieldFirstName = "first_name"
-	// FieldLastName holds the string denoting the last_name field in the database.
-	FieldLastName = "last_name"
-	// FieldEmail holds the string denoting the email field in the database.
-	FieldEmail = "email"
 	// FieldAvatar holds the string denoting the avatar field in the database.
 	FieldAvatar = "avatar"
 	// FieldDescription holds the string denoting the description field in the database.
@@ -53,6 +47,8 @@ const (
 	EdgeUsersLinks = "users_links"
 	// EdgeUsersSessions holds the string denoting the users_sessions edge name in mutations.
 	EdgeUsersSessions = "users_sessions"
+	// EdgeUsersAccounts holds the string denoting the users_accounts edge name in mutations.
+	EdgeUsersAccounts = "users_accounts"
 	// Table holds the table name of the users in the database.
 	Table = "users"
 	// UsersLinksTable is the table that holds the users_links relation/edge.
@@ -69,6 +65,13 @@ const (
 	UsersSessionsInverseTable = "sessions"
 	// UsersSessionsColumn is the table column denoting the users_sessions relation/edge.
 	UsersSessionsColumn = "user_id"
+	// UsersAccountsTable is the table that holds the users_accounts relation/edge.
+	UsersAccountsTable = "accounts"
+	// UsersAccountsInverseTable is the table name for the Account entity.
+	// It exists in this package in order to avoid circular dependency with the "account" package.
+	UsersAccountsInverseTable = "accounts"
+	// UsersAccountsColumn is the table column denoting the users_accounts relation/edge.
+	UsersAccountsColumn = "external_id"
 )
 
 // Columns holds all SQL columns for users fields.
@@ -78,9 +81,6 @@ var Columns = []string{
 	FieldUsername,
 	FieldGlobalName,
 	FieldSlug,
-	FieldFirstName,
-	FieldLastName,
-	FieldEmail,
 	FieldAvatar,
 	FieldDescription,
 	FieldAccessToken,
@@ -110,12 +110,6 @@ var (
 	GlobalNameValidator func(string) error
 	// SlugValidator is a validator for the "slug" field. It is called by the builders before save.
 	SlugValidator func(string) error
-	// FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
-	FirstNameValidator func(string) error
-	// LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
-	LastNameValidator func(string) error
-	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
-	EmailValidator func(string) error
 	// AvatarValidator is a validator for the "avatar" field. It is called by the builders before save.
 	AvatarValidator func(string) error
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
@@ -164,21 +158,6 @@ func ByGlobalName(opts ...sql.OrderTermOption) OrderOption {
 // BySlug orders the results by the slug field.
 func BySlug(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSlug, opts...).ToFunc()
-}
-
-// ByFirstName orders the results by the first_name field.
-func ByFirstName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldFirstName, opts...).ToFunc()
-}
-
-// ByLastName orders the results by the last_name field.
-func ByLastName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLastName, opts...).ToFunc()
-}
-
-// ByEmail orders the results by the email field.
-func ByEmail(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEmail, opts...).ToFunc()
 }
 
 // ByAvatar orders the results by the avatar field.
@@ -258,6 +237,20 @@ func ByUsersSessions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUsersSessionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUsersAccountsCount orders the results by users_accounts count.
+func ByUsersAccountsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUsersAccountsStep(), opts...)
+	}
+}
+
+// ByUsersAccounts orders the results by users_accounts terms.
+func ByUsersAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUsersAccountsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUsersLinksStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -270,5 +263,12 @@ func newUsersSessionsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UsersSessionsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, UsersSessionsTable, UsersSessionsColumn),
+	)
+}
+func newUsersAccountsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UsersAccountsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UsersAccountsTable, UsersAccountsColumn),
 	)
 }

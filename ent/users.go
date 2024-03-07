@@ -26,12 +26,6 @@ type Users struct {
 	GlobalName string `json:"global_name,omitempty"`
 	// Slug holds the value of the "slug" field.
 	Slug string `json:"slug,omitempty"`
-	// FirstName holds the value of the "first_name" field.
-	FirstName string `json:"first_name,omitempty"`
-	// LastName holds the value of the "last_name" field.
-	LastName string `json:"last_name,omitempty"`
-	// Email holds the value of the "email" field.
-	Email string `json:"email,omitempty"`
 	// Avatar holds the value of the "avatar" field.
 	Avatar string `json:"avatar,omitempty"`
 	// Description holds the value of the "description" field.
@@ -64,9 +58,11 @@ type UsersEdges struct {
 	UsersLinks []*Links `json:"users_links,omitempty"`
 	// UsersSessions holds the value of the users_sessions edge.
 	UsersSessions []*Session `json:"users_sessions,omitempty"`
+	// UsersAccounts holds the value of the users_accounts edge.
+	UsersAccounts []*Account `json:"users_accounts,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UsersLinksOrErr returns the UsersLinks value or an error if the edge
@@ -87,6 +83,15 @@ func (e UsersEdges) UsersSessionsOrErr() ([]*Session, error) {
 	return nil, &NotLoadedError{edge: "users_sessions"}
 }
 
+// UsersAccountsOrErr returns the UsersAccounts value or an error if the edge
+// was not loaded in eager-loading.
+func (e UsersEdges) UsersAccountsOrErr() ([]*Account, error) {
+	if e.loadedTypes[2] {
+		return e.UsersAccounts, nil
+	}
+	return nil, &NotLoadedError{edge: "users_accounts"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Users) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -96,7 +101,7 @@ func (*Users) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case users.FieldExpiresIn:
 			values[i] = new(sql.NullFloat64)
-		case users.FieldExternalID, users.FieldUsername, users.FieldGlobalName, users.FieldSlug, users.FieldFirstName, users.FieldLastName, users.FieldEmail, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken, users.FieldScope, users.FieldSessionState:
+		case users.FieldExternalID, users.FieldUsername, users.FieldGlobalName, users.FieldSlug, users.FieldAvatar, users.FieldDescription, users.FieldAccessToken, users.FieldRefreshToken, users.FieldScope, users.FieldSessionState:
 			values[i] = new(sql.NullString)
 		case users.FieldCreatedAt, users.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -146,24 +151,6 @@ func (u *Users) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field slug", values[i])
 			} else if value.Valid {
 				u.Slug = value.String
-			}
-		case users.FieldFirstName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field first_name", values[i])
-			} else if value.Valid {
-				u.FirstName = value.String
-			}
-		case users.FieldLastName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field last_name", values[i])
-			} else if value.Valid {
-				u.LastName = value.String
-			}
-		case users.FieldEmail:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field email", values[i])
-			} else if value.Valid {
-				u.Email = value.String
 			}
 		case users.FieldAvatar:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -248,6 +235,11 @@ func (u *Users) QueryUsersSessions() *SessionQuery {
 	return NewUsersClient(u.config).QueryUsersSessions(u)
 }
 
+// QueryUsersAccounts queries the "users_accounts" edge of the Users entity.
+func (u *Users) QueryUsersAccounts() *AccountQuery {
+	return NewUsersClient(u.config).QueryUsersAccounts(u)
+}
+
 // Update returns a builder for updating this Users.
 // Note that you need to call Users.Unwrap() before calling this method if this Users
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -282,15 +274,6 @@ func (u *Users) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("slug=")
 	builder.WriteString(u.Slug)
-	builder.WriteString(", ")
-	builder.WriteString("first_name=")
-	builder.WriteString(u.FirstName)
-	builder.WriteString(", ")
-	builder.WriteString("last_name=")
-	builder.WriteString(u.LastName)
-	builder.WriteString(", ")
-	builder.WriteString("email=")
-	builder.WriteString(u.Email)
 	builder.WriteString(", ")
 	builder.WriteString("avatar=")
 	builder.WriteString(u.Avatar)

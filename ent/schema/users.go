@@ -11,16 +11,13 @@ type Users struct {
 	ent.Schema
 }
 
-// Fields of the Users.
+// Fields of the Users coming from providers
 func (Users) Fields() []ent.Field {
 	users := []ent.Field{
 		field.String("external_id").Unique(),
 		field.String("username").MaxLen(255),
 		field.String("global_name").MaxLen(255),
 		field.String("slug").MaxLen(255),
-		field.String("first_name").MaxLen(255).Optional(),
-		field.String("last_name").MaxLen(255).Optional(),
-		field.String("email").MaxLen(255).Optional(),
 		field.String("avatar").MaxLen(255).Optional(),
 		field.String("description").MaxLen(255).Optional(),
 		field.String("access_token").MaxLen(255).Optional(),
@@ -37,5 +34,6 @@ func (Users) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("users_links", Links.Type),
 		edge.To("users_sessions", Session.Type),
+		edge.To("users_accounts", Account.Type),
 	}
 }

@@ -40,6 +40,20 @@ func (lc *LinksCreate) SetTitle(s string) *LinksCreate {
 	return lc
 }
 
+// SetDescription sets the "description" field.
+func (lc *LinksCreate) SetDescription(s string) *LinksCreate {
+	lc.mutation.SetDescription(s)
+	return lc
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (lc *LinksCreate) SetNillableDescription(s *string) *LinksCreate {
+	if s != nil {
+		lc.SetDescription(*s)
+	}
+	return lc
+}
+
 // SetImage sets the "image" field.
 func (lc *LinksCreate) SetImage(s string) *LinksCreate {
 	lc.mutation.SetImage(s)
@@ -50,6 +64,20 @@ func (lc *LinksCreate) SetImage(s string) *LinksCreate {
 func (lc *LinksCreate) SetNillableImage(s *string) *LinksCreate {
 	if s != nil {
 		lc.SetImage(*s)
+	}
+	return lc
+}
+
+// SetOrder sets the "order" field.
+func (lc *LinksCreate) SetOrder(i int) *LinksCreate {
+	lc.mutation.SetOrder(i)
+	return lc
+}
+
+// SetNillableOrder sets the "order" field if the given value is not nil.
+func (lc *LinksCreate) SetNillableOrder(i *int) *LinksCreate {
+	if i != nil {
+		lc.SetOrder(*i)
 	}
 	return lc
 }
@@ -150,6 +178,10 @@ func (lc *LinksCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (lc *LinksCreate) defaults() {
+	if _, ok := lc.mutation.Order(); !ok {
+		v := links.DefaultOrder
+		lc.mutation.SetOrder(v)
+	}
 	if _, ok := lc.mutation.Deleted(); !ok {
 		v := links.DefaultDeleted
 		lc.mutation.SetDeleted(v)
@@ -193,6 +225,9 @@ func (lc *LinksCreate) check() error {
 		if err := links.ImageValidator(v); err != nil {
 			return &ValidationError{Name: "image", err: fmt.Errorf(`ent: validator failed for field "Links.image": %w`, err)}
 		}
+	}
+	if _, ok := lc.mutation.Order(); !ok {
+		return &ValidationError{Name: "order", err: errors.New(`ent: missing required field "Links.order"`)}
 	}
 	if _, ok := lc.mutation.Deleted(); !ok {
 		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "Links.deleted"`)}
@@ -249,9 +284,17 @@ func (lc *LinksCreate) createSpec() (*Links, *sqlgraph.CreateSpec) {
 		_spec.SetField(links.FieldTitle, field.TypeString, value)
 		_node.Title = value
 	}
+	if value, ok := lc.mutation.Description(); ok {
+		_spec.SetField(links.FieldDescription, field.TypeString, value)
+		_node.Description = value
+	}
 	if value, ok := lc.mutation.Image(); ok {
 		_spec.SetField(links.FieldImage, field.TypeString, value)
 		_node.Image = value
+	}
+	if value, ok := lc.mutation.Order(); ok {
+		_spec.SetField(links.FieldOrder, field.TypeInt, value)
+		_node.Order = value
 	}
 	if value, ok := lc.mutation.Deleted(); ok {
 		_spec.SetField(links.FieldDeleted, field.TypeBool, value)

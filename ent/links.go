@@ -25,8 +25,12 @@ type Links struct {
 	URL string `json:"url,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
+	// Description holds the value of the "description" field.
+	Description string `json:"description,omitempty"`
 	// Image holds the value of the "image" field.
 	Image string `json:"image,omitempty"`
+	// Order holds the value of the "order" field.
+	Order int `json:"order,omitempty"`
 	// Deleted holds the value of the "deleted" field.
 	Deleted bool `json:"deleted,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -66,7 +70,9 @@ func (*Links) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case links.FieldDeleted:
 			values[i] = new(sql.NullBool)
-		case links.FieldURL, links.FieldTitle, links.FieldImage:
+		case links.FieldOrder:
+			values[i] = new(sql.NullInt64)
+		case links.FieldURL, links.FieldTitle, links.FieldDescription, links.FieldImage:
 			values[i] = new(sql.NullString)
 		case links.FieldCreatedAt, links.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -111,11 +117,23 @@ func (l *Links) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				l.Title = value.String
 			}
+		case links.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				l.Description = value.String
+			}
 		case links.FieldImage:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field image", values[i])
 			} else if value.Valid {
 				l.Image = value.String
+			}
+		case links.FieldOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field order", values[i])
+			} else if value.Valid {
+				l.Order = int(value.Int64)
 			}
 		case links.FieldDeleted:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -185,8 +203,14 @@ func (l *Links) String() string {
 	builder.WriteString("title=")
 	builder.WriteString(l.Title)
 	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(l.Description)
+	builder.WriteString(", ")
 	builder.WriteString("image=")
 	builder.WriteString(l.Image)
+	builder.WriteString(", ")
+	builder.WriteString("order=")
+	builder.WriteString(fmt.Sprintf("%v", l.Order))
 	builder.WriteString(", ")
 	builder.WriteString("deleted=")
 	builder.WriteString(fmt.Sprintf("%v", l.Deleted))

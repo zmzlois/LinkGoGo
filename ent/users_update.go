@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/zmzlois/LinkGoGo/ent/account"
 	"github.com/zmzlois/LinkGoGo/ent/links"
 	"github.com/zmzlois/LinkGoGo/ent/predicate"
 	"github.com/zmzlois/LinkGoGo/ent/session"
@@ -84,66 +85,6 @@ func (uu *UsersUpdate) SetNillableSlug(s *string) *UsersUpdate {
 	if s != nil {
 		uu.SetSlug(*s)
 	}
-	return uu
-}
-
-// SetFirstName sets the "first_name" field.
-func (uu *UsersUpdate) SetFirstName(s string) *UsersUpdate {
-	uu.mutation.SetFirstName(s)
-	return uu
-}
-
-// SetNillableFirstName sets the "first_name" field if the given value is not nil.
-func (uu *UsersUpdate) SetNillableFirstName(s *string) *UsersUpdate {
-	if s != nil {
-		uu.SetFirstName(*s)
-	}
-	return uu
-}
-
-// ClearFirstName clears the value of the "first_name" field.
-func (uu *UsersUpdate) ClearFirstName() *UsersUpdate {
-	uu.mutation.ClearFirstName()
-	return uu
-}
-
-// SetLastName sets the "last_name" field.
-func (uu *UsersUpdate) SetLastName(s string) *UsersUpdate {
-	uu.mutation.SetLastName(s)
-	return uu
-}
-
-// SetNillableLastName sets the "last_name" field if the given value is not nil.
-func (uu *UsersUpdate) SetNillableLastName(s *string) *UsersUpdate {
-	if s != nil {
-		uu.SetLastName(*s)
-	}
-	return uu
-}
-
-// ClearLastName clears the value of the "last_name" field.
-func (uu *UsersUpdate) ClearLastName() *UsersUpdate {
-	uu.mutation.ClearLastName()
-	return uu
-}
-
-// SetEmail sets the "email" field.
-func (uu *UsersUpdate) SetEmail(s string) *UsersUpdate {
-	uu.mutation.SetEmail(s)
-	return uu
-}
-
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (uu *UsersUpdate) SetNillableEmail(s *string) *UsersUpdate {
-	if s != nil {
-		uu.SetEmail(*s)
-	}
-	return uu
-}
-
-// ClearEmail clears the value of the "email" field.
-func (uu *UsersUpdate) ClearEmail() *UsersUpdate {
-	uu.mutation.ClearEmail()
 	return uu
 }
 
@@ -358,6 +299,21 @@ func (uu *UsersUpdate) AddUsersSessions(s ...*Session) *UsersUpdate {
 	return uu.AddUsersSessionIDs(ids...)
 }
 
+// AddUsersAccountIDs adds the "users_accounts" edge to the Account entity by IDs.
+func (uu *UsersUpdate) AddUsersAccountIDs(ids ...uuid.UUID) *UsersUpdate {
+	uu.mutation.AddUsersAccountIDs(ids...)
+	return uu
+}
+
+// AddUsersAccounts adds the "users_accounts" edges to the Account entity.
+func (uu *UsersUpdate) AddUsersAccounts(a ...*Account) *UsersUpdate {
+	ids := make([]uuid.UUID, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddUsersAccountIDs(ids...)
+}
+
 // Mutation returns the UsersMutation object of the builder.
 func (uu *UsersUpdate) Mutation() *UsersMutation {
 	return uu.mutation
@@ -403,6 +359,27 @@ func (uu *UsersUpdate) RemoveUsersSessions(s ...*Session) *UsersUpdate {
 		ids[i] = s[i].ID
 	}
 	return uu.RemoveUsersSessionIDs(ids...)
+}
+
+// ClearUsersAccounts clears all "users_accounts" edges to the Account entity.
+func (uu *UsersUpdate) ClearUsersAccounts() *UsersUpdate {
+	uu.mutation.ClearUsersAccounts()
+	return uu
+}
+
+// RemoveUsersAccountIDs removes the "users_accounts" edge to Account entities by IDs.
+func (uu *UsersUpdate) RemoveUsersAccountIDs(ids ...uuid.UUID) *UsersUpdate {
+	uu.mutation.RemoveUsersAccountIDs(ids...)
+	return uu
+}
+
+// RemoveUsersAccounts removes "users_accounts" edges to Account entities.
+func (uu *UsersUpdate) RemoveUsersAccounts(a ...*Account) *UsersUpdate {
+	ids := make([]uuid.UUID, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveUsersAccountIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -458,21 +435,6 @@ func (uu *UsersUpdate) check() error {
 			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Users.slug": %w`, err)}
 		}
 	}
-	if v, ok := uu.mutation.FirstName(); ok {
-		if err := users.FirstNameValidator(v); err != nil {
-			return &ValidationError{Name: "first_name", err: fmt.Errorf(`ent: validator failed for field "Users.first_name": %w`, err)}
-		}
-	}
-	if v, ok := uu.mutation.LastName(); ok {
-		if err := users.LastNameValidator(v); err != nil {
-			return &ValidationError{Name: "last_name", err: fmt.Errorf(`ent: validator failed for field "Users.last_name": %w`, err)}
-		}
-	}
-	if v, ok := uu.mutation.Email(); ok {
-		if err := users.EmailValidator(v); err != nil {
-			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "Users.email": %w`, err)}
-		}
-	}
 	if v, ok := uu.mutation.Avatar(); ok {
 		if err := users.AvatarValidator(v); err != nil {
 			return &ValidationError{Name: "avatar", err: fmt.Errorf(`ent: validator failed for field "Users.avatar": %w`, err)}
@@ -524,24 +486,6 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Slug(); ok {
 		_spec.SetField(users.FieldSlug, field.TypeString, value)
-	}
-	if value, ok := uu.mutation.FirstName(); ok {
-		_spec.SetField(users.FieldFirstName, field.TypeString, value)
-	}
-	if uu.mutation.FirstNameCleared() {
-		_spec.ClearField(users.FieldFirstName, field.TypeString)
-	}
-	if value, ok := uu.mutation.LastName(); ok {
-		_spec.SetField(users.FieldLastName, field.TypeString, value)
-	}
-	if uu.mutation.LastNameCleared() {
-		_spec.ClearField(users.FieldLastName, field.TypeString)
-	}
-	if value, ok := uu.mutation.Email(); ok {
-		_spec.SetField(users.FieldEmail, field.TypeString, value)
-	}
-	if uu.mutation.EmailCleared() {
-		_spec.ClearField(users.FieldEmail, field.TypeString)
 	}
 	if value, ok := uu.mutation.Avatar(); ok {
 		_spec.SetField(users.FieldAvatar, field.TypeString, value)
@@ -687,6 +631,51 @@ func (uu *UsersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.UsersAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   users.UsersAccountsTable,
+			Columns: []string{users.UsersAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedUsersAccountsIDs(); len(nodes) > 0 && !uu.mutation.UsersAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   users.UsersAccountsTable,
+			Columns: []string{users.UsersAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.UsersAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   users.UsersAccountsTable,
+			Columns: []string{users.UsersAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{users.Label}
@@ -760,66 +749,6 @@ func (uuo *UsersUpdateOne) SetNillableSlug(s *string) *UsersUpdateOne {
 	if s != nil {
 		uuo.SetSlug(*s)
 	}
-	return uuo
-}
-
-// SetFirstName sets the "first_name" field.
-func (uuo *UsersUpdateOne) SetFirstName(s string) *UsersUpdateOne {
-	uuo.mutation.SetFirstName(s)
-	return uuo
-}
-
-// SetNillableFirstName sets the "first_name" field if the given value is not nil.
-func (uuo *UsersUpdateOne) SetNillableFirstName(s *string) *UsersUpdateOne {
-	if s != nil {
-		uuo.SetFirstName(*s)
-	}
-	return uuo
-}
-
-// ClearFirstName clears the value of the "first_name" field.
-func (uuo *UsersUpdateOne) ClearFirstName() *UsersUpdateOne {
-	uuo.mutation.ClearFirstName()
-	return uuo
-}
-
-// SetLastName sets the "last_name" field.
-func (uuo *UsersUpdateOne) SetLastName(s string) *UsersUpdateOne {
-	uuo.mutation.SetLastName(s)
-	return uuo
-}
-
-// SetNillableLastName sets the "last_name" field if the given value is not nil.
-func (uuo *UsersUpdateOne) SetNillableLastName(s *string) *UsersUpdateOne {
-	if s != nil {
-		uuo.SetLastName(*s)
-	}
-	return uuo
-}
-
-// ClearLastName clears the value of the "last_name" field.
-func (uuo *UsersUpdateOne) ClearLastName() *UsersUpdateOne {
-	uuo.mutation.ClearLastName()
-	return uuo
-}
-
-// SetEmail sets the "email" field.
-func (uuo *UsersUpdateOne) SetEmail(s string) *UsersUpdateOne {
-	uuo.mutation.SetEmail(s)
-	return uuo
-}
-
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (uuo *UsersUpdateOne) SetNillableEmail(s *string) *UsersUpdateOne {
-	if s != nil {
-		uuo.SetEmail(*s)
-	}
-	return uuo
-}
-
-// ClearEmail clears the value of the "email" field.
-func (uuo *UsersUpdateOne) ClearEmail() *UsersUpdateOne {
-	uuo.mutation.ClearEmail()
 	return uuo
 }
 
@@ -1034,6 +963,21 @@ func (uuo *UsersUpdateOne) AddUsersSessions(s ...*Session) *UsersUpdateOne {
 	return uuo.AddUsersSessionIDs(ids...)
 }
 
+// AddUsersAccountIDs adds the "users_accounts" edge to the Account entity by IDs.
+func (uuo *UsersUpdateOne) AddUsersAccountIDs(ids ...uuid.UUID) *UsersUpdateOne {
+	uuo.mutation.AddUsersAccountIDs(ids...)
+	return uuo
+}
+
+// AddUsersAccounts adds the "users_accounts" edges to the Account entity.
+func (uuo *UsersUpdateOne) AddUsersAccounts(a ...*Account) *UsersUpdateOne {
+	ids := make([]uuid.UUID, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddUsersAccountIDs(ids...)
+}
+
 // Mutation returns the UsersMutation object of the builder.
 func (uuo *UsersUpdateOne) Mutation() *UsersMutation {
 	return uuo.mutation
@@ -1079,6 +1023,27 @@ func (uuo *UsersUpdateOne) RemoveUsersSessions(s ...*Session) *UsersUpdateOne {
 		ids[i] = s[i].ID
 	}
 	return uuo.RemoveUsersSessionIDs(ids...)
+}
+
+// ClearUsersAccounts clears all "users_accounts" edges to the Account entity.
+func (uuo *UsersUpdateOne) ClearUsersAccounts() *UsersUpdateOne {
+	uuo.mutation.ClearUsersAccounts()
+	return uuo
+}
+
+// RemoveUsersAccountIDs removes the "users_accounts" edge to Account entities by IDs.
+func (uuo *UsersUpdateOne) RemoveUsersAccountIDs(ids ...uuid.UUID) *UsersUpdateOne {
+	uuo.mutation.RemoveUsersAccountIDs(ids...)
+	return uuo
+}
+
+// RemoveUsersAccounts removes "users_accounts" edges to Account entities.
+func (uuo *UsersUpdateOne) RemoveUsersAccounts(a ...*Account) *UsersUpdateOne {
+	ids := make([]uuid.UUID, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveUsersAccountIDs(ids...)
 }
 
 // Where appends a list predicates to the UsersUpdate builder.
@@ -1145,21 +1110,6 @@ func (uuo *UsersUpdateOne) check() error {
 	if v, ok := uuo.mutation.Slug(); ok {
 		if err := users.SlugValidator(v); err != nil {
 			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Users.slug": %w`, err)}
-		}
-	}
-	if v, ok := uuo.mutation.FirstName(); ok {
-		if err := users.FirstNameValidator(v); err != nil {
-			return &ValidationError{Name: "first_name", err: fmt.Errorf(`ent: validator failed for field "Users.first_name": %w`, err)}
-		}
-	}
-	if v, ok := uuo.mutation.LastName(); ok {
-		if err := users.LastNameValidator(v); err != nil {
-			return &ValidationError{Name: "last_name", err: fmt.Errorf(`ent: validator failed for field "Users.last_name": %w`, err)}
-		}
-	}
-	if v, ok := uuo.mutation.Email(); ok {
-		if err := users.EmailValidator(v); err != nil {
-			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "Users.email": %w`, err)}
 		}
 	}
 	if v, ok := uuo.mutation.Avatar(); ok {
@@ -1230,24 +1180,6 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 	}
 	if value, ok := uuo.mutation.Slug(); ok {
 		_spec.SetField(users.FieldSlug, field.TypeString, value)
-	}
-	if value, ok := uuo.mutation.FirstName(); ok {
-		_spec.SetField(users.FieldFirstName, field.TypeString, value)
-	}
-	if uuo.mutation.FirstNameCleared() {
-		_spec.ClearField(users.FieldFirstName, field.TypeString)
-	}
-	if value, ok := uuo.mutation.LastName(); ok {
-		_spec.SetField(users.FieldLastName, field.TypeString, value)
-	}
-	if uuo.mutation.LastNameCleared() {
-		_spec.ClearField(users.FieldLastName, field.TypeString)
-	}
-	if value, ok := uuo.mutation.Email(); ok {
-		_spec.SetField(users.FieldEmail, field.TypeString, value)
-	}
-	if uuo.mutation.EmailCleared() {
-		_spec.ClearField(users.FieldEmail, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Avatar(); ok {
 		_spec.SetField(users.FieldAvatar, field.TypeString, value)
@@ -1386,6 +1318,51 @@ func (uuo *UsersUpdateOne) sqlSave(ctx context.Context) (_node *Users, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.UsersAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   users.UsersAccountsTable,
+			Columns: []string{users.UsersAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedUsersAccountsIDs(); len(nodes) > 0 && !uuo.mutation.UsersAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   users.UsersAccountsTable,
+			Columns: []string{users.UsersAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.UsersAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   users.UsersAccountsTable,
+			Columns: []string{users.UsersAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

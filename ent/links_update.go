@@ -72,6 +72,26 @@ func (lu *LinksUpdate) SetNillableTitle(s *string) *LinksUpdate {
 	return lu
 }
 
+// SetDescription sets the "description" field.
+func (lu *LinksUpdate) SetDescription(s string) *LinksUpdate {
+	lu.mutation.SetDescription(s)
+	return lu
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (lu *LinksUpdate) SetNillableDescription(s *string) *LinksUpdate {
+	if s != nil {
+		lu.SetDescription(*s)
+	}
+	return lu
+}
+
+// ClearDescription clears the value of the "description" field.
+func (lu *LinksUpdate) ClearDescription() *LinksUpdate {
+	lu.mutation.ClearDescription()
+	return lu
+}
+
 // SetImage sets the "image" field.
 func (lu *LinksUpdate) SetImage(s string) *LinksUpdate {
 	lu.mutation.SetImage(s)
@@ -89,6 +109,27 @@ func (lu *LinksUpdate) SetNillableImage(s *string) *LinksUpdate {
 // ClearImage clears the value of the "image" field.
 func (lu *LinksUpdate) ClearImage() *LinksUpdate {
 	lu.mutation.ClearImage()
+	return lu
+}
+
+// SetOrder sets the "order" field.
+func (lu *LinksUpdate) SetOrder(i int) *LinksUpdate {
+	lu.mutation.ResetOrder()
+	lu.mutation.SetOrder(i)
+	return lu
+}
+
+// SetNillableOrder sets the "order" field if the given value is not nil.
+func (lu *LinksUpdate) SetNillableOrder(i *int) *LinksUpdate {
+	if i != nil {
+		lu.SetOrder(*i)
+	}
+	return lu
+}
+
+// AddOrder adds i to the "order" field.
+func (lu *LinksUpdate) AddOrder(i int) *LinksUpdate {
+	lu.mutation.AddOrder(i)
 	return lu
 }
 
@@ -219,11 +260,23 @@ func (lu *LinksUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := lu.mutation.Title(); ok {
 		_spec.SetField(links.FieldTitle, field.TypeString, value)
 	}
+	if value, ok := lu.mutation.Description(); ok {
+		_spec.SetField(links.FieldDescription, field.TypeString, value)
+	}
+	if lu.mutation.DescriptionCleared() {
+		_spec.ClearField(links.FieldDescription, field.TypeString)
+	}
 	if value, ok := lu.mutation.Image(); ok {
 		_spec.SetField(links.FieldImage, field.TypeString, value)
 	}
 	if lu.mutation.ImageCleared() {
 		_spec.ClearField(links.FieldImage, field.TypeString)
+	}
+	if value, ok := lu.mutation.Order(); ok {
+		_spec.SetField(links.FieldOrder, field.TypeInt, value)
+	}
+	if value, ok := lu.mutation.AddedOrder(); ok {
+		_spec.AddField(links.FieldOrder, field.TypeInt, value)
 	}
 	if value, ok := lu.mutation.Deleted(); ok {
 		_spec.SetField(links.FieldDeleted, field.TypeBool, value)
@@ -325,6 +378,26 @@ func (luo *LinksUpdateOne) SetNillableTitle(s *string) *LinksUpdateOne {
 	return luo
 }
 
+// SetDescription sets the "description" field.
+func (luo *LinksUpdateOne) SetDescription(s string) *LinksUpdateOne {
+	luo.mutation.SetDescription(s)
+	return luo
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (luo *LinksUpdateOne) SetNillableDescription(s *string) *LinksUpdateOne {
+	if s != nil {
+		luo.SetDescription(*s)
+	}
+	return luo
+}
+
+// ClearDescription clears the value of the "description" field.
+func (luo *LinksUpdateOne) ClearDescription() *LinksUpdateOne {
+	luo.mutation.ClearDescription()
+	return luo
+}
+
 // SetImage sets the "image" field.
 func (luo *LinksUpdateOne) SetImage(s string) *LinksUpdateOne {
 	luo.mutation.SetImage(s)
@@ -342,6 +415,27 @@ func (luo *LinksUpdateOne) SetNillableImage(s *string) *LinksUpdateOne {
 // ClearImage clears the value of the "image" field.
 func (luo *LinksUpdateOne) ClearImage() *LinksUpdateOne {
 	luo.mutation.ClearImage()
+	return luo
+}
+
+// SetOrder sets the "order" field.
+func (luo *LinksUpdateOne) SetOrder(i int) *LinksUpdateOne {
+	luo.mutation.ResetOrder()
+	luo.mutation.SetOrder(i)
+	return luo
+}
+
+// SetNillableOrder sets the "order" field if the given value is not nil.
+func (luo *LinksUpdateOne) SetNillableOrder(i *int) *LinksUpdateOne {
+	if i != nil {
+		luo.SetOrder(*i)
+	}
+	return luo
+}
+
+// AddOrder adds i to the "order" field.
+func (luo *LinksUpdateOne) AddOrder(i int) *LinksUpdateOne {
+	luo.mutation.AddOrder(i)
 	return luo
 }
 
@@ -502,11 +596,23 @@ func (luo *LinksUpdateOne) sqlSave(ctx context.Context) (_node *Links, err error
 	if value, ok := luo.mutation.Title(); ok {
 		_spec.SetField(links.FieldTitle, field.TypeString, value)
 	}
+	if value, ok := luo.mutation.Description(); ok {
+		_spec.SetField(links.FieldDescription, field.TypeString, value)
+	}
+	if luo.mutation.DescriptionCleared() {
+		_spec.ClearField(links.FieldDescription, field.TypeString)
+	}
 	if value, ok := luo.mutation.Image(); ok {
 		_spec.SetField(links.FieldImage, field.TypeString, value)
 	}
 	if luo.mutation.ImageCleared() {
 		_spec.ClearField(links.FieldImage, field.TypeString)
+	}
+	if value, ok := luo.mutation.Order(); ok {
+		_spec.SetField(links.FieldOrder, field.TypeInt, value)
+	}
+	if value, ok := luo.mutation.AddedOrder(); ok {
+		_spec.AddField(links.FieldOrder, field.TypeInt, value)
 	}
 	if value, ok := luo.mutation.Deleted(); ok {
 		_spec.SetField(links.FieldDeleted, field.TypeBool, value)
