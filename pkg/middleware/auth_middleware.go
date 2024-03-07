@@ -1,11 +1,14 @@
 package middleware
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/aidenwallis/go-write/write"
+
 	"github.com/zmzlois/LinkGoGo/pkg/auth"
+	"github.com/zmzlois/LinkGoGo/pkg/model"
+	"go.uber.org/zap"
 )
 
 var PublicRoutes = []string{
@@ -23,32 +26,34 @@ var PublicRoutes = []string{
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// jwtKey := utils.Config("JWT_SECRET_KEY")
-		// Extract JWT token from Authorization header
 		tokenString, err := auth.GetToken(r)
 
-		_, write := write.New()
-
-		log.Printf("AuthMiddleware.GetToken: %s", tokenString)
-
 		if err != nil || tokenString == "" || len(tokenString) < 1 {
-			log.Printf("AuthMiddleware.GetToken: %s", err)
+			fmt.Printf("AuthMiddleware.GetToken: %v", zap.Error(err))
 
 			http.Redirect(w, r, "/unauthorised", http.StatusFound)
 			return
 		}
 
 		// Parse and validate JWT token
-		authenticated, err := auth.ValidateToken(tokenString)
-		if err != nil || !authenticated {
+		ctx := r.Context()
+		authenticated, err := auth.ValidateToken(ctx, tokenString)
+		if err != nil {
+
+			fmt.Println("failed to validate session token", zap.Error(err))
+			_ = write.InternalServerError(w).JSON(model.UnknownError)
 
 			http.Redirect(w, r, "/unauthorised", http.StatusFound)
 
 			return
 		}
 
+		if authenticated {
+			ctx = auth.WithSession(ctx, tokenString)
+		}
+
 		// Token is valid, call next handler
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
