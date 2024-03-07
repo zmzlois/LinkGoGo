@@ -6,9 +6,7 @@ import (
 	"github.com/zmzlois/LinkGoGo/pkg/model"
 )
 
-type Link model.NewLinkInput
-
-templ EditPage(avatar string, name string, bio string, links []Link) {
+templ EditPage(avatar string, name string, bio string, links []model.NewLinkInput) {
 	@shared.Page("Create link") {
 		@shared.Background() {
 			@shared.Container() {
@@ -28,26 +26,12 @@ templ EditPage(avatar string, name string, bio string, links []Link) {
 					</div>
 				</div>
 			}
+			// form for create link
 			@shared.Container() {
-				<div class="py-4 flex flex-col gap-4 text-center items-center content-center" x-data="{ open: false }">
-					// show "Create a link" if user has pre-existing data
-					<span @click="open = ! open" x-show="!open">
-						@partials.Button() {
-							<span class="px-20 py-3 ">
-								<p>Create your first link</p>
-							</span>
-						}
-					</span>
-					<form action="/create" method="post" class="flex flex-col space-y-4 w-1/2" x-show="open" @click.outside="open = false">
-						<input type="text" name="title" placeholder="Title" class="rounded-sm"/>
-						<input type="text" name="url" placeholder="URL" class="rounded-sm"/>
-						@partials.Button() {
-							<span class="px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-indigo-500">
-								<p>Create</p>
-							</span>
-						}
-					</form>
-				</div>
+				if len(links) >= 1 {
+					@partials.LinkSection(links)
+				}
+				@partials.CreateLink()
 			}
 		}
 	}
