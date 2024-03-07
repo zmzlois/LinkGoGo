@@ -3,6 +3,7 @@ package pages
 import (
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
 	"github.com/zmzlois/LinkGoGo/web/templates/partials"
+	"github.com/zmzlois/LinkGoGo/pkg/model"
 )
 
 var MockData map[string]string = map[string]string{
@@ -11,20 +12,12 @@ var MockData map[string]string = map[string]string{
 	"bio":    "Noob dev",
 }
 
-// var data map[string]string = map[string]string{
-// 	"avatar": "",
-// 	"name":   "",
-// 	"bio":    "",
-// }
-
-// func init() {
-// 	err := godotenv.Load()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	data["avatar"] = os.Getenv("AVATAR")
-// 	data["name"] = os.Getenv("NAME")
-// 	data["bio"] = os.Getenv("BIO")
+var Links []model.NewLinkInput = []model.NewLinkInput{
+	{Title: "Website", Url: "https://loiszhao.com", Image: " "},
+	{Title: "Twitter", Url: "https://twitter.com/zmzlois", Image: " "},
+	{Title: "Github", Url: "https://github.com/zmzlois", Image: " "},
+	{Title: "The repo made this shit", Url: "https://github.com/zmzlois/LinkGoGo", Image: " "},
+}
 
 // }
 templ HomePage() {
@@ -37,7 +30,7 @@ templ HomePage() {
 				@partials.ProfileHeader(MockData["avatar"], MockData["name"], MockData["bio"])
 			}
 			@shared.Container() {
-				@partials.LinkSection(false)
+				@partials.LinkSection(Links)
 			}
 		}
 	}

@@ -11,6 +11,7 @@ import "io"
 import "bytes"
 
 import (
+	"github.com/zmzlois/LinkGoGo/pkg/model"
 	"github.com/zmzlois/LinkGoGo/web/templates/partials"
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
 )
@@ -21,20 +22,12 @@ var MockData map[string]string = map[string]string{
 	"bio":    "Noob dev",
 }
 
-// var data map[string]string = map[string]string{
-// 	"avatar": "",
-// 	"name":   "",
-// 	"bio":    "",
-// }
-
-// func init() {
-// 	err := godotenv.Load()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	data["avatar"] = os.Getenv("AVATAR")
-// 	data["name"] = os.Getenv("NAME")
-// 	data["bio"] = os.Getenv("BIO")
+var Links []model.NewLinkInput = []model.NewLinkInput{
+	{Title: "Website", Url: "https://loiszhao.com", Image: " "},
+	{Title: "Twitter", Url: "https://twitter.com/zmzlois", Image: " "},
+	{Title: "Github", Url: "https://github.com/zmzlois", Image: " "},
+	{Title: "The repo made this shit", Url: "https://github.com/zmzlois/LinkGoGo", Image: " "},
+}
 
 // }
 func HomePage() templ.Component {
@@ -114,7 +107,7 @@ func HomePage() templ.Component {
 						templ_7745c5c3_Buffer = templ.GetBuffer()
 						defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 					}
-					templ_7745c5c3_Err = partials.LinkSection(false).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = partials.LinkSection(Links).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
