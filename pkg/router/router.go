@@ -9,7 +9,6 @@ import (
 	"github.com/zmzlois/LinkGoGo/pkg/database"
 	"github.com/zmzlois/LinkGoGo/pkg/handler"
 	"github.com/zmzlois/LinkGoGo/pkg/middleware"
-	"github.com/zmzlois/LinkGoGo/pkg/monitor"
 	"github.com/zmzlois/LinkGoGo/pkg/service"
 	"github.com/zmzlois/LinkGoGo/pkg/utils"
 	"github.com/zmzlois/LinkGoGo/web/pages"
@@ -30,27 +29,26 @@ func SetupRouter(app chi.Router) {
 
 	// discordOAuthRedirectService := service.NewAuthService(db, ds, state)
 
-	indexHandler := monitor.SentryHandler.HandleFunc(handler.Index)
-	loginHandler := monitor.SentryHandler.HandleFunc(handler.Login)
+	indexHandler := handler.Index
+	loginHandler := handler.Login
 
-	discordOAuthHandler := monitor.SentryHandler.HandleFunc(handler.OAuthHandler)
-	discordOAuthCallbackHandler := monitor.SentryHandler.HandleFunc(discordOAuthService.OAuthCallbackHandler)
+	discordOAuthHandler := handler.OAuthHandler
+	discordOAuthCallbackHandler := discordOAuthService.OAuthCallbackHandler
 	// discordOAuthHandler := monitor.SentryHandler.HandleFunc(handler.NewDiscordOAuthHandler(*discordOAuthService))
 	// discordOAuthRedirectHandler := monitor.SentryHandler.HandleFunc(handler.NewDiscordOAuthRedirect(*discordOAuthRedirectService))
 
 	// Index route
 	app.Get("/", handler.Index)
 
+	// app.Use(middleware.RedirectMiddleware)
+
 	// Login route
-	app.Get("/login", monitor.SentryHandler.HandleFunc(func(w http.ResponseWriter, r *http.Request) {
-		pages.LogInPage().Render(r.Context(), w)
-	}))
+
 	// Auth route
 	app.Post("/discord-oauth", discordOAuthHandler)
 
 	app.Get("/", indexHandler)
 	app.Get("/login", loginHandler)
-	// var state string
 
 	// Once user hit discord login button
 	app.Get("/discord-oauth", discordOAuthHandler)
@@ -66,13 +64,21 @@ func SetupRouter(app chi.Router) {
 		pages.UnauthorisedPage().Render(r.Context(), w)
 	})
 
+	linkService := service.NewLinkService(db)
+
 	app.Group(func(r chi.Router) {
+		tr := &handler.TodosController{
+			LinkService: linkService,
+		}
 		r.Use(middleware.AuthMiddleware)
-		r.Get("/edit", func(w http.ResponseWriter, r *http.Request) {
-			pages.EditPage("something", "Lois", "Noob dev", []pages.Link{{Image: "", Title: "Github", Url: "/github"}}).Render(r.Context(), w)
-		})
+
+		r.Get("/edit", tr.Edit)
+
+		// r.Get("/edit", monitor.SentryHandler.HandleFunc(handler.EditPageHandler))
+		r.Post("/edit/{param}", handler.UrlHandler)
 		r.Get("/account", func(w http.ResponseWriter, r *http.Request) {
 		})
+		r.Post("/create", handler.CreateLinkHandler)
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/", http.StatusFound)
 		})
