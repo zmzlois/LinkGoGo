@@ -61,6 +61,7 @@ func SentryInit() {
 		Debug:              true,
 		AttachStacktrace:   true,
 		EnableTracing:      true,
+		SampleRate:         1.0,
 		ProfilesSampleRate: 1.0,
 		TracesSampleRate:   1.0,
 	}); err != nil {
