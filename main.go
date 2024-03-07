@@ -14,7 +14,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
-
+	m "github.com/zmzlois/LinkGoGo/pkg/middleware"
 	"github.com/zmzlois/LinkGoGo/pkg/monitor"
 	"github.com/zmzlois/LinkGoGo/pkg/router"
 	"github.com/zmzlois/LinkGoGo/pkg/utils"
@@ -35,6 +35,9 @@ func main() {
 	app := chi.NewRouter()
 
 	app.Use(middleware.Logger)
+
+	app.Use(monitor.SentryHandler.Handle)
+	app.Use(m.PublicMiddleware)
 
 	// Serving static files: Create a route along /files that will serve contents from
 	// the ./data/ folder.

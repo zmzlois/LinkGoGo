@@ -18,14 +18,8 @@ var PublicRoutes = []string{
 	"/discord-oauth",
 }
 
-// Change this to state
-// var privateKey = []byte(database.Config("SECRET_KEY"))
-
-// AuthMiddleware to authenticate users
-
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		tokenString, err := auth.GetToken(r)
 
 		if err != nil || tokenString == "" || len(tokenString) < 1 {
@@ -49,24 +43,10 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		if authenticated {
-			ctx = auth.WithSession(ctx, tokenString)
+			ctx = auth.WithSession(ctx, "token", tokenString)
 		}
 
 		// Token is valid, call next handler
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
-
-// func extractTokenFromHeader(r *http.Request) string {
-// 	authHeader := r.Header.Get("Authorization")
-// 	if authHeader == "" {
-// 		return ""
-// 	}
-
-// 	parts := strings.Split(authHeader, " ")
-// 	if len(parts) != 2 || parts[0] != "Bearer" {
-// 		return ""
-// 	}
-
-// 	return parts[1]
-// }
