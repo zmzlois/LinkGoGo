@@ -33,3 +33,11 @@ tasks:
     desc: Run tests
     cmds:
       - go test ./...
+  
+  new-schema:
+    cmds: 
+      - go run -mod=mod entgo.io/ent/cmd/ent new {{ .CLI_ARGS }}
+    # User it like `task new-schema -- {Schema name}`
+    # schema must be uppercase
+
+    
