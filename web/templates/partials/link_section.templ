@@ -1,5 +1,7 @@
 package partials 
 
+import "github.com/zmzlois/LinkGoGo/pkg/model"
+
 type LinkType struct {
 	Image string
 	Path  templ.SafeURL
@@ -13,11 +15,11 @@ var links = []LinkType{
 	{Image: " ", Path: "https://github.com/zmzlois/LinkGoGo", Name: "The repo made this shit"},
 }
 
-templ LinkSection (isLogIn bool) {
+templ LinkSection (links []model.NewLinkInput) {
 	<div class="flex flex-col  items-center  py-8">
 		<div class="lg:w-3/5 w-11/12 justify-between items-center flex flex-col gap-8">
 			for _, link := range links {
-				@Link(link.Image, link.Path, link.Name, isLogIn)
+				@Link(&link)
 			}
 		</div>
 	</div>
