@@ -11,17 +11,13 @@ import (
 	"github.com/zmzlois/LinkGoGo/pkg/utils"
 )
 
-type cookieKey int
-
 var CookieName = fmt.Sprintf("_LinkGoGo-session-token-%s", ScopeIdentify)
-
-const (
-	ContextKey cookieKey = iota
-)
 
 type Claims struct {
 	UserID       int     `json:"user_id"`
 	Username     string  `json:"username"`
+	GlobalName   string  `json:"global_name"`
+	Avatar       string  `json:"avatar"`
 	State        string  `json:"state"`
 	RefreshToken string  `json:"refresh_token"`
 	AccessToken  string  `json:"access_token"`
@@ -34,6 +30,8 @@ func (dc *Client) CreateToken(userData *model.LoginUserInput, tokenInput *model.
 	jwtMapClaim := jwt.MapClaims{
 		"user_id":       userData.Id,
 		"username":      userData.Username,
+		"avatar":        userData.Avatar,
+		"global_name":   userData.GlobalName,
 		"state":         state,
 		"refresh_token": tokenInput.RefreshToken,
 		"access_token":  tokenInput.AccessToken,
@@ -94,16 +92,19 @@ func GetToken(r *http.Request) (string, error) {
 	return tokenFromCookie.Value, nil
 }
 
-func RetrieveTokenValue(field string, r *http.Request) (string, error) {
+func RetrieveTokenValue(field string, r *http.Request) (jwt.MapClaims, interface{}, error) {
+
+	claims := jwt.MapClaims{}
 	tokenFromCookie, err := r.Cookie(CookieName)
 
 	tokenString := tokenFromCookie.Value
 
 	if err != nil {
-		return "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
+		return claims, "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
 	}
 
 	// Parse the JWT token string
+	// FIXME: https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Return the key used for signing the token (you need this to validate the token)
 		// Here, you would typically return the same key that was used for signing the token
@@ -113,30 +114,32 @@ func RetrieveTokenValue(field string, r *http.Request) (string, error) {
 	// Check for errors during parsing
 	if err != nil {
 		fmt.Println("discordClient.RetrieveTokenValue.Error parsing JWT token:", err)
-		return "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
+		return claims, "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
 	}
 
 	// Check if the token is valid
 	if !token.Valid {
 		fmt.Println("Invalid JWT token")
-		return "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
+		return claims, "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
 	}
 
 	// Retrieve claims from the token
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		fmt.Println("Invalid token claims format")
-		return "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
+		return claims, "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
 	}
 
 	// Access specific claims
-	result := claims[field].(string)
+	result := claims[field]
 	// username := claims["username"].(string)
 
-	return result, nil
-
+	return claims, result, nil
 }
 
-func WithSession(ctx context.Context, CookieValue string) context.Context {
-	return context.WithValue(ctx, ContextKey, CookieValue)
+type contextKey string
+
+func WithSession(ctx context.Context, key contextKey, ctxValue string) context.Context {
+
+	return context.WithValue(ctx, key, ctxValue)
 }
