@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 
+	"github.com/a-h/templ"
 	"github.com/zmzlois/LinkGoGo/ent"
 )
 
@@ -63,8 +64,10 @@ func ParsingTokenInput(input map[string]interface{}) (*TokenInput, error) {
 }
 
 type NewLinkInput struct {
-	Title  string `json:"title"`
-	Url    string `json:"url"`
-	Image  string `json:"image"`
-	Author string `json:"author"`
+	Title       string        `json:"title"`
+	Url         templ.SafeURL `json:"url"`
+	Image       string        `json:"image"`
+	Author      string        `json:"author"`
+	Order       int           `json:"order"`
+	Description string        `json:"description"`
 }
