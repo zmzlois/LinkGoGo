@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -26,7 +27,7 @@ func (dc *Client) CreateToken(userData *model.LoginUserInput, tokenInput *model.
 		"user_id":  userData.Id,
 		"username": userData.Username,
 		"state":    state,
-		"exp":      tokenInput.ExpiresIn,
+		"exp":      time.Now().Add(168 * time.Hour).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtMapClaim)
@@ -47,24 +48,41 @@ func (dc *Client) SetCookie(tokenString string, w http.ResponseWriter) {
 		Name:     CookieName,
 		Value:    tokenString,
 		Expires:  time.Now().Add(168 * time.Hour),
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
-		MaxAge:   168 * 60 * 60,
-		Raw:      fmt.Sprintf("_LinkGoGo-session-token-%s=%s; Secure; HttpOnly; SameSite=None; Max-Age=604800", ScopeIdentify, tokenString),
+		// SameSite: http.SameSiteStrictMode,
+		MaxAge: 168 * 60 * 60,
 	}
 
 	http.SetCookie(w, &cookie)
 }
 
-func (dc *Client) ValidateToken(tokenString string) (bool, error) {
-	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+func ValidateToken(tokenString string) (bool, error) {
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
 		return []byte(utils.Config("JWT_SECRET_KEY")), nil
 	})
-	if err != nil {
+
+	if err != nil || !token.Valid {
 		return false, err
 	}
 	return true, nil
+}
+
+func GetToken(r *http.Request) (string, error) {
+	tokenFromCookie, err := r.Cookie(CookieName)
+
+	if err != nil {
+		return "", fmt.Errorf("discordClient.GetToken: %w", err)
+	}
+
+	log.Printf("GetToken: %s\n", tokenFromCookie)
+	log.Printf("GetToken.Value: %s\n", tokenFromCookie.Value)
+	return tokenFromCookie.Value, nil
 }
 
 func (dc *Client) RetrieveTokenValue(field string, r *http.Request) (string, error) {

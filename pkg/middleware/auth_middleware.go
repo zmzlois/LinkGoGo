@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	"fmt"
+	"log"
 	"net/http"
-	"strings"
 
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/zmzlois/LinkGoGo/pkg/utils"
+	"github.com/aidenwallis/go-write/write"
+	"github.com/zmzlois/LinkGoGo/pkg/auth"
 )
 
 var PublicRoutes = []string{
@@ -24,22 +23,28 @@ var PublicRoutes = []string{
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		jwtKey := utils.Config("JWT_SECRET_KEY")
+		// jwtKey := utils.Config("JWT_SECRET_KEY")
 		// Extract JWT token from Authorization header
-		tokenString := extractTokenFromHeader(r)
+		tokenString, err := auth.GetToken(r)
+
+		_, write := write.New()
+
+		log.Printf("AuthMiddleware.GetToken: %s", tokenString)
+
+		if err != nil || tokenString == "" || len(tokenString) < 1 {
+			log.Printf("AuthMiddleware.GetToken: %s", err)
+
+			http.Redirect(w, r, "/unauthorised", http.StatusFound)
+			return
+		}
 
 		// Parse and validate JWT token
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		authenticated, err := auth.ValidateToken(tokenString)
+		if err != nil || !authenticated {
 
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
+			http.Redirect(w, r, "/unauthorised", http.StatusFound)
 
-			return []byte(jwtKey), nil
-		})
-		if err != nil || !token.Valid {
-			w.WriteHeader(http.StatusUnauthorized)
-			http.Redirect(w, r, "/unauthorised", http.StatusSeeOther)
+			return
 		}
 
 		// Token is valid, call next handler
@@ -47,16 +52,16 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func extractTokenFromHeader(r *http.Request) string {
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		return ""
-	}
+// func extractTokenFromHeader(r *http.Request) string {
+// 	authHeader := r.Header.Get("Authorization")
+// 	if authHeader == "" {
+// 		return ""
+// 	}
 
-	parts := strings.Split(authHeader, " ")
-	if len(parts) != 2 || parts[0] != "Bearer" {
-		return ""
-	}
+// 	parts := strings.Split(authHeader, " ")
+// 	if len(parts) != 2 || parts[0] != "Bearer" {
+// 		return ""
+// 	}
 
-	return parts[1]
-}
+// 	return parts[1]
+// }

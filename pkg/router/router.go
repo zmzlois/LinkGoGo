@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/zmzlois/LinkGoGo/pkg/auth"
 	"github.com/zmzlois/LinkGoGo/pkg/database"
 	"github.com/zmzlois/LinkGoGo/pkg/handler"
+	"github.com/zmzlois/LinkGoGo/pkg/middleware"
 	"github.com/zmzlois/LinkGoGo/pkg/monitor"
 	"github.com/zmzlois/LinkGoGo/pkg/service"
 	"github.com/zmzlois/LinkGoGo/pkg/utils"
@@ -62,21 +62,21 @@ func SetupRouter(app chi.Router) {
 
 	app.Get("/discord-callback", discordOAuthCallbackHandler)
 
+	app.Get("/unauthorised", func(w http.ResponseWriter, r *http.Request) {
+		pages.UnauthorisedPage().Render(r.Context(), w)
+	})
+
 	app.Group(func(r chi.Router) {
-		// r.Use(handlers.ProtectedRoutes(r))
-
+		r.Use(middleware.AuthMiddleware)
 		r.Get("/edit", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Printf("URL: %s\n", r.URL.Path)
-
-			pages.EditPage().Render(r.Context(), w)
+			pages.EditPage("something", "Lois", "Noob dev", []pages.Link{{Image: "", Title: "Github", Url: "/github"}}).Render(r.Context(), w)
 		})
-
 		r.Get("/account", func(w http.ResponseWriter, r *http.Request) {
 		})
-
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/", http.StatusFound)
 		})
+
 	})
 
 	app.Get("/logout", handler.LogoutHandler)
