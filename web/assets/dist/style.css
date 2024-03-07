@@ -660,16 +660,16 @@ input:focus-visible {
   margin-bottom: -0.25rem;
 }
 
+.-ml-1 {
+  margin-left: -0.25rem;
+}
+
 .ml-2 {
   margin-left: 0.5rem;
 }
 
 .mr-2 {
   margin-right: 0.5rem;
-}
-
-.-ml-1 {
-  margin-left: -0.25rem;
 }
 
 .mr-3 {
@@ -712,6 +712,10 @@ input:focus-visible {
   height: 1rem;
 }
 
+.h-5 {
+  height: 1.25rem;
+}
+
 .h-6 {
   height: 1.5rem;
 }
@@ -726,10 +730,6 @@ input:focus-visible {
 
 .h-full {
   height: 100%;
-}
-
-.h-5 {
-  height: 1.25rem;
 }
 
 .w-1\/2 {
@@ -760,6 +760,10 @@ input:focus-visible {
   width: 1rem;
 }
 
+.w-5 {
+  width: 1.25rem;
+}
+
 .w-6 {
   width: 1.5rem;
 }
@@ -772,10 +776,6 @@ input:focus-visible {
   width: 100%;
 }
 
-.w-5 {
-  width: 1.25rem;
-}
-
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -786,16 +786,6 @@ input:focus-visible {
 
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-@keyframes pulse {
-  50% {
-    opacity: .5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes spin {
@@ -1096,11 +1086,6 @@ input:focus-visible {
   line-height: 1.75rem;
 }
 
-.text-4xl {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-}
-
 .font-bold {
   font-weight: 700;
 }
@@ -1123,6 +1108,11 @@ input:focus-visible {
 
 .text-transparent {
   color: transparent;
+}
+
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
 .text-zinc-100 {
@@ -1148,11 +1138,6 @@ input:focus-visible {
 .text-zinc-950 {
   --tw-text-opacity: 1;
   color: rgb(9 9 11 / var(--tw-text-opacity));
-}
-
-.text-white {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
 .antialiased {
