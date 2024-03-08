@@ -1,0 +1,26 @@
+package partials 
+
+templ LinkTest() {
+	<script>
+    function isValidURL(url) {
+        // Regular expression to match URLs
+		console.log("url", url)
+        var urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+        return urlPattern.test(url);
+    }
+</script>
+	<form hx-post="/create" class="flex flex-col space-y-4 w-1/2">
+		<input
+			type="text"
+			name="url"
+			onkeyup="this.setCustomValidity('')"
+			hx-on:htmx:validation:validate="if(!isValidURL(this.value)) {
+                    this.setCustomValidity('Please enter a valid url') 
+                    htmx.find('#url-valid').innerText = 'Please enter a valid url'         
+                }"
+			placeholder="URL"
+			class="rounded-sm"
+		/>
+		<span id="url-valid" class="text-red-500"></span>
+	</form>
+}

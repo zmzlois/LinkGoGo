@@ -23,7 +23,7 @@ func LinkForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/create\" class=\"flex flex-col space-y-4 w-1/2\"><input type=\"text\" name=\"title\" placeholder=\"Title\" class=\"rounded-sm\"> <input type=\"text\" name=\"url\" hx-post=\"/edit/url\" hx-indicator=\"#warning\" placeholder=\"URL\" class=\"rounded-sm\"><div class=\"flex justify-between\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n    function isValidURL(url) {\n        // Regular expression to match URLs\n        var urlPattern = /^(https?|ftp):\\/\\/[^\\s/$.?#].[^\\s]*$/i;\n        return urlPattern.test(url);\n    }\n</script><form hx-post=\"/create\" class=\"flex flex-col space-y-4 w-1/2\"><input type=\"text\" name=\"title\" placeholder=\"Title\" class=\"rounded-sm\"> <input type=\"text\" name=\"url\" onkeyup=\"this.setCustomValidity(&#39;&#39;); htmx.find(&#39;#url-valid&#39;).innerText = &#39;&#39;\" oninput=\"this.setCustomValidity(&#39;&#39;); htmx.find(&#39;#url-valid&#39;).innerText = &#39;&#39;\" hx-on:htmx:validation:validate=\"if(!isValidURL(this.value)) {\n                    this.setCustomValidity(&#39;Please input a valid url&#39;) \n                   htmx.find(&#39;#url-valid&#39;).innerText = &#39;Please enter a valid url&#39;\n                }\" placeholder=\"URL\" class=\"rounded-sm\"> <span id=\"url-valid\" class=\"text-red-500\"></span><div class=\"flex justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
