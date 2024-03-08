@@ -86,7 +86,7 @@ func GetToken(r *http.Request) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf("discordClient.GetToken: %w", err)
+		return "", fmt.Errorf("discordClient.GetToken: %w failed to get token, loging user out", err)
 	}
 
 	return tokenFromCookie.Value, nil
@@ -137,11 +137,26 @@ func RetrieveTokenValue(field string, r *http.Request) (jwt.MapClaims, interface
 	return claims, result, nil
 }
 
-type contextKey string
-
-func WithSession(ctx context.Context, key contextKey, ctxValue string) context.Context {
-
+func WithSession(ctx context.Context, key interface{}, ctxValue string) context.Context {
 	return context.WithValue(ctx, key, ctxValue)
+}
+
+func GetSessionValue(ctx context.Context, key interface{}) string {
+	value, ok := ctx.Value(key).(string)
+
+	if !ok {
+		return ""
+	}
+
+	return value
+
+}
+
+func CleanUpContext(ctx context.Context) context.Context {
+	// Create a new context derived from the existing one, without the unwanted values
+	newCtx := context.Background()
+
+	return newCtx
 }
 
 func IsUser(r *http.Request) (bool, error) {
