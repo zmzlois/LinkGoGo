@@ -12,9 +12,25 @@ templ Page(title string) {
 			<meta name="revisit-after" content="7 days"/>
 			<meta name="language" content="English"/>
 			<script src="htmx.min.js">
-			console.log("htmx loaded")
+			
 			</script>
+			<script src="https://bugs.devminer.xyz/js-sdk-loader/86491f94249da30401b735090a53f01e.min.js" crossorigin="anonymous"></script>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<script>
+  Sentry.onLoad(function() {
+    Sentry.init({
+      integrations: [
+        Sentry.replayIntegration({
+          maskAllText: false,
+          blockAllMedia: false,
+        }),
+      ],
+      // Session Replay
+      replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+      replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+    });
+  });
+</script>
 			<script src="https://unpkg.com/sortablejs@1.15.0"></script>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>

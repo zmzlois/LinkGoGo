@@ -10,6 +10,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/joho/godotenv"
+	"github.com/zmzlois/LinkGoGo/pkg/utils"
 )
 
 type handler struct{}
@@ -58,6 +59,7 @@ func SentryInit() {
 
 			return event
 		},
+		Environment:        utils.Config("ENVIRONMENT"),
 		Debug:              true,
 		AttachStacktrace:   true,
 		EnableTracing:      true,

@@ -1,11 +1,29 @@
 package partials 
 
-templ Header() {
+import (
+	"fmt"
+)
+
+func DynamicString(isUser bool) templ.SafeURL {
+	var link templ.SafeURL
+
+	if isUser {
+		link = "/edit"
+	} else {
+		link = "/login"
+	}
+
+	fmt.Printf("Is user? %v\n Link: %v", isUser, link)
+	return link
+
+}
+
+templ Header(isUser bool) {
 	<header class="flex justify-end">
 		@Button() {
-			@ATag("/login", "Create your own") {
-				<img src="/dist/pen.svg" class="w-4 h-4 inline-block mr-2" alt="Create your own link"/>
-			}
+			<a href={ DynamicString(isUser) } class={ "px-4  py-2 items-center gap-2 flex " }>
+				<img src="/dist/pen.svg" class="w-4 h-4 inline-block mr-2" alt="Create your own link"/> <span>Create your own link</span>
+			</a>
 		}
 	</header>
 }

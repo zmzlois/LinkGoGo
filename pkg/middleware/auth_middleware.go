@@ -31,7 +31,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		// Parse and validate JWT token
 		ctx := r.Context()
-		authenticated, err := auth.ValidateToken(ctx, tokenString)
+		authenticated, err := auth.ValidateToken(tokenString)
 		if err != nil {
 
 			fmt.Println("failed to validate session token", zap.Error(err))

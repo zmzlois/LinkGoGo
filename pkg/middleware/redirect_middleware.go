@@ -23,7 +23,7 @@ func RedirectMiddleware(next http.Handler) http.Handler {
 		}
 
 		ctx := r.Context()
-		authenticated, err := auth.ValidateToken(ctx, tokenString)
+		authenticated, err := auth.ValidateToken(tokenString)
 
 		if err != nil {
 			fmt.Printf("AuthMiddleware.ValidateToken: %v", zap.Error(err))

@@ -60,9 +60,7 @@ func SetupRouter(app chi.Router) {
 
 	app.Get("/discord-callback", discordOAuthCallbackHandler)
 
-	app.Get("/unauthorised", func(w http.ResponseWriter, r *http.Request) {
-		pages.UnauthorisedPage().Render(r.Context(), w)
-	})
+	app.Get("/unauthorised", handler.UnauthorisedHandler)
 
 	linkService := service.NewLinkService(db)
 

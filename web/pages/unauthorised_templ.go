@@ -10,9 +10,11 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/zmzlois/LinkGoGo/web/templates/shared"
+import (
+	"github.com/zmzlois/LinkGoGo/web/templates/shared"
+)
 
-func UnauthorisedPage() templ.Component {
+func UnauthorisedPage(loginURL string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -31,7 +33,7 @@ func UnauthorisedPage() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><meta http-equiv=\"refresh\" content=\"5; url=http://localhost:3000\"></head>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><meta http-equiv=\"refresh\" content=\"5; url=http://localhost:3000/login\"></head>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -41,7 +43,7 @@ func UnauthorisedPage() templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex  flex-col content-center items-center text-center justify-center py-10 gap-8\"><h1 class=\"font-bold text-zinc-900 lg:text-4xl text-2xl\">You are not authorised</h1><p>We are redirecting you to home page.</p><svg class=\"animate-spin -ml-1 mr-3 h-5 w-5 text-white\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex  flex-col content-center items-center text-center justify-center py-10 gap-8\"><h1 class=\"font-bold text-zinc-900 lg:text-4xl text-2xl\">You are not authorised</h1><p>We are redirecting you to login.</p><svg class=\"animate-spin -ml-1 mr-3 h-5 w-5 text-white\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

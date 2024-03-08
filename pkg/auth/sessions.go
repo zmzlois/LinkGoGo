@@ -65,7 +65,7 @@ func (dc *Client) SetCookie(tokenString string, w http.ResponseWriter) {
 	http.SetCookie(w, &cookie)
 }
 
-func ValidateToken(ctx context.Context, tokenString string) (bool, error) {
+func ValidateToken(tokenString string) (bool, error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -78,7 +78,7 @@ func ValidateToken(ctx context.Context, tokenString string) (bool, error) {
 	if err != nil || !token.Valid {
 		return false, err
 	}
-	return false, nil
+	return true, nil
 }
 
 func GetToken(r *http.Request) (string, error) {
@@ -97,11 +97,11 @@ func RetrieveTokenValue(field string, r *http.Request) (jwt.MapClaims, interface
 	claims := jwt.MapClaims{}
 	tokenFromCookie, err := r.Cookie(CookieName)
 
-	tokenString := tokenFromCookie.Value
-
 	if err != nil {
 		return claims, "", fmt.Errorf("discordClient.RetrieveTokenValue: %w", err)
 	}
+
+	tokenString := tokenFromCookie.Value
 
 	// Parse the JWT token string
 	// FIXME: https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/
@@ -142,4 +142,24 @@ type contextKey string
 func WithSession(ctx context.Context, key contextKey, ctxValue string) context.Context {
 
 	return context.WithValue(ctx, key, ctxValue)
+}
+
+func IsUser(r *http.Request) (bool, error) {
+
+	token, err := GetToken(r)
+
+	if err != nil {
+
+		return false, err
+	}
+
+	result, err := ValidateToken(token)
+
+	if err != nil {
+
+		return false, err
+	}
+
+	return result, nil
+
 }
