@@ -46,7 +46,7 @@ func Link(link *model.NewLinkInput) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\" w-full border border-red-400 relative inset-0 group\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,7 @@ func Link(link *model.NewLinkInput) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"w-full p-2 rounded bg-zinc-100 drop-shadow-sm content-center items-center flex group justify-between animate-pop\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"p-2 w-full  inset-0 border border-blue-400 relative z-0 rounded bg-zinc-100 drop-shadow-sm content-center items-center grid grid-cols-7  justify-between animate-pop\"><div class=\"col-span-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -82,7 +82,7 @@ func Link(link *model.NewLinkInput) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(ImageTranform(link.Image, link.Url, link.Title))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/link.templ`, Line: 35, Col: 100}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/link.templ`, Line: 37, Col: 102}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -93,20 +93,52 @@ func Link(link *model.NewLinkInput) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"col-span-5 flex text-center\"><p class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(link.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/link.templ`, Line: 38, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/link.templ`, Line: 42, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><div class=\"w-10 h-10 p-2 flex rounded-full bg-inherit group-hover:bg-zinc-300 items-center transition-colors content-center\"><img src=\"/dist/dot-horizontal.svg\" class=\"group-hover:block hidden w-6 h-6\"></div></a>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div></a><div x-data=\"{open:false}\" class=\"col-span-1 absolute right-5 top-[18px] hidden transition-transform duration-300 group-hover:block border border-black z-20\"><div class=\"relative\"><button class=\"w-10 h-10 p-2 flex rounded-full z-30 relative bg-inherit group-hover:bg-zinc-300 items-center transition-colors content-center\" x-on:click=\"open = ! open\"><img src=\"/dist/dot-horizontal.svg\" class=\"group-hover:block block w-6 h-6\"></button><div x-show=\"open\" x-on:click.away=\"open = false\" class=\"absolute z-40 top-6 left-6  bg-zinc-100 p-2 rounded shadow-lg\" x-transition:enter.scale.80 x-transition:leave.scale.90>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, item := range menu {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 templ.SafeURL = item.Action
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var5)))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\" p-2 text-zinc-900 flex content-center text-center hover:bg-zinc-300 transition-colors duration-300\"><p class=\"w-full\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(item.Text)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/partials/link.templ`, Line: 59, Col: 36}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -115,4 +147,15 @@ func Link(link *model.NewLinkInput) templ.Component {
 		}
 		return templ_7745c5c3_Err
 	})
+}
+
+type Menu struct {
+	Id     string
+	Text   string
+	Action templ.SafeURL
+}
+
+var menu = []Menu{
+	{Id: "1", Text: "Edit", Action: "/edit"},
+	{Id: "2", Text: "Delete", Action: "/delete"},
 }

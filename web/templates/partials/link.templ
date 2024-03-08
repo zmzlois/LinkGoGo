@@ -24,21 +24,55 @@ func ImageTranform(image string, path templ.SafeURL, name string) string {
 }
 
 templ Link (link *model.NewLinkInput) {
-	<a href={ link.Url } class="w-full p-2 rounded bg-zinc-100 drop-shadow-sm content-center items-center flex group justify-between animate-pop">
-		if strings.Contains(string(link.Url), "twitter") || strings.Contains(string(link.Url), "x.com") {
-			<img src="/dist/twitter.svg" class="w-14 h-14 rounded" alt="avatar"/>
-		} else if strings.Contains(string(link.Url), "github") {
-			<img src="/dist/github.svg" class="w-14 h-14 rounded" alt="avatar"/>
-		} else if link.Image != " " && strings.Contains(string(link.Url), "instagram") {
-			<img src="/dist/instagram.svg" class="w-14 h-14 rounded" alt="avatar"/>
-		} else {
-			<div class="w-14 h-14 flex p-1 bg-zinc-900 rounded text-zinc-100  items-center justify-center">
-				<p class="text-zinc-100 font-semibold text-3xl">{ ImageTranform(link.Image,link.Url, link.Title) }</p>
+	<div class=" w-full border border-red-400 relative inset-0 group">
+		<a href={ link.Url } class="p-2 w-full  inset-0 border border-blue-400 relative z-0 rounded bg-zinc-100 drop-shadow-sm content-center items-center grid grid-cols-7  justify-between animate-pop">
+			<div class="col-span-1">
+				if strings.Contains(string(link.Url), "twitter") || strings.Contains(string(link.Url), "x.com") {
+					<img src="/dist/twitter.svg" class="w-14 h-14 rounded" alt="avatar"/>
+				} else if strings.Contains(string(link.Url), "github") {
+					<img src="/dist/github.svg" class="w-14 h-14 rounded" alt="avatar"/>
+				} else if link.Image != " " && strings.Contains(string(link.Url), "instagram") {
+					<img src="/dist/instagram.svg" class="w-14 h-14 rounded" alt="avatar"/>
+				} else {
+					<div class="w-14 h-14 flex p-1 bg-zinc-900 rounded text-zinc-100  items-center justify-center">
+						<p class="text-zinc-100 font-semibold text-3xl">{ ImageTranform(link.Image,link.Url, link.Title) }</p>
+					</div>
+				}
 			</div>
-		}
-		<p>{ link.Title }</p>
-		<div class="w-10 h-10 p-2 flex rounded-full bg-inherit group-hover:bg-zinc-300 items-center transition-colors content-center">
-			<img src="/dist/dot-horizontal.svg" class="group-hover:block hidden w-6 h-6"/>
+			<div class="col-span-5 flex text-center">
+				<p class="w-full">{ link.Title }</p>
+			</div>
+		</a>
+		<div x-data="{open:false}" class="col-span-1 absolute right-5 top-[18px] hidden transition-transform duration-300 group-hover:block border border-black z-20">
+			<div class="relative">
+				<button class="w-10 h-10 p-2 flex rounded-full z-30 relative bg-inherit group-hover:bg-zinc-300 items-center transition-colors content-center" x-on:click="open = ! open">
+					<img src="/dist/dot-horizontal.svg" class="group-hover:block block w-6 h-6"/>
+				</button>
+				<div
+					x-show="open"
+					x-on:click.away="open = false"
+					class="absolute z-40 top-6 left-6  bg-zinc-100 p-2 rounded shadow-lg"
+					x-transition:enter.scale.80
+					x-transition:leave.scale.90
+				>
+					for _, item := range menu {
+						<a href={ item.Action } class=" p-2 text-zinc-900 flex content-center text-center hover:bg-zinc-300 transition-colors duration-300">
+							<p class="w-full">{ item.Text }</p>
+						</a>
+					}
+				</div>
+			</div>
 		</div>
-	</a>
+	</div>
+}
+
+type Menu struct {
+	Id     string
+	Text   string
+	Action templ.SafeURL
+}
+
+var menu = []Menu{
+	{Id: "1", Text: "Edit", Action: "/edit"},
+	{Id: "2", Text: "Delete", Action: "/delete"},
 }
