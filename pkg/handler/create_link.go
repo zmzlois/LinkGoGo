@@ -20,7 +20,14 @@ func (rs *TodosController) EditLinkHandler(w http.ResponseWriter, r *http.Reques
 
 	title := r.Form.Get("title")
 
-	fmt.Fprintf(w, "Edit link with title: %s", title)
 	link := r.Form.Get("url")
-	fmt.Fprintf(w, "Edit link with link: %s", link)
+
+	ctx := r.Context()
+
+	userId := ctx.Value("user_id")
+
+	fmt.Println("userId: ", userId)
+
+	rs.LinkService.AddLink(r.Context(), "test-id", title, link)
+
 }
