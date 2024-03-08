@@ -16,6 +16,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
 	})
+	auth.CleanUpContext(r.Context())
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
