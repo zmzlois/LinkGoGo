@@ -30,7 +30,7 @@ func (Links) Fields() []ent.Field {
 	links := []ent.Field{
 		field.UUID("user_id", uuid.UUID{}),
 		field.String("url").MaxLen(255),
-		field.String("title").MaxLen(255).Unique(),
+		field.String("title").MaxLen(255),
 		field.Text("description").Optional(),
 		field.String("image").MaxLen(255).Optional(),
 		field.Int("order").Default(0),

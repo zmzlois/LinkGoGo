@@ -39,7 +39,7 @@ var (
 	LinksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "url", Type: field.TypeString, Size: 255},
-		{Name: "title", Type: field.TypeString, Unique: true, Size: 255},
+		{Name: "title", Type: field.TypeString, Size: 255},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "image", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "order", Type: field.TypeInt, Default: 0},
