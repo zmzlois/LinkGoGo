@@ -16,18 +16,17 @@ type TodosController struct {
 func (rs *TodosController) Edit(w http.ResponseWriter, r *http.Request) {
 	var links = []model.NewLinkInput{}
 
-	user, global_name, _ := auth.RetrieveTokenValue("global_name", r)
-
-	userId := user["user_id"].(string)
-
 	ctx := r.Context()
 
-	links, err := rs.LinkService.GetLinks(ctx, userId)
+	avatar := auth.GetSessionValue(ctx, "avatar")
+	global_name := auth.GetSessionValue(ctx, "global_name")
+
+	links, err := rs.LinkService.GetLinks(ctx)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		// don't return here, still render the page
 	}
 
-	pages.EditPage(user["avatar"].(string), global_name.(string), "Edit your bio here?", links).Render(r.Context(), w)
+	pages.EditPage(avatar, global_name, "Edit your bio here?", links).Render(r.Context(), w)
 }
