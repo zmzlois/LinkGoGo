@@ -64,6 +64,7 @@ func ParsingTokenInput(input map[string]interface{}) (*TokenInput, error) {
 }
 
 type NewLinkInput struct {
+	Id          string        `json:"id"`
 	Title       string        `json:"title"`
 	Url         templ.SafeURL `json:"url"`
 	Image       string        `json:"image"`
