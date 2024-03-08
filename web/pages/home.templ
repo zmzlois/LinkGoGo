@@ -24,7 +24,7 @@ templ HomePage(isUser bool) {
 	@shared.Page("Home") {
 		@shared.Background() {
 			@shared.Container() {
-				@partials.Header(isUser)
+				@shared.Header(isUser)
 			}
 			@shared.Container() {
 				@partials.ProfileHeader(MockData["avatar"], MockData["name"], MockData["bio"])

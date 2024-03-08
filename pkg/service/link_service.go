@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/a-h/templ"
 	"github.com/zmzlois/LinkGoGo/ent"
@@ -51,8 +50,6 @@ func (b *LinkService) GetLinks(ctx context.Context, externalId string) ([]model.
 			continue
 		}
 	}
-
-	fmt.Println("Userlink", userLinks)
 
 	return userLinks, nil
 }

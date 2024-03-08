@@ -1,7 +1,5 @@
 package shared 
 
-import "github.com/zmzlois/LinkGoGo/web/templates/partials"
-
 templ Background () {
 	<style type="text/css">
 		.min-height {
@@ -13,6 +11,6 @@ templ Background () {
 		<div class="min-height">
 			{ children... }
 		</div>
-		@partials.Footer()
+		@Footer()
 	</div>
 }

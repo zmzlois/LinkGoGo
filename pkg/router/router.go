@@ -71,12 +71,14 @@ func SetupRouter(app chi.Router) {
 		r.Use(middleware.AuthMiddleware)
 
 		r.Get("/edit", tr.Edit)
+		r.Get("/edit/link", tr.CreateLinkHandler)
+		r.Get("/create", tr.CreateButtonHandler)
 
 		// r.Get("/edit", monitor.SentryHandler.HandleFunc(handler.EditPageHandler))
 		r.Post("/edit/{param}", handler.UrlHandler)
 		r.Get("/account", func(w http.ResponseWriter, r *http.Request) {
 		})
-		r.Post("/create", handler.CreateLinkHandler)
+		r.Post("/create", tr.EditLinkHandler)
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/", http.StatusFound)
 		})

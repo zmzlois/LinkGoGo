@@ -31,7 +31,9 @@ templ EditPage(avatar string, name string, bio string, links []model.NewLinkInpu
 				if len(links) >= 1 {
 					@partials.LinkSection(links)
 				}
-				@partials.CreateLink()
+				<div id="form-button">
+					@partials.CreateLink()
+				</div>
 			}
 		}
 	}

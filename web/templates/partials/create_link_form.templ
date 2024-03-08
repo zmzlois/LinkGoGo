@@ -1,28 +1,38 @@
 package partials 
 
-templ CreateLink() {
-	<div class="py-4 flex flex-col gap-4 text-center items-center content-center">
-		// show "Create a link" if user has pre-existing data
-		<button class={ "drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base" } type="button">
-			<span class="px-20 py-3 ">
-				<p>Create a new link</p>
-			</span>
-		</button>
-		<form hx-post="/create" class="flex flex-col space-y-4 w-1/2">
-			<input type="text" name="title" placeholder="Title" class="rounded-sm"/>
-			<input type="text" name="url" hx-post="/edit/url" hx-indicator="#warning" placeholder="URL" class="rounded-sm"/>
-			<div class="flex justify-between">
-				<button class={ "drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base" } type="button">
-					<span class="px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-zinc-500">
-						<p>Cancel</p>
-					</span>
-				</button>
-				<button class={ "drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base" } type="submit">
-					<span class="px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-indigo-500">
-						<p>Create</p>
-					</span>
-				</button>
-			</div>
-		</form>
-	</div>
+templ LinkForm() {
+	<form hx-post="/create" class="flex flex-col space-y-4 w-1/2">
+		<input
+			type="text"
+			name="title"
+			placeholder="Title"
+			class="rounded-sm"
+		/>
+		<input
+			type="text"
+			name="url"
+			hx-post="/edit/url"
+			hx-indicator="#warning"
+			placeholder="URL"
+			class="rounded-sm"
+		/>
+		<div class="flex justify-between">
+			<button
+				class={ "drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base" }
+				type="button"
+				hx-get="/create"
+				hx-swap="innerHTML show:top"
+				hx-target="#form-button"
+			>
+				<span class="px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-zinc-500">
+					<p>Cancel</p>
+				</span>
+			</button>
+			<button class={ "drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base" } type="submit">
+				<span class="px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-indigo-500">
+					<p>Create</p>
+				</span>
+			</button>
+		</div>
+	</form>
 }

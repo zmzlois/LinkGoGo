@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/zmzlois/LinkGoGo/pkg/auth"
@@ -29,8 +28,6 @@ func (rs *TodosController) Edit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		// don't return here, still render the page
 	}
-
-	fmt.Println("All links", links)
 
 	pages.EditPage(user["avatar"].(string), global_name.(string), "Edit your bio here?", links).Render(r.Context(), w)
 }

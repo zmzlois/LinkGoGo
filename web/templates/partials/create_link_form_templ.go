@@ -10,7 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-func CreateLink() templ.Component {
+func LinkForm() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -23,7 +23,7 @@ func CreateLink() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"py-4 flex flex-col gap-4 text-center items-center content-center\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/create\" class=\"flex flex-col space-y-4 w-1/2\"><input type=\"text\" name=\"title\" placeholder=\"Title\" class=\"rounded-sm\"> <input type=\"text\" name=\"url\" hx-post=\"/edit/url\" hx-indicator=\"#warning\" placeholder=\"URL\" class=\"rounded-sm\"><div class=\"flex justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -40,7 +40,7 @@ func CreateLink() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"button\"><span class=\"px-20 py-3 \"><p>Create a new link</p></span></button><form hx-post=\"/create\" class=\"flex flex-col space-y-4 w-1/2\"><input type=\"text\" name=\"title\" placeholder=\"Title\" class=\"rounded-sm\"> <input type=\"text\" name=\"url\" hx-post=\"/edit/url\" hx-indicator=\"#warning\" placeholder=\"URL\" class=\"rounded-sm\"><div class=\"flex justify-between\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"button\" hx-get=\"/create\" hx-swap=\"innerHTML show:top\" hx-target=\"#form-button\"><span class=\"px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-zinc-500\"><p>Cancel</p></span></button> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -57,24 +57,7 @@ func CreateLink() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"button\"><span class=\"px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-zinc-500\"><p>Cancel</p></span></button> ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 = []any{"drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base"}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var4).String()))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"submit\"><span class=\"px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-indigo-500\"><p>Create</p></span></button></div></form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"submit\"><span class=\"px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-indigo-500\"><p>Create</p></span></button></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

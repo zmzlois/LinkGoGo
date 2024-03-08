@@ -1,7 +1,8 @@
-package partials 
+package shared
 
 import (
 	"fmt"
+	"github.com/zmzlois/LinkGoGo/web/templates/partials"
 )
 
 func DynamicString(isUser bool) templ.SafeURL {
@@ -20,7 +21,7 @@ func DynamicString(isUser bool) templ.SafeURL {
 
 templ Header(isUser bool) {
 	<header class="flex justify-end">
-		@Button() {
+		@partials.Button() {
 			<a href={ DynamicString(isUser) } class={ "px-4  py-2 items-center gap-2 flex " }>
 				<img src="/dist/pen.svg" class="w-4 h-4 inline-block mr-2" alt="Create your own link"/> <span>Create your own link</span>
 			</a>
