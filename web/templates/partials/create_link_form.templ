@@ -2,12 +2,19 @@ package partials
 
 templ LinkForm() {
 	<script>
-    function isValidURL(url) {
-        // Regular expression to match URLs
-        var urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
-        return urlPattern.test(url);
-    }
-</script>
+	const urlInput = document.getElementById('url');
+	urlInput.addEventListener("keydown", function (event) {
+		const urlValid = document.getElementById('url-valid');
+		if (urlInput.validity.patternMismatch) {
+			urlInput.setCustomValidity("Invalid URL");
+			urlValid.textContent = "Invalid URL";
+		} else {
+			urlInput.setCustomValidity("");
+			urlValid.textContent = "";
+		}
+	});
+
+	</script>
 	<form hx-post="/create" class="flex flex-col space-y-4 w-1/2">
 		<input
 			type="text"
@@ -18,16 +25,11 @@ templ LinkForm() {
 		<input
 			type="text"
 			name="url"
-			onkeyup="this.setCustomValidity(''); htmx.find('#url-valid').innerText = ''"
-			oninput="this.setCustomValidity(''); htmx.find('#url-valid').innerText = ''"
-			hx-on:htmx:validation:validate="if(!isValidURL(this.value)) {
-                    this.setCustomValidity('Please input a valid url') 
-                   htmx.find('#url-valid').innerText = 'Please enter a valid url'
-                }"
+			id="url"
 			placeholder="URL"
+			pattern="(https?|ftp):\/\/[^\s/$.?#].[^\s]*"
 			class="rounded-sm"
 		/>
-		<span id="url-valid" class="text-red-500"></span>
 		<div class="flex justify-between">
 			<button
 				class={ "drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base" }
