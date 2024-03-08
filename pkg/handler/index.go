@@ -16,7 +16,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	isUser, err := auth.IsUser(r)
 
 	if err != nil {
-		fmt.Printf("Index.isUser: %v", zap.Error(err))
+		fmt.Printf("Index.isUser: %v\n", zap.Error(err))
 	}
 
 	pages.HomePage(isUser).Render(r.Context(), w)
