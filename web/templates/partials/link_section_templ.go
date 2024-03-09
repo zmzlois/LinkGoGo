@@ -25,7 +25,7 @@ var links = []LinkType{
 	{Image: " ", Path: "https://github.com/zmzlois/LinkGoGo", Name: "The repo made this shit"},
 }
 
-func LinkSection(links []model.NewLinkInput) templ.Component {
+func LinkSection(links []model.NewLinkInput, isUser bool) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -43,7 +43,7 @@ func LinkSection(links []model.NewLinkInput) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, link := range links {
-			templ_7745c5c3_Err = Link(&link).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = Link(&link, isUser).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

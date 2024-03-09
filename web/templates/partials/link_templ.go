@@ -33,7 +33,7 @@ func ImageTranform(image string, path templ.SafeURL, name string) string {
 	}
 }
 
-func Link(link *model.NewLinkInput) templ.Component {
+func Link(link *model.NewLinkInput, isUser bool) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -106,7 +106,7 @@ func Link(link *model.NewLinkInput) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div></a><div x-data=\"{open:false}\" class=\"col-span-1 absolute right-5 top-[18px] hidden transition-transform duration-300 group-hover:block border border-black z-20\"><div class=\"relative\"><button class=\"w-10 h-10 p-2 flex rounded-full z-30 relative bg-inherit group-hover:bg-zinc-300 items-center transition-colors content-center\" x-on:click=\"open = ! open\"><img src=\"/dist/dot-horizontal.svg\" class=\"group-hover:block block w-6 h-6\"></button><div x-show=\"open\" x-on:click.away=\"open = false\" class=\"absolute z-40 top-6 left-6  bg-zinc-100 p-2 rounded shadow-lg\" x-transition:enter.scale.80 x-transition:leave.scale.90>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div></a><div x-data=\"{open:false}\" class=\"col-span-1 absolute right-5 top-[18px] transition-transform duration-300 group-hover:block  z-20\"><div class=\"relative\"><button class=\"w-10 h-10 p-2 flex rounded-full z-30 relative bg-inherit hover:bg-zinc-300 items-center transition-colors content-center\" x-on:click=\"open = ! open\"><img src=\"/dist/dot-horizontal.svg\" class=\"group-hover:block block w-6 h-6\"></button><div x-show=\"open\" x-on:click.away=\"open = false\" class=\"absolute z-40 top-6 left-6  bg-zinc-100 p-2 rounded shadow-lg\" x-transition:enter.scale.80 x-transition:leave.scale.90>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

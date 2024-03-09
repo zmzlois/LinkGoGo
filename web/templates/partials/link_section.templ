@@ -15,11 +15,11 @@ var links = []LinkType{
 	{Image: " ", Path: "https://github.com/zmzlois/LinkGoGo", Name: "The repo made this shit"},
 }
 
-templ LinkSection (links []model.NewLinkInput) {
+templ LinkSection (links []model.NewLinkInput, isUser bool) {
 	<div class="flex flex-col  items-center  py-8">
 		<div class="lg:w-3/5 w-11/12 justify-between items-center flex flex-col gap-8">
 			for _, link := range links {
-				@Link(&link)
+				@Link(&link, isUser)
 			}
 		</div>
 	</div>

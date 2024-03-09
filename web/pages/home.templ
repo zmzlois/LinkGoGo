@@ -30,7 +30,7 @@ templ HomePage(isUser bool) {
 				@partials.ProfileHeader(MockData["avatar"], MockData["name"], MockData["bio"])
 			}
 			@shared.Container() {
-				@partials.LinkSection(Links)
+				@partials.LinkSection(Links, isUser)
 			}
 		}
 	}

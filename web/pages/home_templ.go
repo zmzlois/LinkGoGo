@@ -107,7 +107,7 @@ func HomePage(isUser bool) templ.Component {
 						templ_7745c5c3_Buffer = templ.GetBuffer()
 						defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 					}
-					templ_7745c5c3_Err = partials.LinkSection(Links).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = partials.LinkSection(Links, isUser).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
