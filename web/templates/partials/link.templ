@@ -24,7 +24,7 @@ func ImageTranform(image string, path templ.SafeURL, name string) string {
 }
 
 templ Link (link *model.NewLinkInput, isUser bool) {
-	< class=" w-full border border-red-400 relative inset-0 group">
+	<div class=" w-full  relative inset-0 group">
 		<a href={ link.Url } class="p-2 w-full  inset-0 border border-blue-400 relative z-0 rounded bg-zinc-100 drop-shadow-sm content-center items-center grid grid-cols-7  justify-between animate-pop">
 			<div class="col-span-1">
 				if strings.Contains(string(link.Url), "twitter") || strings.Contains(string(link.Url), "x.com") {
@@ -43,29 +43,30 @@ templ Link (link *model.NewLinkInput, isUser bool) {
 				<p class="w-full">{ link.Title }</p>
 			</div>
 		</a>
-		if isUser { 
-			<div 
-				x-data="{open:false}" 
-				class="col-span-1 absolute right-5 top-[18px] transition-transform duration-300 group-hover:block  z-20">
+		if isUser {
+			<div
+				x-data="{open:false}"
+				class="col-span-1 absolute right-5 top-[18px] transition-transform duration-300 group-hover:block  z-20"
+			>
 				<div class="relative">
 					<button class="w-10 h-10 p-2 flex rounded-full z-30 relative bg-inherit hover:bg-zinc-300 items-center transition-colors content-center" x-on:click="open = ! open">
 						<img src="/dist/dot-horizontal.svg" class="group-hover:block block w-6 h-6"/>
 					</button>
-						<div
-					x-show="open"
-					x-on:click.away="open = false"
-					class="absolute z-40 top-6 left-6  bg-zinc-100 p-2 rounded shadow-lg"
-					x-transition:enter.scale.80
-					x-transition:leave.scale.90
-				>
-					for _, item := range menu {
-						<a href={ item.Action } class=" p-2 text-zinc-900 flex content-center text-center hover:bg-zinc-300 transition-colors duration-300">
-							<p class="w-full">{ item.Text }</p>
-						</a>
-					}
-						</div>
+					<div
+						x-show="open"
+						x-on:click.away="open = false"
+						class="absolute z-40 top-6 left-6  bg-zinc-100 p-2 rounded shadow-lg"
+						x-transition:enter.scale.80
+						x-transition:leave.scale.90
+					>
+						for _, item := range menu {
+							<a href={ item.Action } class=" p-2 text-zinc-900 flex content-center text-center hover:bg-zinc-300 transition-colors duration-300">
+								<p class="w-full">{ item.Text }</p>
+							</a>
+						}
+					</div>
 				</div>
-		</div>
+			</div>
 		} else {
 			<div></div>
 		}
