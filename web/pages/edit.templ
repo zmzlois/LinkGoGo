@@ -19,8 +19,9 @@ templ EditPage(avatar string, name string, bio string, id string, links []model.
 			@shared.Container() {
 				<div class="flex justify-end gap-4">
 					<button
+						x-on:click="openToast('Link copied to clipboard')"
 						@click="$clipboard('{{ShareableLink(name, id)}}'"
-						class={ "drop-shadow-sm px-4 flex bg-indigo-500 rounded-xl items-center text-center text-zinc-100 font-semibold text-base" }
+						class={ "brutal-button px-4 flex bg-indigo-500 rounded-xl items-center text-center text-white font-semibold text-base" }
 					>
 						<p>Share your LinGoGo</p>
 					</button>

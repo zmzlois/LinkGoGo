@@ -58,12 +58,12 @@ func EditPage(avatar string, name string, bio string, id string, links []model.N
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var5 = []any{"drop-shadow-sm px-4 flex bg-indigo-500 rounded-xl items-center text-center text-zinc-100 font-semibold text-base"}
+					var templ_7745c5c3_Var5 = []any{"brutal-button px-4 flex bg-indigo-500 rounded-xl items-center text-center text-white font-semibold text-base"}
 					templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button @click=\"$clipboard(&#39;{{ShareableLink(name, id)}}&#39;\" class=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button x-on:click=\"openToast(&#39;Link copied to clipboard&#39;)\" @click=\"$clipboard(&#39;{{ShareableLink(name, id)}}&#39;\" class=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -140,7 +140,7 @@ func EditPage(avatar string, name string, bio string, id string, links []model.N
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/pages/edit.templ`, Line: 35, Col: 62}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/pages/edit.templ`, Line: 36, Col: 62}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {

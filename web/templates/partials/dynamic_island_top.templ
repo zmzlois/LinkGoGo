@@ -1,59 +1,16 @@
 package partials 
 
-templ DynamicIslandTop( text string) {
-	<style type="text/css">
-		.island {
-			background-color: whitesmoke;
-			position: absolute;
-			left: 50%;
-			top: 0.4rem;
-			transform: translateX(-50%);
-			border-radius: 20px;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-			margin-bottom: 3px;
-			padding-left: 0.625rem;
-			padding-right: 0.625rem;
-			outline: #52a9ff;
-		}
-		.island-center {
-			padding-left: 0.625rem;
-			padding-right: 0.625rem;
-			justify-content: space-between;
-			align-items: center;
-			display: flex;
-			height: 28px;
-			position: relative;
-		}
-		.popup-title {
-			margin-bottom: 0px;
-		}
-		.popup-title h2 {
-			font-size: 0.8rem;
-			font-weight: 400;
-			font-variant-numeric: slashed-zero;
-			font-variant-ligatures: none;
-			margin: 0;
-		}
-		.popup-close {
-			text-align: right;
-		}
-		.popup-close a {
-			color: #999;
-			font-size: 20px;
-			text-decoration: none;
-		}
-		.popup-close a:hover {
-			color: #000;
-		}
-	</style>
-	<div class="island">
-		<div class="island-center">
-			<div class="popup-title">
-				<h2>Link copied!  </h2>
-			</div>
-			<div class="popup-close">
-				<a href="#" class="close-popup"><i class="fa fa-times"></i> </a>
-			</div>
-		</div>
+templ DynamicIslandTop() {
+	<div
+		x-show="open"
+		class="w-60 p-4 rounded-md h-10 bg-white fixed top-4 right-[calc(100vw-58vw)] transform-gpu border border-black transition-transform duration-400 ease flex flex-col gap"
+		x-class="success ? 'bg-green-500' : 'bg-red-500'"
+		x-transition:enter-start="translate-y-0"
+		x-transition:enter-end="translate-y-full"
+		x-transition:leave-start="translate-y-0"
+		x-transition:leave-end="translate-y-full"
+	>
+		<p class="text-black mb-2" x-text="title">Link</p>
+		<p class="text-sm text-black" x-text="message"></p>
 	</div>
 }

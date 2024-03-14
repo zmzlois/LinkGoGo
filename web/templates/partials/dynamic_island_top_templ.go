@@ -10,7 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-func DynamicIslandTop(text string) templ.Component {
+func DynamicIslandTop() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -23,7 +23,7 @@ func DynamicIslandTop(text string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style type=\"text/css\">\n\t\t.island {\n\t\t\tbackground-color: whitesmoke;\n\t\t\tposition: absolute;\n\t\t\tleft: 50%;\n\t\t\ttop: 0.4rem;\n\t\t\ttransform: translateX(-50%);\n\t\t\tborder-radius: 20px;\n\t\t\tbox-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);\n\t\t\tmargin-bottom: 3px;\n\t\t\tpadding-left: 0.625rem;\n\t\t\tpadding-right: 0.625rem;\n\t\t\toutline: #52a9ff;\n\t\t}\n\t\t.island-center {\n\t\t\tpadding-left: 0.625rem;\n\t\t\tpadding-right: 0.625rem;\n\t\t\tjustify-content: space-between;\n\t\t\talign-items: center;\n\t\t\tdisplay: flex;\n\t\t\theight: 28px;\n\t\t\tposition: relative;\n\t\t}\n\t\t.popup-title {\n\t\t\tmargin-bottom: 0px;\n\t\t}\n\t\t.popup-title h2 {\n\t\t\tfont-size: 0.8rem;\n\t\t\tfont-weight: 400;\n\t\t\tfont-variant-numeric: slashed-zero;\n\t\t\tfont-variant-ligatures: none;\n\t\t\tmargin: 0;\n\t\t}\n\t\t.popup-close {\n\t\t\ttext-align: right;\n\t\t}\n\t\t.popup-close a {\n\t\t\tcolor: #999;\n\t\t\tfont-size: 20px;\n\t\t\ttext-decoration: none;\n\t\t}\n\t\t.popup-close a:hover {\n\t\t\tcolor: #000;\n\t\t}\n\t</style><div class=\"island\"><div class=\"island-center\"><div class=\"popup-title\"><h2>Link copied!  </h2></div><div class=\"popup-close\"><a href=\"#\" class=\"close-popup\"><i class=\"fa fa-times\"></i></a></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div x-show=\"open\" class=\"w-60 p-4 rounded-md h-10 bg-white fixed top-4 right-[calc(100vw-58vw)] transform-gpu border border-black transition-transform duration-400 ease flex flex-col gap\" x-class=\"success ? &#39;bg-green-500&#39; : &#39;bg-red-500&#39;\" x-transition:enter-start=\"translate-y-0\" x-transition:enter-end=\"translate-y-full\" x-transition:leave-start=\"translate-y-0\" x-transition:leave-end=\"translate-y-full\"><p class=\"text-black mb-2\" x-text=\"title\">Link</p><p class=\"text-sm text-black\" x-text=\"message\"></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
