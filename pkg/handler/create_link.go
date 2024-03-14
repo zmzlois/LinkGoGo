@@ -5,13 +5,17 @@ import (
 	"net/http"
 
 	"github.com/zmzlois/LinkGoGo/web/templates/partials"
+	"github.com/zmzlois/LinkGoGo/web/templates/partials/edit"
 )
 
 func (rs *TodosController) CreateLinkHandler(w http.ResponseWriter, r *http.Request) {
-	partials.LinkForm().Render(r.Context(), w)
+
+	edit.EditLinkForm().Render(r.Context(), w)
 }
 
 func (rs *TodosController) CreateButtonHandler(w http.ResponseWriter, r *http.Request) {
+
+	// FIXME: This is a temporary solution to stop the error before fixing interactivity
 	partials.CreateLink().Render(r.Context(), w)
 }
 
