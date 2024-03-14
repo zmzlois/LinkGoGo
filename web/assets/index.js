@@ -45,5 +45,61 @@ document.addEventListener("alpine:init", () => {
             this.id = id
         }
     })
+
+    Alpine.data("notification", () => ({
+        open: false,
+        notif: "",
+        showNotification(content) {
+            this.open = true
+            this.notif = content
+            setTimeout(() => {
+                this.open = false
+            }, 5000)
+        },
+        trigger: {
+            ["x-ref"]: "trigger",
+            ["@click"]() {
+                this.showNotification()
+            }
+        }
+    }))
 }
 )
+
+class Toast {
+    constructor() {
+        this.open = false
+        this.title = ""
+        this.message = ""
+        this.success = false
+        this.warning = false
+    }
+
+    openToast(title, message) {
+        this.open = true
+        this.title = title
+        this.message = message
+        setTimeout(() => {
+            this.open = false
+        }, 5000)
+    }
+}
+
+function toastNotification() {
+
+    return {
+        open: false,
+        title: "",
+        message: "",
+        success: false,
+        openToast(title, message, success) {
+            this.open = true
+            this.title = title ? title : ""
+            this.message = message ? message : ""
+            this.success = success
+            setTimeout(() => {
+                this.open = false
+            }, 3000)
+        }
+    }
+}
