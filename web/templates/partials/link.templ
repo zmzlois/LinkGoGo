@@ -25,7 +25,7 @@ func ImageTranform(image string, path templ.SafeURL, name string) string {
 
 templ Link (link *model.NewLinkInput, isUser bool) {
 	<div class=" w-full  relative inset-0 group">
-		<a href={ link.Url } class="p-2 w-full  inset-0 relative z-0 rounded bg-zinc-100 drop-shadow-sm content-center items-center grid grid-cols-7  justify-between animate-pop">
+		<a href={ link.Url } class="p-2 w-full brutal-button inset-0 relative z-0 bg-zinc-100 content-center items-center grid grid-cols-7  justify-between animate-pop">
 			<div class="col-span-1">
 				if strings.Contains(string(link.Url), "twitter") || strings.Contains(string(link.Url), "x.com") {
 					<img src="/dist/twitter.svg" class="w-14 h-14 rounded" alt="avatar"/>
@@ -43,7 +43,7 @@ templ Link (link *model.NewLinkInput, isUser bool) {
 				<p class="w-full">{ link.Title }</p>
 			</div>
 		</a>
-		if isUser {
+		if !isUser {
 			<div
 				x-data="{open:false}"
 				class="col-span-1 absolute right-5 top-[18px] transition-transform duration-300 group-hover:block  z-20"

@@ -55,7 +55,7 @@ func Link(link *model.NewLinkInput, isUser bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"p-2 w-full  inset-0 relative z-0 rounded bg-zinc-100 drop-shadow-sm content-center items-center grid grid-cols-7  justify-between animate-pop\"><div class=\"col-span-1\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"p-2 w-full brutal-button inset-0 relative z-0 bg-zinc-100 content-center items-center grid grid-cols-7  justify-between animate-pop\"><div class=\"col-span-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -110,7 +110,7 @@ func Link(link *model.NewLinkInput, isUser bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if isUser {
+		if !isUser {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div x-data=\"{open:false}\" class=\"col-span-1 absolute right-5 top-[18px] transition-transform duration-300 group-hover:block  z-20\"><div class=\"relative\"><button class=\"w-10 h-10 p-2 flex rounded-full z-30 relative bg-inherit hover:bg-zinc-300 items-center transition-colors content-center\" x-on:click=\"open = ! open\"><img src=\"/dist/dot-horizontal.svg\" class=\"group-hover:block block w-6 h-6\"></button><div x-show=\"open\" x-on:click.away=\"open = false\" class=\"absolute z-40 top-6 left-6  bg-zinc-100 p-2 rounded shadow-lg\" x-transition:enter.scale.80 x-transition:leave.scale.90>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

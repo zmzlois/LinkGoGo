@@ -27,7 +27,7 @@ func CreateLink() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 = []any{"drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base"}
+		var templ_7745c5c3_Var2 = []any{"drop-shadow-sm brutal-button flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
