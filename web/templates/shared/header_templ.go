@@ -52,7 +52,7 @@ func Header(isUser bool) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			var templ_7745c5c3_Var3 = []any{"px-4  py-2 items-center gap-2 flex "}
+			var templ_7745c5c3_Var3 = []any{"px-4  py-2 items-center gap-2 flex"}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
