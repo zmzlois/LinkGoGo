@@ -3,6 +3,7 @@ package pages
 import (
 	"fmt"
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
+	"github.com/zmzlois/LinkGoGo/web/templates/partials/edit"
 	"github.com/zmzlois/LinkGoGo/web/templates/partials"
 	"github.com/zmzlois/LinkGoGo/pkg/model"
 	"github.com/zmzlois/LinkGoGo/pkg/utils"
@@ -31,11 +32,11 @@ templ EditPage(avatar string, name string, bio string, id string, links []model.
 			// fetch user profile data
 			@shared.Container() {
 				<div class="py-8 flex flex-col items-center gap-4">
-					@partials.EditProfilePicture(avatar)
+					@edit.EditProfilePicture(avatar)
 					<span class="hidden" id="user-name" value={ name }>{ name }</span>
 					<div class="gap-2 flex flex-col items-center w-1/4">
-						@partials.EditName(name)
-						@partials.EditBio(bio)
+						@edit.EditName(name)
+						@edit.EditBio(bio)
 					</div>
 				</div>
 			}

@@ -1,0 +1,15 @@
+package buttons
+
+templ CancelButtons() {
+	<button
+		class="drop-shadow-sm flex bg-zinc-100 rounded-xl text-zinc-900 font-semibold tracking-tight text-base"
+		type="button"
+		hx-get="/create"
+		hx-swap="innerHTML show:top"
+		hx-target="#form-button"
+	>
+		<span class="px-8 rounded-sm  w-full text-center py-3 text-zinc-100 bg-zinc-500">
+			<p>Cancel</p>
+		</span>
+	</button>
+}

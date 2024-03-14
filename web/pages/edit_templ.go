@@ -15,6 +15,7 @@ import (
 	"github.com/zmzlois/LinkGoGo/pkg/model"
 	"github.com/zmzlois/LinkGoGo/pkg/utils"
 	"github.com/zmzlois/LinkGoGo/web/templates/partials"
+	"github.com/zmzlois/LinkGoGo/web/templates/partials/edit"
 	"github.com/zmzlois/LinkGoGo/web/templates/shared"
 )
 
@@ -120,7 +121,7 @@ func EditPage(avatar string, name string, bio string, id string, links []model.N
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = partials.EditProfilePicture(avatar).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = edit.EditProfilePicture(avatar).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -139,7 +140,7 @@ func EditPage(avatar string, name string, bio string, id string, links []model.N
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/pages/edit.templ`, Line: 34, Col: 62}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/pages/edit.templ`, Line: 35, Col: 62}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -149,11 +150,11 @@ func EditPage(avatar string, name string, bio string, id string, links []model.N
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = partials.EditName(name).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = edit.EditName(name).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = partials.EditBio(bio).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = edit.EditBio(bio).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
