@@ -24,7 +24,8 @@ templ Page(title string) {
 			<link rel="stylesheet" href="dist/style.css"/>
 		</head>
 		<body class="h-full antialiased">
-			{ children... }
+			<div x-data="toastNotification()">{ children... }
+</div>
 		</body>
 	</html>
 }

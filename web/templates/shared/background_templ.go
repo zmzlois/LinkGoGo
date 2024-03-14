@@ -29,11 +29,11 @@ func Background() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = partials.DynamicIslandTop("Link copied!").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = partials.DynamicIslandTop().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\" py-10 h-full bg-gradient-to-tr from-teal-600/30 via-indigo-700/30 to-violet-300 flex flex-col \"><div class=\"min-height\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\" py-10 h-full flex flex-col \"><div class=\"min-height\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
