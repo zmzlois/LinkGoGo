@@ -5,6 +5,23 @@
 
 @layer base {
   :root {
+    --black: 216 100% 1%;
+    --white: 0 0% 100%;
+
+    --black-foreground: var(--white);
+    --white-foreground: var(--black);
+
+    --green: 159 100% 70%;
+    --green-foreground: var(--black);
+
+    --orange: 42 99% 71%;
+    --orange-foreground: var(--black);
+
+    --blue: 204 58% 74%;
+    --blue-foreground: var(--black);
+
+    --red: -28 100% 72%;
+    --red-foreground: var(--black);
 
     --font-sans: "Inter", sans-serif;
     --background: 0 0% 100%;
@@ -40,6 +57,24 @@
   }
 
   .dark {
+    --black: 216 100% 1%;
+    --white: 0 0% 100%;
+
+    --black-foreground: var(--white);
+    --white-foreground: var(--black);
+
+    --green: 159 100% 70%;
+    --green-foreground: var(--black);
+
+    --orange: 42 99% 71%;
+    --orange-foreground: var(--black);
+
+    --blue: 204 58% 74%;
+    --blue-foreground: var(--black);
+
+    --red: -28 100% 72%;
+    --red-foreground: var(--black);
+
     --background: 224 71% 4%;
     --foreground: 213 31% 91%;
 
@@ -78,7 +113,7 @@
     @apply border-border font-sans;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-orange text-green-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }  
   input {
@@ -88,6 +123,8 @@
 
 
 @layer utilities {
+
+  
     .btn {
         @apply px-4 py-2 rounded-md;
     }
@@ -95,6 +132,58 @@
     .primary-btn {
         @apply bg-primary text-primary-foreground;
     }
+
+    .brutal-button {
+      @apply border-black rounded-md border-2 shadow-xl hover:shadow-sm active:shadow-none data-[state=open]:shadow-none shadow-black transition-all;
+    }
+
+    .brutal-notification {
+      @apply border-black rounded-md border-2 shadow-sm hover:shadow-xs active:shadow-none data-[state=open]:shadow-none shadow-black transition-all;
+    }
+
+    .island {
+			background-color: whitesmoke;
+			position: absolute;
+			left: 50%;
+			top: 0.4rem;
+			transform: translateX(-50%);
+			border-radius: 20px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+			margin-bottom: 3px;
+			padding-left: 0.625rem;
+			padding-right: 0.625rem;
+			outline: #52a9ff;
+		}
+		.island-center {
+			padding-left: 0.625rem;
+			padding-right: 0.625rem;
+			justify-content: space-between;
+			align-items: center;
+			display: flex;
+			height: 28px;
+			position: relative;
+		}
+		.popup-title {
+			margin-bottom: 0px;
+		}
+		.popup-title h2 {
+			font-size: 0.8rem;
+			font-weight: 400;
+			font-variant-numeric: slashed-zero;
+			font-variant-ligatures: none;
+			margin: 0;
+		}
+		.popup-close {
+			text-align: right;
+		}
+		.popup-close a {
+			color: #999;
+			font-size: 20px;
+			text-decoration: none;
+		}
+		.popup-close a:hover {
+			color: #000;
+		}
 
   
 }

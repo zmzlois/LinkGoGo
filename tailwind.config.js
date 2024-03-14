@@ -12,7 +12,7 @@
 // }
 
 const { fontFamily } = require("tailwindcss/defaultTheme")
- 
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -27,6 +27,30 @@ module.exports = {
     },
     extend: {
       colors: {
+        white: {
+          DEFAULT: "hsl(var(--white))",
+          foreground: "hsl(var(--white-foreground))",
+        },
+        black: {
+          DEFAULT: "hsl(var(--black))",
+          foreground: "hsl(var(--black-foreground))",
+        },
+        green: {
+          DEFAULT: "hsl(var(--green))",
+          foreground: "hsl(var(--green-foreground))",
+        },
+        blue: {
+          DEFAULT: "hsl(var(--blue))",
+          foreground: "hsl(var(--blue-foreground))",
+        },
+        red: {
+          DEFAULT: "hsl(var(--red))",
+          foreground: "hsl(var(--red-foreground))",
+        },
+        orange: {
+          DEFAULT: "hsl(var(--orange))",
+          foreground: "hsl(var(--orange-foreground))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -68,6 +92,11 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
+      },
+      boxShadow: {
+        xl: "4px 4px 0 1px var(--tw-shadow-color)",
+        lg: "2px 2px 0 1px var(--tw-shadow-color)",
       },
       keyframes: {
         "accordion-down": {
