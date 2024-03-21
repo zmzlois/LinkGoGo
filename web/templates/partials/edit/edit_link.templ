@@ -12,7 +12,7 @@ templ EditLinkForm() {
 			name="url"
 			id="url"
 			placeholder="URL"
-			pattern="(https?|ftp):\\/\\/[^0-9a-zA-Z\\s/$.?#].[^a-z\\s]*"
+			pattern="/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i"
 			class="rounded-sm"
 		/>
 		<div class="flex justify-between">

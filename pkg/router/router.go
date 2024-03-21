@@ -27,22 +27,14 @@ func SetupRouter(app chi.Router) {
 	discordOAuth := service.NewAuthService(db, ds, state)
 	discordOAuthService := handler.NewAuthHandler(*discordOAuth)
 
-	// discordOAuthRedirectService := service.NewAuthService(db, ds, state)
-
 	indexHandler := handler.Index
 	loginHandler := handler.Login
 
 	discordOAuthHandler := handler.OAuthHandler
 	discordOAuthCallbackHandler := discordOAuthService.OAuthCallbackHandler
-	// discordOAuthHandler := monitor.SentryHandler.HandleFunc(handler.NewDiscordOAuthHandler(*discordOAuthService))
-	// discordOAuthRedirectHandler := monitor.SentryHandler.HandleFunc(handler.NewDiscordOAuthRedirect(*discordOAuthRedirectService))
 
 	// Index route
 	app.Get("/", handler.Index)
-
-	// app.Use(middleware.RedirectMiddleware)
-
-	// Login route
 
 	// Auth route
 	app.Post("/discord-oauth", discordOAuthHandler)
