@@ -12,6 +12,12 @@ Sentry.onLoad(function () {
     });
 });
 
+const client = new Client();
+
+client
+    .setEndpoint('https://cloud.appwrite.io/v1')
+    .setProject('65fc9c1109edacb7a24b');
+
 const urlInput = document.getElementById('url');
 urlInput.addEventListener("keydown", function (event) {
     const urlValid = document.getElementById('url-valid');
