@@ -41,8 +41,11 @@ Alternatively if you need to start with a Postgres database you can do a `docker
 
 # Highlights
 
-## Bare minimal authentication, but secure 
-The implementation details can be seen in [pkg/auth](./pkg/auth) folder and 
+## Bare minimal authentication for OAuth, but secure 
+The implementation details can be seen in 
+- [pkg/auth](./pkg/auth) 
+    - The client struct is first defined in [entry.go](./pkg/auth/entry.go) and client is used as a receiver in most of the function to help functions to access client credentials and exchanging with discord api to obtain other necessary values (access token, refresh token, oauth url etc )
+- [pkg/handler/oauth_callback.go](./pkg/handler/oauth_callback.go)
 
 
 ## Environment Variables 
