@@ -8,6 +8,8 @@ The idea started with "why tf do you need to pay LinkTree for analytics and fanc
 
 ~~And it was.~~
 
+![image](./web/assets/landing.png)
+
 ### This project uses:
 
 - [Chi](https://go-chi.io/#/) for backend.

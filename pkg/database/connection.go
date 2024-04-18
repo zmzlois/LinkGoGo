@@ -105,7 +105,7 @@ func Connection() *ent.Client {
 	// Run the migrations.
 	ctx := context.Background()
 	if err := client.Schema.Create(ctx); err != nil {
-		log.Fatal(err)
+		log.Fatal("failed creating schema resources: %v", err)
 	}
 	return client
 
