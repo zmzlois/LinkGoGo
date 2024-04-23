@@ -4,18 +4,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 )
 
 var RequestClient *http.Client = &http.Client{}
 
 func AuthCred() *Client {
-	err := godotenv.Load()
-
-	if err != nil {
-		panic("[Authentication] Error loading environment variables")
-	}
 
 	// Create a new oauth2 config
 	var cred *Client = &Client{

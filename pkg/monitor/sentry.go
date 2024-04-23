@@ -2,14 +2,13 @@ package monitor
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
-	"github.com/joho/godotenv"
+
 	"github.com/zmzlois/LinkGoGo/pkg/utils"
 )
 
@@ -35,12 +34,6 @@ func enhanceSentryEvent(handler http.HandlerFunc) http.HandlerFunc {
 }
 
 func SentryInit() {
-
-	err := godotenv.Load()
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	sentryDSN := os.Getenv("SENTRY_DSN")
 
