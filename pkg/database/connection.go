@@ -36,11 +36,7 @@ type Database struct {
 
 func DBCredentials() *Database {
 
-	err := godotenv.Load()
-
-	if err != nil {
-		panic("[Database] Error loading environment variables")
-	}
+	_ = godotenv.Load()
 
 	var cred *Database = &Database{
 		Host:     os.Getenv("DB_HOST"),
