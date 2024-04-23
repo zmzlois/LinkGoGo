@@ -22,7 +22,7 @@ import (
 
 func main() {
 
-	port := fmt.Sprintf(`:%s`, utils.Config("PORT"))
+	port := ":3000"
 
 	fmt.Printf("Port is trying to listening on %s\n\n", port)
 
@@ -50,5 +50,5 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(port, app))
 
-	fmt.Println("Listening on 3000")
+	fmt.Println("Listening on http://localhost:3000")
 }
