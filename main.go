@@ -22,7 +22,7 @@ import (
 
 func main() {
 
-	port := utils.Config("PORT")
+	port := fmt.Sprintf(`:%s`, utils.Config("PORT"))
 
 	fmt.Printf("Port is trying to listening on %s\n\n", port)
 
