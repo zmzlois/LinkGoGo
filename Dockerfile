@@ -1,18 +1,15 @@
 # Build. 
 # This docker file is for production use.
-FROM golang:1.20 AS build-stage
+FROM golang:1.21-bullseye AS build-stage
 WORKDIR /app
-COPY go.mod go.sum ./
+COPY go.mod .
 RUN go mod download
-COPY . /app
-RUN CGO_ENABLED=0 GOOS=linux go build -o /entrypoint \
-    && 
+COPY . .
+# within the /app directory 
+RUN CGO_ENABLED=0 GOOS=linux go build -o /opt/go-docker-multistage 
 
-# Deploy.
-FROM gcr.io/distroless/static-debian11 AS release-stage
-WORKDIR /
-COPY --from=build-stage /entrypoint /entrypoint
-COPY --from=build-stage /app/assets /web/assets
+# Final stage 
+FROM alpine:3.14 
+COPY --from=build-stage /opt/go-docker-multistage /opt/go-docker-multistage 
 EXPOSE 8080
-USER nonroot:nonroot
-ENTRYPOINT ["/entrypoint"]
+ENTRYPOINT ["/opt/go-docker-multistage"]
