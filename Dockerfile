@@ -14,4 +14,4 @@ COPY --from=build-stage /entrypoint /entrypoint
 COPY --from=build-stage /app/web/assets /web/assets
 EXPOSE 8080
 USER nonroot:nonroot
-ENTRYPOINT ["/opt/go-docker-multistage"]
+ENTRYPOINT ["/entrypoint"]
