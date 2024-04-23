@@ -2,7 +2,7 @@
 
 I was curious about how overengineered a Todo list (everyone's loved and hated) can be
 
-I guess it's something similar to LinkTree. Hosted on [contabo](https://contabo.com/)
+I guess it's something similar to LinkTree. Hosted on [railway](https://railway.app/)
 
 The idea started with "why tf do you need to pay LinkTree for analytics and fancy features" it's an overbloated next.js app + gatsby site (it has gotten much slower over the years) and the project itself its a 1 person product can be built in 3 days (I meant about 72 hours).
 
